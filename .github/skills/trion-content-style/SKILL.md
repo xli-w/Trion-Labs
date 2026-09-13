@@ -66,6 +66,27 @@ Connected Production View
 Shared shift-level information makes sources of lost time visible sooner.
 ```
 
+### Canonical Entry and Completion Copy
+
+Preserve these anchor messages unless a user explicitly requests a content change:
+
+```text
+Trion Labs
+Find the friction. Build the flow.
+A small operation. A few hidden problems. A chance to make it work better.
+```
+
+The primary entry action is `Enter the Lab`; `How it works` can provide a concise explanation without interrupting entry.
+
+For the final experience, use the following intent:
+
+```text
+The operation is moving.
+You have improved visibility, connected information, and made the next improvement easier to find.
+```
+
+The primary final CTA should direct visitors to explore Trion's approach, with `Start again` as the secondary action. The summary must emphasise that better understanding makes the next improvement possible; it must not claim that every problem has been solved.
+
 ## Word Choice
 
 Prefer:

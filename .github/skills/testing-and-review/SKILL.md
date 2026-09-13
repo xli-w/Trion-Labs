@@ -27,8 +27,9 @@ Test the changed path first, then test the closest shared behaviour likely to re
 - Navigation reaches each affected screen and preserves or resets state as designed.
 - Every changed button, link, selection, and control performs its advertised action once.
 - Challenge decisions record correctly, apply the correct effects, and cannot create duplicate completion or unlock states.
-- KPI values and feedback reflect the central state model.
+- KPI values and feedback reflect the central state model, including current, previous, target, and documented visual indicator values.
 - Allowed challenge order does not break progression; a completed challenge remains coherent when revisited.
+- A suboptimal decision explains its trade-off, changes only the appropriate outcome, and provides the designed retry or alternative path.
 - Reset restores all relevant state, UI, notifications, selected options, progress, and KPI values.
 - Invalid or unavailable actions receive clear handling rather than a silent failure.
 - Browser console contains no avoidable errors or warnings caused by the change.
@@ -59,6 +60,7 @@ Test the changed path first, then test the closest shared behaviour likely to re
 - Feedback explains a credible consequence rather than rewarding completion generically.
 - The feature advances the intended experience: Observe -> Investigate -> Decide -> Improve -> Measure -> Unlock.
 - The scope remains a simplified demonstration, not a live factory system or a complex simulation.
+- For a complete-experience review, all six challenges form one connected operational story, the final Improvement Challenge enables the `Improving` maturity stage, and the final summary makes the next improvement possible.
 
 ## Honest Review Protocol
 

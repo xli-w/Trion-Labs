@@ -21,6 +21,20 @@ Maintain a refined, editorial, architectural, and operational visual language th
 
 Use white and near-white surfaces as the dominant canvas. Deep purple (`#281a39`) is the primary anchor for key text, structural emphasis, and selected controls. Use dark neutral text and muted neutral support text where that produces clearer hierarchy.
 
+Use the following reference tokens when the implementation does not establish an equivalent token system:
+
+```css
+--trion-purple: #281a39;
+--trion-purple-light: #4b3565;
+--trion-purple-muted: #75658d;
+--trion-lilac: #eee9f5;
+--trion-background: #ffffff;
+--trion-surface: #f8f7fa;
+--trion-border: #e5e0eb;
+--trion-text: #281a39;
+--trion-text-muted: #6f6878;
+```
+
 Reserve supporting colours for semantic meaning, such as a credible improvement, risk, attention state, or comparison. Every semantic colour must have a text, icon, pattern, or label companion; colour alone must never carry the meaning.
 
 Use gradients only when they clarify a relationship or depth more effectively than a flat surface. A default gradient, glow, or coloured background is not a brand treatment.
@@ -52,6 +66,8 @@ Use gradients only when they clarify a relationship or depth more effectively th
 | Status indicators | Pair a concise state label with a restrained visual cue. Avoid red/green-only status. |
 | Icons | Use familiar, simple symbols as supporting cues; never substitute an ambiguous icon for an essential label. |
 | Process diagrams | Use alignment, connectors, and grouping to expose dependency and flow. Decorative arrows are not evidence. |
+
+A compact operational overview may use KPI cards, but it must read as a connected living model rather than a generic dashboard grid. Pair the operational score, maturity stage, and KPI movement with a simple 2D diagram of production, quality, logistics, planning, people, and systems. Use fine lines, subtle state changes, and progressive connection to show maturity.
 
 ## Motion Principles
 

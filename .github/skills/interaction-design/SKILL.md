@@ -58,6 +58,7 @@ Do not substitute "Correct", "Wrong", or "You gained 100 points" for this explan
 
 - Preserve a visitor's valid input when an action cannot proceed, then explain what is needed.
 - Make validation or error text specific and located near the affected decision.
+- When a visitor makes a suboptimal decision, show the trade-off and affected KPI, then offer a retry or alternative without a harsh failure screen.
 - Do not fake loading to make a local state change feel more dramatic.
 - If real loading is introduced later, identify what is loading, keep the interface stable, and announce progress appropriately.
 - Use completion states to connect the resolved friction to the KPI effect and unlocked capability.
@@ -66,6 +67,7 @@ Do not substitute "Correct", "Wrong", or "You gained 100 points" for this explan
 ## Motion and Reduced Motion
 
 - Use motion to connect cause and effect, orient visitors after navigation, or show a meaningful change in flow.
+- Animate KPI changes, process connections, data relationships, capability unlocks, and maturity evolution only when the animation clarifies the newly connected or improved state.
 - Keep duration and distance restrained; the outcome must remain understandable without animation.
 - Honour `prefers-reduced-motion` by removing nonessential transitions and using static state changes.
 - Do not use flashing, repeated pulse effects, confetti, decorative loops, or movement that competes with evidence.

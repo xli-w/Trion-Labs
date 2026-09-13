@@ -56,7 +56,7 @@ Build the experience in coherent stages:
 5. Add the next challenge using the refined patterns.
 6. Complete a final cohesion review across the full journey.
 
-Do not build all five mini-games simultaneously. Do not create a generic game engine before a real repeated need is demonstrated.
+The complete experience comprises six challenges, including the final Improvement Challenge. Do not build all six simultaneously. Do not create a generic game engine before a real repeated need is demonstrated.
 
 ## Scope Decision Rules
 

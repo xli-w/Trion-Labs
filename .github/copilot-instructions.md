@@ -6,12 +6,15 @@ Trion Labs is a polished, browser-based operational strategy experience for Trio
 
 The experience communicates one central idea: **Find the friction. Build the flow.** It is an interactive demonstration of Trion's approach, not a conventional computer game, a live factory system, or a generic SaaS dashboard.
 
+Its supporting message is: **See what changes when your operation starts making sense.**
+
 ## Technical Constraints
 
 - Inspect the repository before changing it and preserve useful patterns already in place.
 - Prefer semantic HTML, CSS, and vanilla JavaScript.
 - Do not introduce a framework, TypeScript, Tailwind, a backend, external APIs, authentication, accounts, payments, or dependencies unless the user explicitly requests them or the repository already establishes a justified alternative.
 - Keep the application understandable and runnable locally without a build system.
+- Build the experience as a single-page application-like flow; visitors should move between views without full-page reloads.
 - Implement the smallest cohesive change that satisfies the request; do not build all challenges or a generic game engine at once.
 
 ## Product and Visual Guardrails
@@ -22,6 +25,7 @@ The experience communicates one central idea: **Find the friction. Build the flo
 - Use a predominantly white, refined visual language anchored by deep purple (`#281a39`) and restrained semantic supporting colours.
 - Be professional, intelligent, practical, slightly playful, and human.
 - Do not drift into cyberpunk styling, neon effects, a generic dashboard, a corporate slide deck, or an overcomplicated simulation.
+- The completed experience comprises six connected challenges, ending with an Improvement Challenge that demonstrates continuous improvement. Implement them incrementally, but preserve this full-experience endpoint.
 
 ## Applying the Skills
 
@@ -34,7 +38,7 @@ Read the relevant skill files in [skills](./skills/) before planning or editing 
 | `visual-design` | Brand-consistent visual hierarchy and component treatment |
 | `frontend-architecture` | Vanilla frontend structure, state boundaries, and reuse |
 | `state-and-progression` | Truthful state, KPI effects, unlocks, and reset behaviour |
-| `challenge-design` | Short operational challenges and their methodology links |
+| `challenge-design` | Six linked operational challenges and their methodology links |
 | `interaction-design` | Input, feedback, motion, keyboard, touch, and error behaviour |
 | `data-and-kpis` | Legible operational metrics and meaningful visualisations |
 | `accessibility-and-responsive` | Semantic, inclusive, and responsive implementation |

@@ -19,7 +19,7 @@ Protect the product intent behind every Trion Labs decision. This skill keeps in
 
 Trion Labs is an interactive website experience for Trion, a manufacturing digitalisation and operational transformation consultancy. A visitor enters a simplified manufacturing operation, notices hidden friction, investigates evidence, decides on an intervention, and sees the operational consequences.
 
-Its central message is **Find the friction. Build the flow.** The experience should reveal how people, processes, data, technology, systems, and performance influence one another. It should make Trion's practical thinking tangible without claiming to be a live production environment.
+Its central message is **Find the friction. Build the flow.** Its supporting message is **See what changes when your operation starts making sense.** The experience should reveal how people, processes, data, technology, systems, and performance influence one another. It should make Trion's practical thinking tangible without claiming to be a live production environment.
 
 The intended audience includes operational leaders, transformation stakeholders, and technically curious visitors who need an intelligible introduction to Trion's approach. Do not assume specialist knowledge; explain operational significance in plain language.
 
@@ -45,6 +45,8 @@ Use the improvement philosophy to explain why an intervention comes next:
 5. Measure
 
 Not every challenge must use every step, but it must be compatible with this order. Automation must not appear before the visitor understands and simplifies the problem it addresses.
+
+The complete experience is six connected challenges, culminating in an Improvement Challenge where the visitor identifies the next valuable improvement. The endpoint is continuous improvement, not the claim that an operation has been permanently "fixed." Build this sequence incrementally, but preserve its connected, end-to-end operational story.
 
 ### Tone and Boundaries
 
@@ -77,6 +79,7 @@ Reject or reduce the feature if it cannot answer these questions. For example, a
 - Use simplified scenarios honestly and label them as demonstrations where relevant.
 - Let complexity emerge gradually through evidence and decisions.
 - Connect each local action to the wider operation.
+- Show the operation becoming more visible, connected, responsive, and able to improve as capability matures.
 
 ## Avoid
 
@@ -93,3 +96,4 @@ Reject or reduce the feature if it cannot answer these questions. For example, a
 - Does the flow move from observation toward a credible improvement?
 - Is the result an operating capability or insight rather than an arbitrary reward?
 - Has the work avoided generic game, dashboard, and presentation conventions?
+- When reviewing the complete experience, does the sixth challenge show how the next improvement becomes possible?

@@ -22,6 +22,21 @@ Create short, understandable journeys that let visitors experience Trion's appro
 - Keep a visible connection between the local problem and the wider operation.
 - Balance action with concise explanation: explain just enough for the visitor to make an informed choice.
 - Make discovery satisfying because it changes understanding, not because it triggers decoration.
+- Keep all challenges visibly part of one evolving operation rather than a set of unrelated pages.
+
+## Whole-Experience Journey
+
+Design the full experience as one single-page flow with these distinct, connected jobs:
+
+| View | Visitor question | Required outcome |
+| --- | --- | --- |
+| Landing | What is Trion Labs and why should I enter? | Introduce "Find the friction. Build the flow.", set the concise premise, and offer `Enter the Lab` plus an optional `How it works` route. A restrained 2D operational diagram is preferable to a complex 3D factory scene. |
+| Lab overview | What operation am I improving and where should I begin? | Show available challenges, a living operational model spanning production, quality, logistics, planning, people, and systems, plus concise shared KPI and maturity context. |
+| Challenge | What friction am I investigating and what should I decide? | Deliver one focused Observe -> Investigate -> Decide -> Improve -> Measure -> Unlock loop. |
+| Shared navigation | Where am I and what has changed so far? | Keep a compact, elegant route to Overview, Challenges, Capabilities, Performance, and restart; it must not become a traditional admin dashboard. |
+| Final summary | What operating capability has been gained and what comes next? | Show final KPIs, maturity stage, unlocked improvements, completed challenges, before/after evidence, and the ongoing opportunity for improvement. Provide a natural CTA to explore Trion's approach and a `Start again` action. |
+
+At every non-landing stage, visitors must be able to return to the overview, understand current progress, inspect KPIs and unlocked capabilities, and restart intentionally.
 
 ## Required Process
 
@@ -62,6 +77,10 @@ Each loop should follow:
 
 Avoid stacking multiple unrelated tasks in one loop. If a visitor needs more than a short explanation to know what to do, simplify the task or disclose it in stages.
 
+### 4. Teach Through Recoverable Consequences
+
+Permit a bounded suboptimal decision when it reveals a useful operational trade-off. Show the affected KPI and explain the reason, then provide an alternative or retry without a harsh failure screen. A visitor should learn, not be punished or locked out of the full journey.
+
 ## Feature Decision Test
 
 Add a feature only when it improves at least one of the following without materially harming another:
@@ -81,6 +100,7 @@ For example, a before-and-after process view can clarify the effect of a simplif
 - Keep navigation predictable and let visitors recover from a choice when the design permits it.
 - Let completion lead to reflection or the next relevant challenge, not a dead end.
 - Design every interaction to support the central operational message.
+- Update the shared overview or relevant summary after a completed or revised decision so the operation feels connected.
 
 ## Avoid
 
@@ -97,3 +117,4 @@ For example, a before-and-after process view can clarify the effect of a simplif
 - Does the flow preserve Observe -> Investigate -> Decide -> Improve -> Measure -> Unlock?
 - Does each interaction make a relationship or consequence clearer?
 - Has nonessential complexity been removed?
+- Does the complete journey reach a final, continuous-improvement summary rather than ending after an isolated unlock?

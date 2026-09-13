@@ -23,10 +23,12 @@ At minimum, model:
 
 - Current screen or route.
 - Challenge status and decision made for each challenge.
-- Unlocked capabilities.
-- KPI baselines, effects, and displayed values.
-- Current capability stage or overall progress.
-- Active notification or outcome feedback.
+- Unlocked methodology and integration upgrades, including their practical capabilities.
+- KPI baseline, current, previous, target, effect, and display values.
+- A derived operational score that represents balanced health, not arbitrary game points.
+- Current operational-maturity stage and overall progress.
+- Available improvement and integration capacity where a decision needs to express a credible constraint.
+- Active notification, outcome feedback, and before/after comparison data.
 - Any selected item needed to continue an interaction.
 
 Use a fresh initial-state factory rather than reusing a mutable initial object. A conceptual shape is:
@@ -34,18 +36,39 @@ Use a fresh initial-state factory rather than reusing a mutable initial object. 
 ```js
 function createInitialState() {
   return {
-    currentScreen: "welcome",
-    challenges: {},
+    currentScreen: "landing",
+    completedChallenges: [],
     decisions: {},
-    unlockedCapabilities: [],
+    unlockedUpgrades: [],
     kpis: {},
-    capabilityStage: "observe",
-    notification: null
+    operationalScore: 0,
+    capabilityStage: 1,
+    resources: {
+      improvementCapacity: 3,
+      integrationCapacity: 2
+    },
+    notifications: []
   };
 }
 ```
 
 The exact properties should fit the implementation, but avoid adding state that can be reliably derived from another authoritative value.
+
+## Operational Maturity and Score
+
+Represent capability progression as operational maturity, never as a conventional game level:
+
+| Stage | Name | Meaning |
+| --- | --- | --- |
+| 1 | Fragmented | Information is scattered and friction is difficult to see. |
+| 2 | Visible | Processes and KPI signals are clearer. |
+| 3 | Connected | Systems and information start working together. |
+| 4 | Responsive | People can act faster because information reaches the right place. |
+| 5 | Improving | The operation can measure, learn, and continuously improve. |
+
+Derive the current stage from explicit completion, capability, and decision rules. Pair it with a progress indicator, stage label, short description, unlock indicators, and a visible evolution of the operating model.
+
+If the overview contains an `operationalScore`, calculate it from the documented health of relevant KPIs and capabilities. It must communicate balance and trade-offs, not award points for simply clicking through a challenge. Define how missing, neutral, and poor decision outcomes affect it.
 
 ## Required Transition Process
 
@@ -75,6 +98,8 @@ For each effect, define:
 
 Use named effect data rather than unexplained number changes scattered through handlers. Clamp displayed values only when the KPI's real scale has a documented valid range.
 
+Model methodology upgrades (`Understand`, `Simplify`, `Standardise`, `Automate`, and `Measure`) and integration upgrades as practical capabilities. A connection must create a new ability to see, coordinate, or decide, not merely increase a KPI. Track capacity only when it makes an operational choice meaningful; it must not act as an arbitrary countdown or prevent a visitor from learning through a retry.
+
 Unlock a capability when its stated conditions are met. Prevent duplicate unlocks and make repeated completion idempotent. Capability names should describe the operating ability gained, such as "Connected Production View", rather than a game reward.
 
 ## Progression Rules
@@ -84,6 +109,8 @@ Unlock a capability when its stated conditions are met. Prevent duplicate unlock
 - Preserve completed work when visitors move among allowed screens.
 - Make unavailable actions understandable: explain what needs to happen first instead of presenting a silent disabled control.
 - Test completion in more than one allowable challenge order if the experience permits non-linear progress.
+- Record a suboptimal decision deterministically, explain its trade-off through the affected KPI, and allow an alternative or retry when the challenge design calls for it.
+- Treat the Improvement Challenge as the transition to the `Improving` stage and the `Continuous Improvement` capability, not as a declaration that all friction has disappeared.
 
 ## Reset Behaviour
 

@@ -26,7 +26,8 @@ Before displaying a KPI, define:
 | Inputs | Which observable facts or decisions can change it? |
 | Direction | Is higher or lower generally better, or does it need contextual interpretation? |
 | Relationship | Which other KPIs, processes, or capabilities does it influence or contextualise? |
-| Presentation | What label, unit, baseline, and comparison make it intelligible? |
+| Current, previous, and target | What are the current value, value before the relevant change, and appropriate target or reference? |
+| Presentation | What label, unit, visual indicator, baseline, and comparison make it intelligible? |
 | Explanation | How will the visitor learn why it changed? |
 
 Centralise this metadata and the related effect rules so the same definition drives challenge feedback, KPI cards, and summaries.
@@ -44,7 +45,16 @@ Use only the metrics needed for the current decision. The following set provides
 | Visibility | Timely, useful operational information | Connected data and shared views improve the ability to see and act on friction. |
 | Cost | Operational resource or loss impact | A change may reduce avoidable cost or expose a trade-off requiring consideration. |
 
-Do not show all six by default. Select the two to four metrics that make the current relationship clearest, then connect those local outcomes to a concise overall summary.
+On the shared lab overview and final summary, the six KPIs can appear as a compact operational-health set when their common context is clear. On an individual challenge, select the two to four metrics that make the current relationship clearest, then connect those local outcomes to a concise overall summary.
+
+## Shared Operational Overview
+
+Treat the overview as a living operational model, not a spreadsheet. It may present a derived operational score alongside the six KPIs and the current maturity stage when it helps the visitor see the wider state of the operation.
+
+- Derive the score from documented KPI and capability rules; it must reflect balance and trade-offs rather than completion count.
+- Pair the maturity stage with a label, short description, progress indicator, unlock indicators, and visible changes in the connected operational model.
+- Keep production, quality, logistics, planning, people, and systems visibly related, using a simple diagram or process model rather than a dashboard grid.
+- For the final summary, include final values, relevant before-and-after comparisons, unlocked capabilities, and the next improvement opportunity.
 
 ## Visualisation Selection
 
@@ -67,7 +77,7 @@ For a KPI or status display, make the reading order explicit:
 
 1. Label the measure or operational status.
 2. Show the current value or state with an appropriate unit.
-3. Show the relevant comparison or direction of change.
+3. Show the previous value or relevant baseline, target, and direction of change.
 4. State the time, scenario, role, or process context.
 5. Explain the causal relationship when the value is an outcome of a decision.
 

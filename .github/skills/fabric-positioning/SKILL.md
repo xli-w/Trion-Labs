@@ -61,6 +61,12 @@ Use accurate, natural phrasing:
 
 Fabric should feel integral when it helps a visitor see, connect, coordinate, or measure the operation. Do not interrupt a challenge with a promotional claim that adds no explanatory value.
 
+Include one restrained, supporting explanation in the overall experience, preferably near the capability or final summary rather than before the visitor can interact:
+
+> Powered by the principles behind Fabric: connecting the information, tools and processes that help an operation work better.
+
+Do not repeat this wording across challenge screens or use it as a substitute for demonstrating the relationships through interaction.
+
 ## Do
 
 - Show connected information in service of a real operational decision.

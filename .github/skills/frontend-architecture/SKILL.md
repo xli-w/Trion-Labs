@@ -20,6 +20,7 @@ Keep Trion Labs small, understandable, and maintainable as a vanilla HTML, CSS, 
 - Preserve the existing stack and conventions after inspecting the repository.
 - Prefer HTML, CSS, and browser-native JavaScript with no build system or dependency by default.
 - Do not introduce React, Vue, TypeScript, Tailwind, a backend, or a client-side framework unless explicitly requested or already justified by the repository.
+- Build an application-like single-page flow: route or switch views in place rather than reloading an HTML document for each screen.
 - Start with the fewest files that keep responsibilities clear; split only when a file has a stable, distinct responsibility.
 
 ## Structure and Responsibilities
@@ -55,6 +56,8 @@ js/
 
 This is a guide, not a requirement to create every file at once. Avoid empty abstractions and one-function modules.
 
+When multiple challenges are implemented, use a small module per challenge with a consistent, explicit challenge definition or lifecycle. Keep challenge-specific evidence and decision rules in that module, and keep shared state, rendering, navigation, KPI calculation, and capability progression in focused shared modules. This is separation of concerns, not a generic game engine.
+
 | Layer | Responsibility |
 | --- | --- |
 | HTML | Semantic structure, stable regions, templates, labels, and relationships. |
@@ -80,6 +83,7 @@ This is a guide, not a requirement to create every file at once. Avoid empty abs
 - Use lower camel case for JavaScript values and functions. Use verbs for actions, such as `completeChallenge` and `renderKpiSummary`.
 - Keep IDs unique and reserve them for document relationships, form labels, or stable landmarks rather than general styling.
 - Store challenge definitions, KPI metadata, and effect mappings centrally so UI copies do not diverge.
+- Keep the shared operating model, capability stages, and challenge outcomes available to overview, challenge, performance, and final-summary renders without duplicating screen-specific data.
 
 ## Do
 

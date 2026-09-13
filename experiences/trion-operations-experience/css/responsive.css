@@ -35,22 +35,6 @@
 }
 
 @media (max-width: 840px) {
-  .site-header {
-    flex-wrap: wrap;
-    padding: 18px 0;
-  }
-
-  .site-header > .header-actions {
-    margin-left: auto;
-  }
-
-  .lab-navigation {
-    order: 3;
-    width: 100%;
-    overflow-x: auto;
-    padding-top: 6px;
-  }
-
   .navigation-button {
     flex: 0 0 auto;
   }
@@ -146,12 +130,12 @@
     --page-gutter: 18px;
   }
 
-  .site-header {
-    gap: 14px;
-    min-height: auto;
+  .lab-subnav {
+    gap: 0;
+    min-height: 48px;
   }
 
-  .header-actions {
+  .footer-actions {
     gap: 4px;
   }
 
@@ -379,6 +363,10 @@
     min-height: auto;
     flex-direction: column;
     padding: 27px 0;
+  }
+
+  .footer-actions {
+    flex-wrap: wrap;
   }
 
   .briefing-page {

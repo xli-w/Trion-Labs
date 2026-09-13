@@ -125,76 +125,25 @@ p {
   margin: 0 auto;
 }
 
-.site-header {
+.lab-subnav {
   position: sticky;
   top: 0;
   z-index: 20;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  min-height: 86px;
+  gap: 2px;
+  min-height: 56px;
+  overflow-x: auto;
   background: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid rgba(229, 224, 235, 0.8);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
 }
 
-.brand-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0;
-  background: transparent;
-  color: var(--trion-purple);
-  text-align: left;
-}
-
-.brand-mark {
-  width: 34px;
-  height: 34px;
-  flex: 0 0 auto;
-}
-
-.brand-mark path:first-child {
-  fill: currentColor;
-}
-
-.brand-mark path:not(:first-child),
-.brand-mark circle {
-  fill: #ffffff;
-  stroke: #ffffff;
-}
-
-.brand-copy {
-  display: grid;
-  gap: 2px;
-  line-height: 1;
-}
-
-.brand-copy strong {
-  font-size: 1.16rem;
-  font-weight: 790;
-  letter-spacing: -0.065em;
-}
-
-.brand-copy span {
-  color: var(--trion-purple-muted);
-  font-size: 0.57rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.header-actions,
-.lab-navigation {
+.footer-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.lab-navigation {
-  gap: 2px;
 }
 
 .navigation-button,
@@ -221,7 +170,7 @@ p {
   grid-template-columns: minmax(0, 1fr) minmax(370px, 0.84fr);
   align-items: center;
   gap: clamp(44px, 7vw, 100px);
-  min-height: min(760px, calc(100vh - 86px));
+  min-height: min(760px, 100vh);
   padding: clamp(64px, 10vw, 118px) 0;
 }
 

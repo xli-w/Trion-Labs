@@ -14,7 +14,7 @@ import {
   renderCompletionAction,
   renderDecisionKpiImpact,
   renderFooter,
-  renderHeader,
+  renderNav,
 } from "./shared.js";
 
 function getMissionStepClass(completed, current) {
@@ -513,7 +513,7 @@ export function renderDeliveryDomino(state) {
 
   return `
     <div class="page-shell">
-      ${renderHeader(state, "challenge")}
+      ${renderNav(state)}
       <main id="main-content">
         <article class="delivery-domino-page" aria-labelledby="screen-title">
           <div class="challenge-game-back">
@@ -556,7 +556,7 @@ export function renderDeliveryDomino(state) {
           ${renderDecisionSection(state, challenge, status)}
         </article>
       </main>
-      ${renderFooter()}
+      ${renderFooter(state)}
     </div>
   `;
 }

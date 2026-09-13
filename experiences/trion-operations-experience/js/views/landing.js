@@ -1,9 +1,9 @@
-import { renderFooter, renderHeader } from "./shared.js";
+import { renderFooter, renderNav } from "./shared.js";
 
 export function renderLanding(state) {
   return `
     <div class="page-shell">
-      ${renderHeader(state, "landing")}
+      ${renderNav(state)}
       <main id="main-content">
         <section class="landing-hero" id="top" aria-labelledby="screen-title">
           <div>
@@ -71,7 +71,7 @@ export function renderLanding(state) {
           </ol>
         </section>
       </main>
-      ${renderFooter()}
+      ${renderFooter(state)}
     </div>
   `;
 }

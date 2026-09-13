@@ -12,7 +12,7 @@ import { renderBeforeAfterOperatingModel } from "./beforeAfterOperatingModel.js"
 import { renderDiagnosticProfile } from "./diagnosticProfile.js";
 import { renderOpportunityPrioritization } from "./opportunityPrioritization.js";
 import { renderTrionApproach } from "./trionApproach.js";
-import { renderFooter, renderHeader } from "./shared.js";
+import { renderFooter, renderNav } from "./shared.js";
 
 function formatKpiValue(kpi) {
   return `${kpi.current}<small>${kpi.unit}</small>`;
@@ -482,7 +482,7 @@ export function renderLabOverview(state) {
 
   return `
     <div class="page-shell">
-      ${renderHeader(state, "overview")}
+      ${renderNav(state)}
       <main id="main-content">
         <section class="lab-hero" id="overview" aria-labelledby="screen-title">
           <div>
@@ -557,7 +557,7 @@ export function renderLabOverview(state) {
         </section>
         ${renderExperienceSummary(state)}
       </main>
-      ${renderFooter()}
+      ${renderFooter(state)}
     </div>
   `;
 }

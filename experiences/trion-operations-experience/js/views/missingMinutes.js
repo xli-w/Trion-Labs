@@ -13,7 +13,7 @@ import {
   renderCompletionAction,
   renderDecisionKpiImpact,
   renderFooter,
-  renderHeader,
+  renderNav,
 } from "./shared.js";
 
 function getEventStatus(event) {
@@ -322,7 +322,7 @@ export function renderMissingMinutes(state) {
 
   return `
     <div class="page-shell">
-      ${renderHeader(state, "challenge")}
+      ${renderNav(state)}
       <main id="main-content">
         <article class="missing-minutes-page" aria-labelledby="screen-title">
           <div class="challenge-game-back">
@@ -404,7 +404,7 @@ export function renderMissingMinutes(state) {
           ${renderDecisionSection(state, challenge, status)}
         </article>
       </main>
-      ${renderFooter()}
+      ${renderFooter(state)}
     </div>
   `;
 }

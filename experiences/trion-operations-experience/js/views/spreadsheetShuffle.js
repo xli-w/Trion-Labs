@@ -19,7 +19,7 @@ import {
   renderCompletionAction,
   renderDecisionKpiImpact,
   renderFooter,
-  renderHeader,
+  renderNav,
 } from "./shared.js";
 
 function getMissionStepClass(completed, current) {
@@ -575,7 +575,7 @@ export function renderSpreadsheetShuffle(state) {
 
   return `
     <div class="page-shell">
-      ${renderHeader(state, "challenge")}
+      ${renderNav(state)}
       <main id="main-content">
         <article class="spreadsheet-shuffle-page" aria-labelledby="screen-title">
           <div class="challenge-game-back">
@@ -620,7 +620,7 @@ export function renderSpreadsheetShuffle(state) {
           ${renderAutomationSection(state, challenge)}
         </article>
       </main>
-      ${renderFooter()}
+      ${renderFooter(state)}
     </div>
   `;
 }

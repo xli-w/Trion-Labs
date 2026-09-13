@@ -3,7 +3,7 @@ import { getChallengeReadiness } from "../miniGames/registry.js";
 import {
   renderChallengeOperationContext,
   renderFooter,
-  renderHeader,
+  renderNav,
 } from "./shared.js";
 
 function getChallengeStateLabel(readiness) {
@@ -30,7 +30,7 @@ export function renderChallengeBriefing(state) {
 
   return `
     <div class="page-shell">
-      ${renderHeader(state, "challenge")}
+      ${renderNav(state)}
       <main id="main-content">
         <article class="briefing-page" aria-labelledby="screen-title">
           <div class="briefing-back">
@@ -95,7 +95,7 @@ export function renderChallengeBriefing(state) {
           </div>
         </article>
       </main>
-      ${renderFooter()}
+      ${renderFooter(state)}
     </div>
   `;
 }

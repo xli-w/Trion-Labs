@@ -78,7 +78,7 @@
     linear-gradient(180deg, var(--trion-background) 0%, var(--trion-surface) 100%);
 }
 
-:root[data-theme="dark"] .site-header {
+:root[data-theme="dark"] .lab-subnav {
   border-bottom-color: rgba(93, 81, 103, 0.72);
   background: rgba(21, 17, 28, 0.9);
 }
@@ -87,12 +87,6 @@
   border-color: var(--trion-border-strong);
   background: var(--trion-surface-elevated);
   color: var(--trion-purple);
-}
-
-:root[data-theme="dark"] .brand-mark path:not(:first-child),
-:root[data-theme="dark"] .brand-mark circle {
-  fill: var(--trion-background);
-  stroke: var(--trion-background);
 }
 
 :root[data-theme="dark"] .diagram-surface {

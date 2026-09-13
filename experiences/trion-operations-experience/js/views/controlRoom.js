@@ -18,7 +18,7 @@ import {
   renderCompletionAction,
   renderDecisionKpiImpact,
   renderFooter,
-  renderHeader,
+  renderNav,
 } from "./shared.js";
 
 function getMissionStepClass(completed, current) {
@@ -617,7 +617,7 @@ export function renderControlRoom(state) {
 
   return `
     <div class="page-shell">
-      ${renderHeader(state, "challenge")}
+      ${renderNav(state)}
       <main id="main-content">
         <article class="control-room-page ${completed ? "is-complete" : ""}" aria-labelledby="screen-title">
           <div class="challenge-game-back">
@@ -661,7 +661,7 @@ export function renderControlRoom(state) {
           ${renderDecisionSection(state, challenge)}
         </article>
       </main>
-      ${renderFooter()}
+      ${renderFooter(state)}
     </div>
   `;
 }

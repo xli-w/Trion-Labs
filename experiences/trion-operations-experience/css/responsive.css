@@ -73,7 +73,15 @@
     gap: 16px;
   }
 
-  .operations-layout,
+  .snapshot-kpis__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .starting-snapshot__layout,
+  .starting-snapshot__support,
+  .connection-map-layout,
   .capability-layout,
   .performance-grid {
     grid-template-columns: 1fr;
@@ -143,6 +151,7 @@
 
   #how-it-works,
   #overview,
+  #starting-snapshot,
   #challenges,
   #capabilities,
   #performance {
@@ -274,24 +283,49 @@
     min-height: 130px;
   }
 
-  .operations-map {
+  .operation-facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .operation-facts div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .friction-list__item {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .operation-area-list,
+  .operation-system-list,
+  .connection-map__relationships {
+    grid-template-columns: 1fr;
+  }
+
+  .connection-map {
+    padding: 16px;
+  }
+
+  .connection-map__surface {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
     min-height: auto;
     padding: 16px;
   }
 
-  .operations-map::before,
-  .operations-map::after,
-  .operations-connection {
+  .connection-map__lines {
     display: none;
   }
 
-  .operations-node--quality,
-  .operations-node--people {
-    transform: none;
+  .connection-map__node {
+    position: relative;
+    inset: auto;
+    width: auto;
+    min-height: 82px;
   }
 
-  .operations-node:last-child {
+  .connection-map__node--outcomes {
     grid-column: 1 / -1;
   }
 

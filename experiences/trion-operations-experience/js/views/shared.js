@@ -4,7 +4,7 @@ import {
   kpiDefinitions,
   navigationItems,
 } from "../data.js";
-import { isDarkTheme } from "../../../theme.js";
+import { isDarkTheme } from "../../../../theme.js";
 
 function getChallengeIndex(challenge) {
   const challengeIndex = challenges.findIndex((item) => item.id === challenge.id);

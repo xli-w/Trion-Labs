@@ -26,7 +26,10 @@ The shared `theme.js` utility remains available from the repository root.
   ES module.
 - `css/` separates global visual tokens and layout from reusable components and
   responsive rules.
-- `js/data.js` owns deterministic, display-independent operational data.
+- `js/operationModel.js` owns the fictional operation, baseline KPI metadata,
+  operational areas, friction points, and progression-ready connection-map data.
+- `js/data.js` owns app-wide progression data and the initial-state factory,
+  reusing the shared KPI definitions from the operation model.
 - `js/state.js` owns the immutable-style central state store and all state
   transitions.
 - `js/game.js` is the application-facing game service. UI code calls it rather

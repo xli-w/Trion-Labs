@@ -4,11 +4,16 @@ import {
   getCapabilityStage,
   hasCompletedExperience,
   kpiDefinitions,
-  operationAreas,
-  operationConnections,
   upgrades,
 } from "../data.js";
 import { getChallengeReadiness } from "../miniGames/registry.js";
+import {
+  connectionMapNodes,
+  getOperationSnapshot,
+  operation,
+  operationalAreas,
+  operationSystems,
+} from "../operationModel.js";
 import { renderFooter, renderHeader } from "./shared.js";
 
 function formatKpiValue(kpi) {
@@ -49,98 +54,211 @@ function renderKpiCards(state) {
   `;
 }
 
-function isOperationAreaActive(area, state) {
-  return area.unlockId
-    ? state.unlockedUpgrades.includes(area.unlockId)
-    : state.capabilityStage >= area.activeAt;
+function getNextAvailableChallenge(state) {
+  const nextChallenge = challenges.find((challenge) =>
+    getChallengeReadiness(challenge.id, state).canLaunch,
+  );
+
+  if (!nextChallenge && !hasCompletedExperience(state.completedChallenges)) {
+    throw new Error("The next available challenge could not be determined.");
+  }
+
+  return nextChallenge;
 }
 
-function isOperationConnectionActive(connection, state) {
-  return state.unlockedUpgrades.includes(connection.unlockId);
+function renderStartingSnapshot(state) {
+  const snapshot = getOperationSnapshot(state);
+  const nextChallenge = getNextAvailableChallenge(state);
+  const action = nextChallenge
+    ? `
+        <button
+          class="button button--primary"
+          type="button"
+          data-action="review-challenge"
+          data-challenge-id="${nextChallenge.id}"
+        >
+          Investigate ${nextChallenge.title} <span class="button-arrow" aria-hidden="true">-></span>
+        </button>
+      `
+    : `
+        <button class="button button--primary" type="button" data-action="navigate" data-section="capabilities">
+          Review the connected operation <span class="button-arrow" aria-hidden="true">-></span>
+        </button>
+      `;
+
+  return `
+    <section class="lab-section starting-snapshot" id="starting-snapshot" aria-labelledby="startingSnapshotTitle">
+      <div class="section-topline">
+        <div>
+          <p class="eyebrow">Starting snapshot</p>
+          <h2 id="startingSnapshotTitle" tabindex="-1">Working harder than it needs to.</h2>
+        </div>
+        <p>
+          This illustrative operation has capable people and useful systems. The friction is in the handoffs between them.
+        </p>
+      </div>
+      <div class="starting-snapshot__layout">
+        <section class="snapshot-panel snapshot-panel--operation" aria-labelledby="operationProfileTitle">
+          <p class="snapshot-panel__label">The operation</p>
+          <h3 id="operationProfileTitle">${operation.name}</h3>
+          <p class="snapshot-panel__lead">${operation.currentChallenge}</p>
+          <ul class="snapshot-pressure-list">
+            ${operation.pressurePoints.map((pressurePoint) => `<li>${pressurePoint}</li>`).join("")}
+          </ul>
+          <dl class="operation-facts">
+            ${operation.profileFacts
+              .map(
+                (fact) => `
+                  <div>
+                    <dt>${fact.label}</dt>
+                    <dd>${fact.value}</dd>
+                  </div>
+                `,
+              )
+              .join("")}
+          </dl>
+        </section>
+        <aside class="snapshot-panel snapshot-panel--friction" aria-labelledby="frictionTitle">
+          <p class="snapshot-panel__label">Where the flow is breaking</p>
+          <h3 id="frictionTitle">Five connected friction points</h3>
+          <ol class="friction-list">
+            ${snapshot.frictionPoints
+              .map(
+                (frictionPoint) => `
+                  <li class="friction-list__item is-${frictionPoint.status}">
+                    <span class="friction-list__status">${frictionPoint.statusLabel}</span>
+                    <div>
+                      <strong>${frictionPoint.title}</strong>
+                      <p>${frictionPoint.statusDescription}</p>
+                    </div>
+                  </li>
+                `,
+              )
+              .join("")}
+          </ol>
+        </aside>
+      </div>
+      <div class="starting-snapshot__support">
+        <section class="snapshot-panel snapshot-panel--areas" aria-labelledby="areasTitle">
+          <p class="snapshot-panel__label">Operational areas</p>
+          <h3 id="areasTitle">The work involved</h3>
+          <ul class="operation-area-list">
+            ${operationalAreas
+              .map(
+                (area) => `
+                  <li>
+                    <strong>${area.label}</strong>
+                    <span>${area.detail}</span>
+                  </li>
+                `,
+              )
+              .join("")}
+          </ul>
+        </section>
+        <section class="snapshot-panel snapshot-panel--systems" aria-labelledby="systemsTitle">
+          <p class="snapshot-panel__label">Existing systems and tools</p>
+          <h3 id="systemsTitle">Information is already there</h3>
+          <ul class="operation-system-list">
+            ${operationSystems
+              .map(
+                (system) => `
+                  <li>
+                    <strong>${system.label}</strong>
+                    <span>${system.type}</span>
+                  </li>
+                `,
+              )
+              .join("")}
+          </ul>
+        </section>
+      </div>
+      <section class="snapshot-kpis" aria-labelledby="snapshotKpisTitle">
+        <div class="snapshot-kpis__heading">
+          <div>
+            <p class="snapshot-panel__label">Baseline measures</p>
+            <h3 id="snapshotKpisTitle">What the operation can see today.</h3>
+          </div>
+          <p>
+            Illustrative baseline measures show where the operation has room to improve. A challenge changes only the measures it meaningfully affects.
+          </p>
+        </div>
+        ${renderKpiCards(state)}
+      </section>
+      <div class="starting-snapshot__action">
+        ${action}
+        <p>Start with the production loss that is visible, but not yet understood.</p>
+      </div>
+    </section>
+  `;
 }
 
 function renderOperationMap(state) {
-  const stage = getCapabilityStage(state.capabilityStage);
-  const hasProductionQualityIntegration = state.unlockedUpgrades.includes(
-    "production-quality-integration",
-  );
-  const hasWorkflowAutomation = state.unlockedUpgrades.includes("workflow-automation");
-  const hasLogisticsProductionVisibility = state.unlockedUpgrades.includes(
-    "logistics-production-visibility",
-  );
-  const hasCentralOperationalView = state.unlockedUpgrades.includes(
-    "central-operational-view",
-  );
-  const activeOperationConnections = operationConnections.filter((connection) =>
-    isOperationConnectionActive(connection, state),
-  );
-  const connectedRelationshipCount = activeOperationConnections.length;
+  const snapshot = getOperationSnapshot(state);
+  const nextConnection = snapshot.nextConnection;
   const relationshipSummary =
-    connectedRelationshipCount === 0
-      ? "Complete an operational question to make a relationship visible."
-      : "Each relationship gives people more useful context for the next decision.";
-  const insightLabel = hasCentralOperationalView
-    ? "Central operational view"
-    : hasLogisticsProductionVisibility
-    ? "Delivery response connected"
-    : hasWorkflowAutomation || hasProductionQualityIntegration
-      ? "New shared capability"
-    : "Current condition";
-  const insightTitle = hasCentralOperationalView
-    ? "The right exception now reaches the people who can act on it."
-    : hasLogisticsProductionVisibility
-    ? "Material risk now reaches planning before it reaches customer commitments."
-    : hasWorkflowAutomation
-      ? "Planning updates now follow a shared, automated route."
-    : hasProductionQualityIntegration
-      ? "Production and quality now share a traceable record."
-      : `${stage.name} operations need clearer shared context.`;
-  const insightCopy = hasCentralOperationalView
-    ? "Management, production, and planning now work from one shared exception, with role-relevant detail rather than a larger generic dashboard."
-    : hasLogisticsProductionVisibility
-      ? "Logistics exceptions can be viewed with the production schedule, available capacity, customer orders, and delivery commitments they affect."
-      : hasWorkflowAutomation
-        ? "Production and ERP context travel with the planning update, reducing copied figures and giving people a clearer schedule to work from."
-        : hasProductionQualityIntegration
-          ? "Defect signals can be compared with the production conditions and material trace that created them."
-          : stage.description;
+    snapshot.connectedRelationshipCount === 0
+      ? "The information exists, but the relationships needed for a useful decision are incomplete."
+      : "Each connected relationship gives people more useful context for the next decision.";
+  const insightLabel = nextConnection ? "Next relationship to investigate" : "Connected operation";
+  const insightTitle = nextConnection
+    ? nextConnection.title
+    : "The operation can see the response as well as the signal.";
+  const insightCopy = nextConnection
+    ? nextConnection.statusDescription
+    : "The shared operational view connects the people, context, and consequences needed to find the next bottleneck.";
 
   return `
-    <div class="operations-layout">
-      <div class="operations-map" data-stage="${state.capabilityStage}" aria-label="Operational model at ${stage.name} capability stage with ${connectedRelationshipCount} connected relationship${connectedRelationshipCount === 1 ? "" : "s"}">
-        ${operationConnections
-          .map(
-            (connection) => `
-              <span class="operations-connection operations-connection--${connection.id} ${
-                isOperationConnectionActive(connection, state) ? "is-active" : ""
-              }" aria-hidden="true"></span>
-            `,
-          )
-          .join("")}
-        ${activeOperationConnections
-          .map((connection) => `<p class="sr-only">${connection.description}</p>`)
-          .join("")}
-        ${operationAreas
-          .map((area) => {
-            const isActive = isOperationAreaActive(area, state);
-
-            return `
-              <article class="operations-node operations-node--${area.id} ${
-                isActive ? "is-active" : ""
-              }">
-                <span>${area.label}</span>
-                <strong>${area.detail}</strong>
-                <small>${isActive ? "Context is available" : "Connection will unlock"}</small>
-              </article>
-            `;
-          })
-          .join("")}
-        <p class="operations-map__summary">
-          <strong>${connectedRelationshipCount} connected relationship${
-            connectedRelationshipCount === 1 ? "" : "s"
-          }</strong>
+    <div class="connection-map-layout">
+      <div class="connection-map" role="group" aria-label="Connection map" aria-describedby="connectionMapSummary">
+        <div class="connection-map__surface">
+          <svg
+            class="connection-map__lines"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+          >
+            ${snapshot.connections
+              .map(
+                (relationship) => `
+                  <path
+                    class="connection-map__path connection-map__path--${relationship.id} is-${relationship.status}"
+                    d="${relationship.mapPath}"
+                  />
+                `,
+              )
+              .join("")}
+          </svg>
+          ${connectionMapNodes
+            .map(
+              (node) => `
+                <div class="connection-map__node connection-map__node--${node.id}">
+                  <span>${node.label}</span>
+                  <strong>${node.detail}</strong>
+                </div>
+              `,
+            )
+            .join("")}
+        </div>
+        <p class="connection-map__summary" id="connectionMapSummary">
+          <strong>${snapshot.connectedRelationshipCount} of ${snapshot.totalRelationshipCount} relationships connected</strong>
           <span>${relationshipSummary}</span>
         </p>
+        <ol class="connection-map__relationships" aria-label="Connection status">
+          ${snapshot.connections
+            .map(
+              (relationship) => `
+                <li class="connection-map__relationship is-${relationship.status}">
+                  <span class="connection-map__relationship-status">${relationship.statusLabel}</span>
+                  <div>
+                    <strong>${relationship.title}</strong>
+                    <p>${relationship.statusDescription}</p>
+                  </div>
+                </li>
+              `,
+            )
+            .join("")}
+        </ol>
       </div>
       <aside class="map-insight">
         <div>
@@ -488,43 +606,34 @@ export function renderLabOverview(state) {
       <main id="main-content">
         <section class="lab-hero" id="overview" aria-labelledby="screen-title">
           <div>
-            <p class="eyebrow">Operational strategy experience</p>
+            <p class="eyebrow">Illustrative operation / ${operation.location}</p>
             <h1 class="lab-title" id="screen-title" tabindex="-1">
-              Start with the work.<br /><span class="heading-accent">Then improve the flow.</span>
+              ${operation.name}
             </h1>
             <p class="lab-copy">
-              This operation is functioning, but its information, decisions, and handoffs are fragmented.
-              Follow five connected questions to understand the loss, connect the evidence, improve the flow, coordinate dependencies, and measure the next decision.
+              ${operation.description} ${operation.manufacturingContext}
             </p>
+            <p class="operation-premise">${operation.premise}</p>
           </div>
-          <aside class="lab-summary" aria-label="Operational score and capability stage">
+          <aside class="lab-summary" aria-label="Illustrative operational score and capability stage">
             <div class="score-ring" style="--score: ${state.operationalScore}%"><strong>${state.operationalScore}</strong></div>
             <div class="summary-copy">
-              <span>Operational score</span>
+              <span>Illustrative starting score</span>
               <strong>Stage ${stage.stage}: ${stage.name}</strong>
-              <small>${stage.description}</small>
+              <small>${operation.profileFacts.map((fact) => fact.value).join(" / ")}</small>
             </div>
           </aside>
         </section>
 
-        <section class="lab-section lab-section--surface" aria-labelledby="healthTitle">
-          <div class="section-topline">
-            <div>
-              <p class="eyebrow">Operational health</p>
-              <h2 id="healthTitle" tabindex="-1">Make the condition visible.</h2>
-            </div>
-            <p>These measures are the health system for the operation. Improvements will change only the measures they meaningfully affect.</p>
-          </div>
-          ${renderKpiCards(state)}
-        </section>
+        ${renderStartingSnapshot(state)}
 
         <section class="lab-section" aria-labelledby="modelTitle">
           <div class="section-topline">
             <div>
-              <p class="eyebrow">The operation</p>
-              <h2 id="modelTitle" tabindex="-1">One operation. Shared context.</h2>
+              <p class="eyebrow">Friction and connection map</p>
+              <h2 id="modelTitle" tabindex="-1">Where useful context is breaking.</h2>
             </div>
-            <p>Every connection should create a practical new capability, not merely increase a number.</p>
+            <p>Each relationship becomes useful only when it helps the right people make a better operational decision.</p>
           </div>
           <div class="stage-line" aria-label="Capability progression">
             <span>Stage ${stage.stage} of ${capabilityStages.length}</span>

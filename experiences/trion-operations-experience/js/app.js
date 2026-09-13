@@ -39,7 +39,7 @@ import {
   scrollToSection,
 } from "./ui.js";
 import { subscribe } from "./state.js";
-import { initializeTheme, syncThemeToggle, toggleTheme } from "../../theme.js";
+import { initializeTheme, syncThemeToggle, toggleTheme } from "../../../theme.js";
 
 const sectionFocusTargetIds = Object.freeze({
   overview: "screen-title",

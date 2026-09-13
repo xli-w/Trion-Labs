@@ -3,6 +3,9 @@ import { createInitialQualityLoopState } from "./miniGames/qualityLoop.js";
 import { createInitialSpreadsheetShuffleState } from "./miniGames/spreadsheetShuffle.js";
 import { createInitialDeliveryDominoState } from "./miniGames/deliveryDomino.js";
 import { createInitialControlRoomState } from "./miniGames/controlRoom.js";
+import { initialKpis, kpiDefinitions } from "./operationModel.js";
+
+export { initialKpis, kpiDefinitions };
 
 export const navigationItems = Object.freeze([
   { id: "overview", label: "Overview" },
@@ -10,42 +13,6 @@ export const navigationItems = Object.freeze([
   { id: "capabilities", label: "Capabilities" },
   { id: "performance", label: "Performance" },
 ]);
-
-export const kpiDefinitions = Object.freeze({
-  throughput: {
-    label: "Throughput",
-    description: "How much the operation produces.",
-  },
-  quality: {
-    label: "Quality",
-    description: "How much is produced right first time.",
-  },
-  delivery: {
-    label: "Delivery",
-    description: "Whether orders are fulfilled on time.",
-  },
-  productivity: {
-    label: "Productivity",
-    description: "How efficiently people and resources are used.",
-  },
-  visibility: {
-    label: "Visibility",
-    description: "How clearly the operation can be understood.",
-  },
-  cost: {
-    label: "Cost control",
-    description: "How well avoidable resource use is controlled.",
-  },
-});
-
-export const initialKpis = Object.freeze({
-  throughput: { baseline: 58, current: 58, target: 78, unit: "%" },
-  quality: { baseline: 72, current: 72, target: 88, unit: "%" },
-  delivery: { baseline: 64, current: 64, target: 86, unit: "%" },
-  productivity: { baseline: 55, current: 55, target: 76, unit: "%" },
-  visibility: { baseline: 35, current: 35, target: 80, unit: "%" },
-  cost: { baseline: 68, current: 68, target: 82, unit: "%" },
-});
 
 export const capabilityStages = Object.freeze([
   {
@@ -72,77 +39,6 @@ export const capabilityStages = Object.freeze([
     stage: 5,
     name: "Improving",
     description: "The operation can measure, learn, and continuously improve.",
-  },
-]);
-
-export const operationAreas = Object.freeze([
-  {
-    id: "production",
-    label: "Production",
-    detail: "Line events and process time",
-    activeAt: 1,
-  },
-  {
-    id: "quality",
-    label: "Quality",
-    detail: "Defects and first-time-right data",
-    activeAt: 3,
-  },
-  {
-    id: "logistics",
-    label: "Logistics",
-    detail: "Material and delivery dependencies",
-    unlockId: "logistics-production-visibility",
-  },
-  {
-    id: "planning",
-    label: "Planning",
-    detail: "Capacity, orders, and constraints",
-    activeAt: 4,
-  },
-  {
-    id: "people",
-    label: "People",
-    detail: "Decisions, handoffs, and work",
-    activeAt: 1,
-  },
-  {
-    id: "systems",
-    label: "Systems",
-    detail: "Shared operational context",
-    activeAt: 2,
-  },
-]);
-
-export const operationConnections = Object.freeze([
-  {
-    id: "production-systems",
-    unlockId: "connected-production-view",
-    description:
-      "Production loss records now carry the context needed for a shared operational view.",
-  },
-  {
-    id: "production-quality",
-    unlockId: "production-quality-integration",
-    description: "Production conditions and quality results can now be investigated together.",
-  },
-  {
-    id: "production-planning",
-    unlockId: "workflow-automation",
-    description:
-      "A standard planning flow now carries shared production and ERP context into the schedule.",
-  },
-  {
-    id: "logistics-systems",
-    unlockId: "logistics-production-visibility",
-    description:
-      "Material risk now reaches the production, planning, and delivery response earlier.",
-  },
-  {
-    id: "systems-people",
-    unlockId: "central-operational-view",
-    description:
-      "The right operational exception now reaches the people who can coordinate the response.",
   },
 ]);
 

@@ -1,35 +1,5 @@
-.delivery-domino-page {
-  padding: 34px 0 var(--section-space);
-}
-
 .delivery-domino-investigation {
   padding-top: 29px;
-}
-
-.delivery-domino-investigation__heading {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 28px;
-  margin-bottom: 22px;
-}
-
-.delivery-domino-investigation__heading h2 {
-  max-width: 700px;
-  margin-bottom: 10px;
-  color: var(--trion-purple);
-  font-size: clamp(1.7rem, 3vw, 2.35rem);
-  font-weight: 660;
-  letter-spacing: -0.06em;
-  line-height: 1.04;
-}
-
-.delivery-domino-investigation__heading > div > p:last-child {
-  max-width: 680px;
-  margin-bottom: 0;
-  color: var(--trion-text-muted);
-  font-size: 0.86rem;
-  line-height: 1.58;
 }
 
 .domino-risk-signal {

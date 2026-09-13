@@ -7,6 +7,7 @@
   --trion-background: #ffffff;
   --trion-surface: #f8f7fa;
   --trion-surface-strong: #f1edf5;
+  --trion-surface-elevated: #ffffff;
   --trion-border: #e5e0eb;
   --trion-border-strong: #cec5d8;
   --trion-text: #281a39;
@@ -18,11 +19,16 @@
   --trion-green-soft: #ebf5f0;
   --trion-amber: #9a672f;
   --trion-amber-soft: #f9f0e4;
+  --trion-action: #281a39;
+  --trion-action-hover: #4b3565;
+  --trion-on-action: #ffffff;
+  --trion-focus-ring: rgba(73, 109, 168, 0.6);
   --shadow-soft: 0 18px 46px rgba(40, 26, 57, 0.08);
   --shadow-card: 0 8px 22px rgba(40, 26, 57, 0.055);
   --page-width: 1200px;
   --page-gutter: clamp(20px, 4vw, 48px);
   --section-space: clamp(72px, 8vw, 108px);
+  --scroll-offset: 108px;
   --radius-large: 24px;
   --radius-medium: 16px;
   --radius-small: 10px;
@@ -63,7 +69,7 @@ button {
 
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid rgba(73, 109, 168, 0.6);
+  outline: 3px solid var(--trion-focus-ring);
   outline-offset: 3px;
 }
 
@@ -75,7 +81,7 @@ a:focus-visible {
   padding: 9px 12px;
   border: 1px solid var(--trion-border-strong);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--trion-surface-elevated);
   color: var(--trion-purple);
   font-size: 0.72rem;
   font-weight: 750;
@@ -269,7 +275,7 @@ p {
   border-radius: var(--radius-large);
   background:
     radial-gradient(circle at 75% 22%, rgba(238, 233, 245, 0.85), transparent 12rem),
-    linear-gradient(150deg, #ffffff 0%, #faf9fb 100%);
+    linear-gradient(150deg, var(--trion-surface-elevated) 0%, var(--trion-surface) 100%);
   box-shadow: var(--shadow-soft);
 }
 
@@ -344,7 +350,7 @@ p {
   padding: 13px 15px;
   border: 1px solid var(--trion-border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--trion-surface-elevated);
   box-shadow: var(--shadow-card);
 }
 
@@ -393,9 +399,9 @@ p {
   place-items: center;
   border: 1px solid rgba(75, 53, 101, 0.28);
   border-radius: 50%;
-  background: var(--trion-purple);
+  background: var(--trion-action);
   box-shadow: 0 12px 30px rgba(40, 26, 57, 0.2);
-  color: #ffffff;
+  color: var(--trion-on-action);
   font-size: 0.73rem;
   font-weight: 780;
   letter-spacing: -0.03em;
@@ -443,7 +449,7 @@ p {
 #opportunities,
 #before-after-operating-model,
 #trion-approach {
-  scroll-margin-top: 108px;
+  scroll-margin-top: var(--scroll-offset);
 }
 
 .section-heading {
@@ -484,7 +490,7 @@ p {
   padding: 18px;
   border: 1px solid var(--trion-border);
   border-radius: var(--radius-medium);
-  background: #ffffff;
+  background: var(--trion-surface-elevated);
 }
 
 .loop-number {
@@ -532,7 +538,7 @@ p {
   padding: 23px;
   border: 1px solid var(--trion-border-strong);
   border-radius: var(--radius-large);
-  background: #ffffff;
+  background: var(--trion-surface-elevated);
   box-shadow: var(--shadow-card);
 }
 
@@ -550,7 +556,7 @@ p {
   width: 78px;
   height: 78px;
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--trion-surface-elevated);
   content: "";
 }
 
@@ -662,7 +668,7 @@ p {
   padding: 18px 20px;
   border: 1px solid var(--trion-border);
   border-radius: var(--radius-medium);
-  background: #ffffff;
+  background: var(--trion-surface-elevated);
   color: var(--trion-text-muted);
   font-size: 0.82rem;
   line-height: 1.55;
@@ -721,7 +727,7 @@ p {
   border: 1px solid var(--trion-border-strong);
   border-top: 3px solid var(--trion-purple);
   border-radius: var(--radius-medium);
-  background: #ffffff;
+  background: var(--trion-surface-elevated);
   box-shadow: var(--shadow-card);
 }
 

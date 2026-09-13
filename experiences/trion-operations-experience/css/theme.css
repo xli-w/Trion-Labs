@@ -1,10 +1,3 @@
-:root {
-  --trion-action: #281a39;
-  --trion-action-hover: #4b3565;
-  --trion-on-action: #ffffff;
-  --trion-surface-elevated: #ffffff;
-}
-
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -111,62 +104,6 @@
   stroke: rgba(169, 197, 255, 0.66);
 }
 
-:root[data-theme="dark"] .diagram-node,
-:root[data-theme="dark"] .loop-list li,
-:root[data-theme="dark"] .lab-summary,
-:root[data-theme="dark"] .foundation-note,
-:root[data-theme="dark"] .briefing-status,
-:root[data-theme="dark"] .challenge-operation-context,
-:root[data-theme="dark"] .challenge-operation-context__facts div,
-:root[data-theme="dark"] .challenge-completion-context__facts div,
-:root[data-theme="dark"] .button--secondary,
-:root[data-theme="dark"] .button--quiet,
-:root[data-theme="dark"] .kpi-card,
-:root[data-theme="dark"] .snapshot-panel,
-:root[data-theme="dark"] .operation-facts div,
-:root[data-theme="dark"] .connection-map,
-:root[data-theme="dark"] .connection-map__node,
-:root[data-theme="dark"] .diagnostic-profile__summary-copy,
-:root[data-theme="dark"] .diagnostic-profile__facts div,
-:root[data-theme="dark"] .diagnostic-dimension,
-:root[data-theme="dark"] .diagnostic-profile__next > article,
-:root[data-theme="dark"] .opportunity-card,
-:root[data-theme="dark"] .opportunity-card__metrics div,
-:root[data-theme="dark"] .opportunity-selection-feedback,
-:root[data-theme="dark"] .opportunity-selection-feedback dl div,
-:root[data-theme="dark"] .trion-approach-step,
-:root[data-theme="dark"] .challenge-card,
-:root[data-theme="dark"] .capability-trail__item,
-:root[data-theme="dark"] .briefing-steps li,
-:root[data-theme="dark"] .briefing-facts div,
-:root[data-theme="dark"] .challenge-game-brief,
-:root[data-theme="dark"] .mission-trail,
-:root[data-theme="dark"] .timeline-stage,
-:root[data-theme="dark"] .event-inspector--empty,
-:root[data-theme="dark"] .event-inspector__facts div,
-:root[data-theme="dark"] .decision-gate,
-:root[data-theme="dark"] .improvement-decision,
-:root[data-theme="dark"] .decision-outcome,
-:root[data-theme="dark"] .improvement-choice:hover {
-  background: var(--trion-surface-elevated);
-}
-
-:root[data-theme="dark"] .diagram-core,
-:root[data-theme="dark"] .button--primary,
-:root[data-theme="dark"] .map-insight,
-:root[data-theme="dark"] .diagnostic-profile__next > aside,
-:root[data-theme="dark"] .trion-cta,
-:root[data-theme="dark"] .timeline-event--running,
-:root[data-theme="dark"] .timeline-key__item--running::before,
-:root[data-theme="dark"] .capability-outcome {
-  background: var(--trion-action);
-  color: var(--trion-on-action);
-}
-
-:root[data-theme="dark"] .button--primary:hover {
-  background: var(--trion-action-hover);
-}
-
 :root[data-theme="dark"] .connection-map__surface {
   background:
     radial-gradient(circle at 51% 50%, rgba(121, 86, 162, 0.25), transparent 12rem),
@@ -200,15 +137,6 @@
   color: var(--trion-on-action);
 }
 
-:root[data-theme="dark"] .trion-cta .button--primary {
-  background: var(--trion-surface-elevated);
-  color: var(--trion-purple);
-}
-
-:root[data-theme="dark"] .trion-cta .button--primary:hover {
-  background: var(--trion-lilac);
-}
-
 :root[data-theme="dark"] .workflow-panel--before {
   background:
     linear-gradient(145deg, rgba(74, 53, 31, 0.74) 0%, transparent 48%),
@@ -226,10 +154,6 @@
   border-color: var(--trion-purple-muted);
 }
 
-:root[data-theme="dark"] .challenge-card.is-current {
-  background: linear-gradient(145deg, var(--trion-surface-elevated) 0%, var(--trion-surface) 100%);
-}
-
 :root[data-theme="dark"] .capability-trail__item.is-unlocked,
 :root[data-theme="dark"] .decision-gate__checks li.is-complete {
   border-color: var(--trion-green);
@@ -239,10 +163,6 @@
   border-top-color: rgba(93, 81, 103, 0.72);
   border-bottom-color: rgba(93, 81, 103, 0.72);
   background: rgba(48, 38, 61, 0.68);
-}
-
-:root[data-theme="dark"] .score-ring::before {
-  background: var(--trion-surface-elevated);
 }
 
 :root[data-theme="dark"] .timeline-event--waiting,

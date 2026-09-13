@@ -128,6 +128,7 @@
 @media (max-width: 620px) {
   :root {
     --page-gutter: 18px;
+    --scroll-offset: 148px;
   }
 
   .lab-subnav {
@@ -145,20 +146,6 @@
 
   .button--quiet {
     min-height: 34px;
-  }
-
-  #how-it-works,
-  #overview,
-  #starting-snapshot,
-  #challenges,
-  #capabilities,
-  #performance,
-  #summary-journey,
-  #diagnostic,
-  #opportunities,
-  #before-after-operating-model,
-  #trion-approach {
-    scroll-margin-top: 148px;
   }
 
   .landing-title,

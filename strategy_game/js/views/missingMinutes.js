@@ -24,24 +24,89 @@ function getEventStatus(event) {
   return event.causeKnown ? "Unplanned, cause known" : "Unplanned, cause unknown";
 }
 
+function getMissionStepClass(completed, current) {
+  if (completed) {
+    return "is-complete";
+  }
+
+  return current ? "is-current" : "is-locked";
+}
+
+function renderMissionTrail(state, status) {
+  const progress = state.missingMinutes;
+  const challengeCompleted = state.completedChallenges.includes(missingMinutesChallengeId);
+  const hasStartedInvestigation = progress.inspectedEventIds.length > 0;
+  const hasDecisionOutcome = Boolean(progress.decisionId);
+  const collectedClues = Math.min(status.inspectedLossEvents, status.requiredLossEvents);
+  const steps = [
+    {
+      number: "01",
+      label: "Spot the gap",
+      detail: "Line target missed",
+      completed: hasStartedInvestigation,
+      current: !hasStartedInvestigation,
+    },
+    {
+      number: "02",
+      label: "Collect clues",
+      detail: `${collectedClues} / ${status.requiredLossEvents} revealed`,
+      completed: status.canDecide || hasDecisionOutcome || challengeCompleted,
+      current: hasStartedInvestigation && !status.canDecide,
+    },
+    {
+      number: "03",
+      label: "Make the call",
+      detail: hasDecisionOutcome ? "Decision reviewed" : "Choose first move",
+      completed: challengeCompleted,
+      current: status.canDecide && !challengeCompleted,
+    },
+    {
+      number: "04",
+      label: "Reveal the view",
+      detail: challengeCompleted ? "Capability available" : "Capability ahead",
+      completed: challengeCompleted,
+      current: false,
+    },
+  ];
+
+  return `
+    <ol class="mission-trail" aria-label="Challenge progress">
+      ${steps
+        .map(
+          (step) => `
+            <li class="mission-trail__step ${getMissionStepClass(step.completed, step.current)}">
+              <span class="mission-trail__number">${step.number}</span>
+              <strong>${step.label}</strong>
+              <small>${step.detail}</small>
+            </li>
+          `,
+        )
+        .join("")}
+    </ol>
+  `;
+}
+
 function renderTimelineEvent(event, progress) {
   const selected = progress.selectedEventId === event.id;
   const inspected = progress.inspectedEventIds.includes(event.id);
+  const ariaLabel = inspected
+    ? `${event.label} revealed: ${event.duration} minutes, ${getEventStatus(event)}`
+    : `Inspect ${event.label} event`;
 
   return `
     <li class="timeline-item" style="--timeline-duration: ${event.duration}">
       <button
-        class="timeline-event timeline-event--${event.tone} ${selected ? "is-selected" : ""} ${inspected ? "is-inspected" : ""}"
+        class="timeline-event timeline-event--${event.tone} ${selected ? "is-selected" : ""} ${inspected ? "is-revealed" : ""}"
         type="button"
         data-action="inspect-missing-minutes-event"
         data-event-id="${event.id}"
         aria-pressed="${selected}"
-        aria-label="Inspect ${event.label}, ${event.duration} minutes, ${getEventStatus(event)}"
+        aria-label="${ariaLabel}"
       >
         <span class="timeline-event__label">${event.label}</span>
-        <strong class="timeline-event__duration">${event.duration}<small> min</small></strong>
-        <span class="timeline-event__time">${event.start} - ${event.end}</span>
-        <span class="timeline-event__state">${inspected ? "Inspected" : "Inspect"}</span>
+        <strong class="timeline-event__duration">${inspected ? event.duration : "?"}<small> min</small></strong>
+        <span class="timeline-event__time">${inspected ? `${event.start} - ${event.end}` : "Scan event"}</span>
+        <span class="timeline-event__state">${inspected ? "Clue found" : "Reveal clue"}</span>
       </button>
     </li>
   `;
@@ -51,20 +116,25 @@ function renderEventInspector(event) {
   if (!event) {
     return `
       <aside class="event-inspector event-inspector--empty" aria-labelledby="eventInspectorTitle">
-        <p class="eyebrow">Event detail</p>
-        <h3 id="eventInspectorTitle">Choose a moment on the line.</h3>
+        <p class="eyebrow">Mission file</p>
+        <h3 id="eventInspectorTitle">Start the scan.</h3>
         <p>
-          Compare duration, whether the time was planned, and whether the cause is known.
-          The difference matters before an improvement is chosen.
+          Each revealed record adds the evidence needed to make the first improvement meaningful.
         </p>
+        <ol class="case-file__clues">
+          <li><span>01</span><strong>Compare duration</strong><small>How much time went missing?</small></li>
+          <li><span>02</span><strong>Check the plan</strong><small>Was the time expected?</small></li>
+          <li><span>03</span><strong>Test the cause</strong><small>Can the team explain it?</small></li>
+        </ol>
       </aside>
     `;
   }
 
   return `
     <aside class="event-inspector event-inspector--${event.tone}" aria-labelledby="eventInspectorTitle">
-      <p class="eyebrow">Selected event</p>
+      <p class="eyebrow">Mission file</p>
       <h3 id="eventInspectorTitle">${event.label} <span>${event.duration} minutes</span></h3>
+      <span class="event-inspector__status">Clue logged</span>
       <dl class="event-inspector__facts">
         <div>
           <dt>Time</dt>
@@ -96,19 +166,19 @@ function renderEvidenceGate(status, decisionError) {
   return `
     <section class="decision-gate" aria-labelledby="decisionGateTitle">
       <div>
-        <p class="eyebrow">Next: compare the evidence</p>
-        <h2 id="decisionGateTitle">Find the loss that needs understanding first.</h2>
+        <p class="eyebrow">Mission lock</p>
+        <h2 id="decisionGateTitle">Build the case before making the call.</h2>
         <p>${message}</p>
         ${decisionError ? `<p class="decision-gate__error" role="alert">${decisionError}</p>` : ""}
       </div>
       <ul class="decision-gate__checks">
         <li class="${status.inspectedLossEvents >= status.requiredLossEvents ? "is-complete" : ""}">
           <span>${Math.min(status.inspectedLossEvents, status.requiredLossEvents)} / ${status.requiredLossEvents}</span>
-          Loss events inspected
+          Loss clues revealed
         </li>
         <li class="${status.hasLargestAvoidableLoss ? "is-complete" : ""}">
           <span>${status.hasLargestAvoidableLoss ? "Viewed" : "Still needed"}</span>
-          Longest unplanned loss compared
+          Key loss compared
         </li>
       </ul>
     </section>
@@ -120,8 +190,8 @@ function renderDecisionChoices() {
     <section class="improvement-decision" id="missing-minutes-decision" tabindex="-1" aria-labelledby="decisionTitle">
       <div class="improvement-decision__header">
         <div>
-          <p class="eyebrow">Decide</p>
-          <h2 id="decisionTitle">Choose the first improvement.</h2>
+          <p class="eyebrow">Make the call</p>
+          <h2 id="decisionTitle">Choose the first move.</h2>
         </div>
         <p>
           Which action makes the largest unexplained loss more useful for the team trying to improve it?
@@ -185,7 +255,7 @@ function renderKpiImpact(decision) {
 }
 
 function renderDecisionOutcome(decision, challenge, completed) {
-  const outcomeLabel = completed ? "Measure and unlock" : "Decision consequence";
+  const outcomeLabel = completed ? "Reveal and measure" : "Decision consequence";
   const outcomeClass = completed ? "is-complete" : "is-incomplete";
 
   return `
@@ -212,7 +282,7 @@ function renderDecisionOutcome(decision, challenge, completed) {
           ? `
             <section class="capability-outcome" aria-labelledby="capabilityOutcomeTitle">
               <div>
-                <span>Capability now available</span>
+                <span>Capability revealed</span>
                 <h3 id="capabilityOutcomeTitle">${challenge.unlockLabel}</h3>
               </div>
               <p>
@@ -296,40 +366,33 @@ export function renderMissingMinutes(state) {
               </p>
             </div>
             <aside class="challenge-game-brief" aria-label="Challenge objective">
-              <span>Objective</span>
-              <strong>Find the largest avoidable loss before choosing the first improvement.</strong>
+              <span>Mission 01</span>
+              <strong>Find the largest avoidable loss before choosing the first move.</strong>
               <dl>
                 <div>
-                  <dt>Shift fragment</dt>
-                  <dd>${missingMinutesSummary.totalMinutes} minutes</dd>
-                </div>
-                <div>
-                  <dt>Unplanned loss</dt>
+                  <dt>Unplanned time</dt>
                   <dd>${missingMinutesSummary.unplannedLossMinutes} minutes</dd>
                 </div>
                 <div>
-                  <dt>Unexplained loss</dt>
+                  <dt>Unexplained</dt>
                   <dd>${missingMinutesSummary.unexplainedLossMinutes} minutes</dd>
+                </div>
+                <div>
+                  <dt>Clues collected</dt>
+                  <dd>${Math.min(status.inspectedLossEvents, status.requiredLossEvents)} / ${status.requiredLossEvents}</dd>
                 </div>
               </dl>
             </aside>
           </header>
 
+          ${renderMissionTrail(state, status)}
+
           <section class="timeline-investigation" aria-labelledby="timelineTitle">
             <div class="timeline-investigation__heading">
               <div>
-                <p class="eyebrow">Investigate</p>
-                <h2 id="timelineTitle">A two-hour shift fragment.</h2>
-                <p>Inspect the individual events. Compare duration, plan status, and whether anyone can explain the cause.</p>
-              </div>
-              <div class="investigation-progress">
-                <span>Evidence reviewed</span>
-                <strong>${Math.min(status.inspectedLossEvents, status.requiredLossEvents)} / ${status.requiredLossEvents} loss events</strong>
-                <progress
-                  value="${Math.min(status.inspectedLossEvents, status.requiredLossEvents)}"
-                  max="${status.requiredLossEvents}"
-                  aria-label="Loss events inspected"
-                ></progress>
+                <p class="eyebrow">Investigation board</p>
+                <h2 id="timelineTitle">Reveal the shift record.</h2>
+                <p>Select an event to turn its trace into a clue. Duration, plan status, and cause will show in the mission file.</p>
               </div>
             </div>
 

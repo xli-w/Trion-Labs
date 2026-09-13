@@ -87,8 +87,85 @@
   font-weight: 780;
 }
 
+.mission-trail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 21px 0 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--trion-border);
+  border-radius: 14px;
+  background: #ffffff;
+  list-style: none;
+}
+
+.mission-trail__step {
+  position: relative;
+  display: grid;
+  min-height: 90px;
+  align-content: center;
+  gap: 3px;
+  padding: 14px 17px;
+  border-right: 1px solid var(--trion-border);
+}
+
+.mission-trail__step:last-child {
+  border-right: 0;
+}
+
+.mission-trail__number {
+  color: var(--trion-text-quiet);
+  font-size: 0.55rem;
+  font-weight: 830;
+  letter-spacing: 0.1em;
+}
+
+.mission-trail__step strong {
+  color: var(--trion-purple);
+  font-size: 0.76rem;
+  letter-spacing: -0.025em;
+}
+
+.mission-trail__step small {
+  color: var(--trion-text-muted);
+  font-size: 0.61rem;
+  font-weight: 630;
+  line-height: 1.35;
+}
+
+.mission-trail__step.is-current {
+  background: var(--trion-lilac);
+}
+
+.mission-trail__step.is-current::before,
+.mission-trail__step.is-complete::before {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--trion-purple);
+  box-shadow: 0 0 0 4px rgba(75, 53, 101, 0.12);
+  content: "";
+}
+
+.mission-trail__step.is-complete::before {
+  background: var(--trion-green);
+  box-shadow: 0 0 0 4px rgba(63, 129, 109, 0.1);
+}
+
+.mission-trail__step.is-locked {
+  background: var(--trion-surface);
+}
+
+.mission-trail__step.is-locked strong,
+.mission-trail__step.is-locked small {
+  color: var(--trion-text-quiet);
+}
+
 .timeline-investigation {
-  padding: 38px 0 0;
+  padding: 29px 0 0;
 }
 
 .timeline-investigation__heading,
@@ -123,52 +200,6 @@
   color: var(--trion-text-muted);
   font-size: 0.86rem;
   line-height: 1.58;
-}
-
-.investigation-progress {
-  display: grid;
-  width: min(100%, 232px);
-  flex: 0 0 auto;
-  gap: 6px;
-  padding-bottom: 3px;
-}
-
-.investigation-progress span {
-  color: var(--trion-text-quiet);
-  font-size: 0.6rem;
-  font-weight: 810;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.investigation-progress strong {
-  color: var(--trion-purple);
-  font-size: 0.73rem;
-  line-height: 1.35;
-}
-
-.investigation-progress progress {
-  width: 100%;
-  height: 6px;
-  overflow: hidden;
-  border: 0;
-  border-radius: 999px;
-  background: var(--trion-lilac);
-  color: var(--trion-purple);
-}
-
-.investigation-progress progress::-webkit-progress-bar {
-  background: var(--trion-lilac);
-}
-
-.investigation-progress progress::-webkit-progress-value {
-  background: var(--trion-purple);
-  transition: width 280ms ease;
-}
-
-.investigation-progress progress::-moz-progress-bar {
-  background: var(--trion-purple);
-  transition: width 280ms ease;
 }
 
 .timeline-investigation__layout {
@@ -266,6 +297,7 @@
   z-index: 1;
   box-shadow: 0 10px 22px rgba(40, 26, 57, 0.16);
   transform: translateY(-4px);
+  animation: timeline-clue-reveal 230ms ease-out;
 }
 
 .timeline-event.is-selected::before {
@@ -314,6 +346,15 @@
   line-height: 0.9;
 }
 
+.timeline-event:not(.is-revealed) .timeline-event__duration {
+  color: var(--trion-purple-light);
+  letter-spacing: -0.025em;
+}
+
+.timeline-event--running:not(.is-revealed) .timeline-event__duration {
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .timeline-event__duration small {
   font-size: 0.47em;
   font-weight: 770;
@@ -351,9 +392,21 @@
   color: #ffffff;
 }
 
-.timeline-event.is-inspected:not(.is-selected) .timeline-event__state {
+.timeline-event.is-revealed:not(.is-selected) .timeline-event__state {
   background: var(--trion-purple-light);
   color: #ffffff;
+}
+
+@keyframes timeline-clue-reveal {
+  from {
+    opacity: 0.66;
+    transform: translateY(4px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(-4px) scale(1);
+  }
 }
 
 .timeline-key {
@@ -447,6 +500,56 @@
   min-height: 250px;
   border-style: dashed;
   background: #ffffff;
+}
+
+.case-file__clues {
+  display: grid;
+  gap: 8px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case-file__clues li {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  column-gap: 8px;
+  align-items: baseline;
+  padding-top: 8px;
+  border-top: 1px solid var(--trion-border);
+}
+
+.case-file__clues span {
+  grid-row: 1 / span 2;
+  color: var(--trion-purple-light);
+  font-size: 0.58rem;
+  font-weight: 830;
+  letter-spacing: 0.08em;
+}
+
+.case-file__clues strong {
+  color: var(--trion-purple);
+  font-size: 0.68rem;
+  letter-spacing: -0.02em;
+}
+
+.case-file__clues small {
+  color: var(--trion-text-muted);
+  font-size: 0.61rem;
+  line-height: 1.35;
+}
+
+.event-inspector__status {
+  width: fit-content;
+  margin: -7px 0 0;
+  padding: 4px 6px;
+  border-radius: 5px;
+  background: var(--trion-green-soft);
+  color: var(--trion-green);
+  font-size: 0.53rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .event-inspector__facts {
@@ -812,8 +915,16 @@
     gap: 14px;
   }
 
-  .investigation-progress {
-    width: min(100%, 320px);
+  .mission-trail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mission-trail__step:nth-child(2) {
+    border-right: 0;
+  }
+
+  .mission-trail__step:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--trion-border);
   }
 
   .timeline-list {

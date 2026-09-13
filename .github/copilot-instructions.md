@@ -74,4 +74,20 @@ Read the relevant skill files in [skills](./skills/) before planning or editing 
 7. Run the smallest relevant existing validation and perform the checks in `testing-and-review`.
 8. Report what changed, what was validated, and any remaining risk honestly.
 
+## Commit Message Generation
+
+When creating a commit, inspect the final staged diff and write a concise, factual message about the result:
+
+- Use a plain-English subject in the form `<optional emoji> <imperative verb> <specific outcome>`. Do not add conventional-commit prefixes, scopes, or filler unless the user requests them.
+- Describe the user-visible behaviour, domain outcome, or meaningful maintenance result. Name files or implementation mechanics only when they are the change's clearest purpose.
+- Use at most one fitting emoji when it adds a useful, light-touch signal: `✨` for a feature, `🐛` for a bug fix, `♻️` for a refactor, `📝` for documentation, or `✅` for tests. Omit it for mixed, routine, or formal changes rather than adding one decoratively.
+- Keep straightforward changes to the subject line. Add a short body only when it explains an important why, behaviour impact, migration note, or validation result. Use one to three plain-language bullets and never claim work that is not in the diff or validation that was not run.
+- Avoid vague subjects such as `Update files`, `Fix issues`, or `Changes`. Preserve required commit trailers after any body.
+
+Examples:
+
+- `✨ Preserve challenge progress after refresh`
+- `🐛 Prevent duplicate reset handlers`
+- `📝 Clarify local setup steps`
+
 Do not declare work complete merely because code was written. Verify the requested behaviour and preserve the Trion Labs product direction.

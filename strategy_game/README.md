@@ -33,12 +33,27 @@ Open `http://127.0.0.1:4173`. Any static development server that serves
   into controller callbacks.
 - `js/miniGames/registry.js` registers the six challenge contracts and exposes
   their progression rules without coupling their future mechanics to the shell.
+- `js/miniGames/missingMinutes.js` owns the first challenge's illustrative
+  timeline, intervention rules, and focused interaction state.
 
 Future mini-game modules should own only their focused interaction. On a
 completed decision they can call `completeChallenge()` from `js/game.js` with
 the challenge id, KPI changes, resource costs, decision record, and unlocked
 capability ids. The state store then records the result and updates the
 aggregate operational score and capability stage.
+
+## First interactive challenge
+
+`The Missing Minutes` is the first completed challenge. It uses an illustrative
+two-hour production timeline rather than live factory data. Visitors inspect
+individual events, compare planned and unplanned time with known and unknown
+causes, then choose a first improvement. The strongest intervention captures
+downtime context, changes only throughput, productivity, and visibility in the
+scenario, and unlocks the Connected Production View.
+
+Suboptimal interventions explain their trade-off and offer a retry; they do not
+persist KPI changes or mark the challenge complete. Reset restores the full
+challenge and operational state.
 
 ## Scope of this foundation
 

@@ -1,4 +1,8 @@
 import { getChallengeById } from "./data.js";
+import {
+  getMissingMinutesDecisionById,
+  getMissingMinutesEventById,
+} from "./miniGames/missingMinutes.js";
 import { getChallengeReadiness, getChallengeModule } from "./miniGames/registry.js";
 import { dispatch, getState } from "./state.js";
 
@@ -74,4 +78,30 @@ export function completeChallenge({
     resourceCosts,
     unlockIds,
   });
+}
+
+export function inspectMissingMinutesEvent(eventId) {
+  if (!getMissingMinutesEventById(eventId)) {
+    throw new Error(`Unknown Missing Minutes event: ${eventId}`);
+  }
+
+  return dispatch({
+    type: "INSPECT_MISSING_MINUTES_EVENT",
+    eventId,
+  });
+}
+
+export function chooseMissingMinutesImprovement(decisionId) {
+  if (!getMissingMinutesDecisionById(decisionId)) {
+    throw new Error(`Unknown Missing Minutes decision: ${decisionId}`);
+  }
+
+  return dispatch({
+    type: "CHOOSE_MISSING_MINUTES_IMPROVEMENT",
+    decisionId,
+  });
+}
+
+export function retryMissingMinutesDecision() {
+  return dispatch({ type: "RETRY_MISSING_MINUTES_DECISION" });
 }

@@ -95,6 +95,12 @@ function renderChallengeCards(state) {
         .map((challenge) => {
           const readiness = getChallengeReadiness(challenge.id, state);
           const stateClass = readiness.completed || readiness.canLaunch ? "is-available" : "";
+          const actionLabel =
+            challenge.id === "missing-minutes"
+              ? readiness.completed
+                ? "Review outcome"
+                : "Investigate timeline"
+              : "Review scenario";
 
           return `
             <article class="challenge-card ${readiness.canLaunch ? "is-current" : ""}">
@@ -114,7 +120,7 @@ function renderChallengeCards(state) {
                 data-action="review-challenge"
                 data-challenge-id="${challenge.id}"
               >
-                Review scenario <span class="button-arrow" aria-hidden="true">-></span>
+                ${actionLabel} <span class="button-arrow" aria-hidden="true">-></span>
               </button>
             </article>
           `;

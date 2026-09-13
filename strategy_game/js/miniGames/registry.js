@@ -1,4 +1,5 @@
 import { challenges, getChallengeById } from "../data.js";
+import { missingMinutesChallengeId, missingMinutesModule } from "./missingMinutes.js";
 
 function createChallengeContract(challenge) {
   return Object.freeze({
@@ -15,7 +16,12 @@ function createChallengeContract(challenge) {
 }
 
 const registeredModules = new Map(
-  challenges.map((challenge) => [challenge.id, createChallengeContract(challenge)]),
+  challenges.map((challenge) => [
+    challenge.id,
+    challenge.id === missingMinutesChallengeId
+      ? missingMinutesModule
+      : createChallengeContract(challenge),
+  ]),
 );
 
 export function getChallengeModule(challengeId) {

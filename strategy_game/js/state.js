@@ -6,6 +6,12 @@ import {
   getUpgradeById,
   kpiDefinitions,
 } from "./data.js";
+import {
+  getMissingMinutesDecisionById,
+  getMissingMinutesEventById,
+  isMissingMinutesReadyForDecision,
+  missingMinutesChallengeId,
+} from "./miniGames/missingMinutes.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
 const sectionNames = new Set(["overview", "challenges", "capabilities", "performance"]);
@@ -19,6 +25,10 @@ function cloneState(state) {
       Object.entries(state.kpis).map(([key, value]) => [key, { ...value }]),
     ),
     resources: { ...state.resources },
+    missingMinutes: {
+      ...state.missingMinutes,
+      inspectedEventIds: [...state.missingMinutes.inspectedEventIds],
+    },
     completedChallenges: [...state.completedChallenges],
     unlockedUpgrades: [...state.unlockedUpgrades],
     decisions: state.decisions.map((decision) => ({ ...decision })),
@@ -94,6 +104,40 @@ function updateResources(resources, costs) {
   }
 
   return nextResources;
+}
+
+function applyChallengeCompletion(state, action) {
+  const challenge = assertKnownChallenge(action.challengeId);
+  const nextKpis = updateKpis(state.kpis, action.kpiChanges ?? {});
+  const resources = updateResources(state.resources, action.resourceCosts ?? {});
+  const unlockedUpgrades = [...state.unlockedUpgrades];
+  const upgradeIds = action.unlockIds ?? [challenge.unlockId];
+
+  for (const upgradeId of upgradeIds) {
+    if (!getUpgradeById(upgradeId)) {
+      throw new Error(`Unknown upgrade: ${upgradeId}`);
+    }
+
+    if (!unlockedUpgrades.includes(upgradeId)) {
+      unlockedUpgrades.push(upgradeId);
+    }
+  }
+
+  const completedChallenges = [...state.completedChallenges, challenge.id];
+  const decisions = action.decision
+    ? [...state.decisions, { challengeId: challenge.id, ...action.decision }]
+    : state.decisions;
+
+  return {
+    ...state,
+    completedChallenges,
+    unlockedUpgrades,
+    decisions,
+    kpis: nextKpis,
+    resources,
+    operationalScore: calculateOperationalScore(nextKpis),
+    capabilityStage: deriveCapabilityStage(completedChallenges, unlockedUpgrades),
+  };
 }
 
 function deriveCapabilityStage(completedChallenges, unlockedUpgrades) {
@@ -178,39 +222,115 @@ function reduce(state, action) {
         return addNotification(state, `${challenge.title} is already complete.`);
       }
 
-      const nextKpis = updateKpis(state.kpis, action.kpiChanges ?? {});
-      const resources = updateResources(state.resources, action.resourceCosts ?? {});
-      const unlockedUpgrades = [...state.unlockedUpgrades];
-      const upgradeIds = action.unlockIds ?? [challenge.unlockId];
-
-      for (const upgradeId of upgradeIds) {
-        if (!getUpgradeById(upgradeId)) {
-          throw new Error(`Unknown upgrade: ${upgradeId}`);
-        }
-
-        if (!unlockedUpgrades.includes(upgradeId)) {
-          unlockedUpgrades.push(upgradeId);
-        }
-      }
-
-      const completedChallenges = [...state.completedChallenges, challenge.id];
-      const decisions = action.decision
-        ? [...state.decisions, { challengeId: challenge.id, ...action.decision }]
-        : state.decisions;
-
-      const nextState = {
-        ...state,
-        completedChallenges,
-        unlockedUpgrades,
-        decisions,
-        kpis: nextKpis,
-        resources,
-        operationalScore: calculateOperationalScore(nextKpis),
-        capabilityStage: deriveCapabilityStage(completedChallenges, unlockedUpgrades),
-      };
+      const nextState = applyChallengeCompletion(state, action);
 
       return addNotification(nextState, `${challenge.title} is complete. ${challenge.unlockLabel} unlocked.`);
     }
+
+    case "INSPECT_MISSING_MINUTES_EVENT": {
+      const event = getMissingMinutesEventById(action.eventId);
+
+      if (!event) {
+        throw new Error(`Unknown Missing Minutes event: ${action.eventId}`);
+      }
+
+      const inspectedEventIds = state.missingMinutes.inspectedEventIds.includes(event.id)
+        ? state.missingMinutes.inspectedEventIds
+        : [...state.missingMinutes.inspectedEventIds, event.id];
+      const nextState = {
+        ...state,
+        missingMinutes: {
+          ...state.missingMinutes,
+          selectedEventId: event.id,
+          inspectedEventIds,
+          decisionError: null,
+        },
+      };
+      const causeMessage = event.causeKnown ? "cause known" : "cause unknown";
+
+      return addNotification(
+        nextState,
+        `${event.label} inspected: ${event.duration} minutes, ${event.planned ? "planned" : "unplanned"}, ${causeMessage}.`,
+      );
+    }
+
+    case "CHOOSE_MISSING_MINUTES_IMPROVEMENT": {
+      const decision = getMissingMinutesDecisionById(action.decisionId);
+
+      if (!decision) {
+        throw new Error(`Unknown Missing Minutes decision: ${action.decisionId}`);
+      }
+
+      if (state.completedChallenges.includes(missingMinutesChallengeId)) {
+        return addNotification(
+          state,
+          "The Missing Minutes is already complete. Review the capability outcome from the challenge map.",
+        );
+      }
+
+      if (!isMissingMinutesReadyForDecision(state.missingMinutes)) {
+        const decisionError =
+          "Inspect at least three loss events, including the longest unplanned loss, before choosing an improvement.";
+
+        return addNotification(
+          {
+            ...state,
+            missingMinutes: {
+              ...state.missingMinutes,
+              decisionError,
+            },
+          },
+          decisionError,
+        );
+      }
+
+      const nextState = {
+        ...state,
+        missingMinutes: {
+          ...state.missingMinutes,
+          selectedEventId: decision.focusEventId,
+          decisionId: decision.id,
+          decisionError: null,
+        },
+      };
+
+      if (!decision.completesChallenge) {
+        return addNotification(nextState, decision.announcement);
+      }
+
+      const completedState = applyChallengeCompletion(nextState, {
+        challengeId: missingMinutesChallengeId,
+        decision: {
+          id: decision.id,
+          title: decision.title,
+        },
+        kpiChanges: decision.kpiChanges,
+        resourceCosts: decision.resourceCosts,
+        unlockIds: decision.unlockIds,
+      });
+
+      return addNotification(completedState, decision.announcement);
+    }
+
+    case "RETRY_MISSING_MINUTES_DECISION":
+      if (state.completedChallenges.includes(missingMinutesChallengeId)) {
+        return addNotification(
+          state,
+          "The Missing Minutes is already complete. Review the capability outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          missingMinutes: {
+            ...state.missingMinutes,
+            decisionId: null,
+            decisionError: null,
+          },
+        },
+        "Review the production timeline and choose another first intervention.",
+      );
 
     case "RESET": {
       const resetState = createInitialGameState();

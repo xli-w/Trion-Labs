@@ -1,3 +1,5 @@
+import { createInitialMissingMinutesState } from "./miniGames/missingMinutes.js";
+
 export const navigationItems = Object.freeze([
   { id: "overview", label: "Overview" },
   { id: "challenges", label: "Challenges" },
@@ -316,6 +318,7 @@ export function createInitialGameState() {
       improvementCapacity: 3,
       integrationCapacity: 2,
     },
+    missingMinutes: createInitialMissingMinutesState(),
     decisions: [],
     notifications: [],
     announcement: "Welcome to Trion Labs.",

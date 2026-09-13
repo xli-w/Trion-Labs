@@ -49,6 +49,8 @@ import {
 import {
   getChallengeDecisionEffect,
   getChallengeOutcomeByDecisionId,
+  getOpportunityAvailability,
+  getOpportunityById,
 } from "./operationModel.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
@@ -1554,6 +1556,42 @@ function reduce(state, action) {
         },
         "Choose the approach that keeps one shared exception useful for each role.",
       );
+
+    case "SELECT_OPPORTUNITY": {
+      const opportunity = getOpportunityById(action.opportunityId);
+
+      if (!opportunity) {
+        throw new Error(`Unknown opportunity: ${action.opportunityId}`);
+      }
+
+      if (!hasCompletedExperience(state.completedChallenges)) {
+        return addNotification(
+          state,
+          "Complete the five operational challenges before choosing the next improvement.",
+        );
+      }
+
+      const availability = getOpportunityAvailability(opportunity, state);
+
+      if (!availability.available) {
+        return addNotification(
+          state,
+          `${opportunity.title} is not ready yet. ${opportunity.dependencies}`,
+        );
+      }
+
+      const isAlreadySelected = state.selectedOpportunityId === opportunity.id;
+
+      return addNotification(
+        {
+          ...state,
+          selectedOpportunityId: opportunity.id,
+        },
+        isAlreadySelected
+          ? `${opportunity.title} remains the selected next improvement.`
+          : `${opportunity.title} is now the selected next improvement.`,
+      );
+    }
 
     case "RESET": {
       const resetState = createInitialGameState();

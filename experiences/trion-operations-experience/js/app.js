@@ -25,6 +25,7 @@ import {
   retryControlRoomDecision,
   retryDeliveryDominoImprovement,
   reviewChallenge,
+  selectOpportunity,
   selectQualityLoopNode,
   toggleSpreadsheetShuffleStep,
   toggleControlRoomAudience,
@@ -240,6 +241,13 @@ bindInteractions({
     if (nextState.activeSection === "summary") {
       scrollToSection("summary");
       focusElementById("summary-title");
+    }
+  },
+  "select-opportunity": ({ opportunityId }) => {
+    const nextState = selectOpportunity(opportunityId);
+
+    if (nextState.selectedOpportunityId === opportunityId) {
+      focusElementById("opportunity-selection-feedback");
     }
   },
   reset: () => {

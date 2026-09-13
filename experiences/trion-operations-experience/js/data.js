@@ -300,6 +300,7 @@ export function createInitialGameState() {
     deliveryDomino: createInitialDeliveryDominoState(),
     controlRoom: createInitialControlRoomState(),
     decisions: [],
+    selectedOpportunityId: null,
     notifications: [],
     nextNotificationId: 0,
     announcement: "Welcome to Trion Labs.",

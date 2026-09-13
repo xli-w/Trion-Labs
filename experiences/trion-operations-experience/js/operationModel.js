@@ -818,6 +818,132 @@ export const diagnosticDimensions = Object.freeze([
   }),
 ]);
 
+export const opportunities = Object.freeze([
+  Object.freeze({
+    id: "standardise-downtime-response",
+    title: "Standardise the recurring downtime response",
+    description:
+      "Use the new line-event context to agree who reviews a repeated loss, when they act, and how the response is recorded.",
+    frictionPointIds: Object.freeze(["incomplete-downtime-context"]),
+    relatedCapabilityIds: Object.freeze(["connected-production-view"]),
+    requiredCapabilityIds: Object.freeze(["connected-production-view"]),
+    diagnosticDimensionId: "process-efficiency",
+    impact: "Medium",
+    effort: "Low",
+    timeToValue: "2-4 weeks",
+    operationalRisk: "Low",
+    dependencies:
+      "A shared downtime record and agreement on the shift-level response.",
+    whyFirst:
+      "It turns a visible loss pattern into a repeatable way of working before more technology is added.",
+    enables:
+      "A targeted maintenance review and a clearer case for reducing the largest recurring loss.",
+    tradeOff:
+      "It improves consistency, but the team must still investigate and remove the underlying equipment or material cause.",
+    recommendation:
+      "Run a short shift-level process review to agree one response for recurring downtime and the evidence it needs.",
+  }),
+  Object.freeze({
+    id: "quality-containment-workflow",
+    title: "Create a shared quality containment workflow",
+    description:
+      "Use the connected production and quality record to standardise how a repeat defect is contained, investigated, and shared with the supplier.",
+    frictionPointIds: Object.freeze(["disconnected-production-quality-records"]),
+    relatedCapabilityIds: Object.freeze(["production-quality-integration"]),
+    requiredCapabilityIds: Object.freeze(["production-quality-integration"]),
+    diagnosticDimensionId: "data-connection",
+    impact: "High",
+    effort: "Medium",
+    timeToValue: "4-6 weeks",
+    operationalRisk: "Medium",
+    dependencies:
+      "Reliable production, material, and quality context plus one agreed containment owner.",
+    whyFirst:
+      "The connected record can now shorten the path from a defect signal to a coordinated containment decision.",
+    enables:
+      "Faster supplier investigation, clearer quality escalation, and stronger evidence for the next process improvement.",
+    tradeOff:
+      "It needs disciplined data capture and cross-functional ownership; another dashboard alone would not create the response.",
+    recommendation:
+      "Use the shared production and quality context to define one containment workflow for repeat defects and supplier follow-up.",
+  }),
+  Object.freeze({
+    id: "material-exception-playbook",
+    title: "Standardise the material exception playbook",
+    description:
+      "Define the response from late supplier confirmation through to production resequencing and customer communication.",
+    frictionPointIds: Object.freeze(["late-material-risk-visibility"]),
+    relatedCapabilityIds: Object.freeze(["logistics-production-visibility"]),
+    requiredCapabilityIds: Object.freeze(["logistics-production-visibility"]),
+    diagnosticDimensionId: "operational-responsiveness",
+    impact: "High",
+    effort: "Medium",
+    timeToValue: "3-5 weeks",
+    operationalRisk: "Medium",
+    dependencies:
+      "Shared material, schedule, capacity, and customer exception context.",
+    whyFirst:
+      "It uses the new early-warning view to protect the response before a supplier delay becomes a delivery failure.",
+    enables:
+      "Clearer escalation, faster resequencing, and earlier customer communication when a material risk appears.",
+    tradeOff:
+      "It does not remove supplier delays; the teams still need clear ownership and realistic capacity decisions.",
+    recommendation:
+      "Map the next material exception from supplier confirmation to customer response, then agree the few decisions that need to happen earlier.",
+  }),
+  Object.freeze({
+    id: "standardise-exception-ownership",
+    title: "Set clear ownership for shared exceptions",
+    description:
+      "Agree which role owns the next action when an operational exception affects production, planning, and delivery.",
+    frictionPointIds: Object.freeze(["unfocused-operational-exception-view"]),
+    relatedCapabilityIds: Object.freeze(["central-operational-view"]),
+    requiredCapabilityIds: Object.freeze(["central-operational-view"]),
+    diagnosticDimensionId: "operational-responsiveness",
+    impact: "Medium",
+    effort: "Low",
+    timeToValue: "1-2 weeks",
+    operationalRisk: "Low",
+    dependencies:
+      "One shared exception view and agreement between management, production, and planning.",
+    whyFirst:
+      "It makes the newly shared information actionable without asking every role to monitor every signal.",
+    enables:
+      "Faster decisions, role-relevant communication, and a clearer operating rhythm for future exceptions.",
+    tradeOff:
+      "It needs cross-functional agreement and regular review; assigning an owner does not replace the work of resolving the cause.",
+    recommendation:
+      "Use the shared exception view in a short operating review to agree who owns the next action, escalation, and customer response.",
+  }),
+  Object.freeze({
+    id: "automate-planning-exception-triage",
+    title: "Automate planning exception triage",
+    description:
+      "Use the standard planning flow to route a repeatable, well-defined exception to the right planning response.",
+    frictionPointIds: Object.freeze(["duplicated-planning-workflow"]),
+    relatedCapabilityIds: Object.freeze(["workflow-automation", "central-operational-view"]),
+    requiredCapabilityIds: Object.freeze([
+      "workflow-automation",
+      "central-operational-view",
+    ]),
+    diagnosticDimensionId: "automation-readiness",
+    impact: "Medium",
+    effort: "Medium",
+    timeToValue: "4-6 weeks",
+    operationalRisk: "Medium",
+    dependencies:
+      "A standard planning route, clear exception ownership, and reliable shared source context.",
+    whyFirst:
+      "It can remove repetitive triage work once the process and the decision owner are genuinely clear.",
+    enables:
+      "A focused automation sprint around one repeatable planning exception rather than another spreadsheet workaround.",
+    tradeOff:
+      "Automation is premature if ownership or exception rules remain unclear, so the process must stay visible and reviewable.",
+    recommendation:
+      "Identify one repeatable planning exception, confirm its owner and standard response, then automate only the repetitive triage step.",
+  }),
+]);
+
 export function getOperationalAreaById(areaId) {
   return operationalAreas.find((area) => area.id === areaId);
 }
@@ -842,6 +968,30 @@ export function getChallengeOutcomeByDecisionId(challengeId, decisionId) {
   return challengeOutcomes.find(
     (outcome) => outcome.challengeId === challengeId && outcome.decisionId === decisionId,
   );
+}
+
+export function getDiagnosticDimensionById(dimensionId) {
+  return diagnosticDimensions.find((dimension) => dimension.id === dimensionId);
+}
+
+export function getOpportunityById(opportunityId) {
+  return opportunities.find((opportunity) => opportunity.id === opportunityId);
+}
+
+export function getOpportunityAvailability(opportunity, state) {
+  if (!opportunity || !Array.isArray(opportunity.requiredCapabilityIds)) {
+    throw new TypeError("Opportunity availability requires a valid opportunity.");
+  }
+
+  const unlockedUpgradeIds = getUnlockedUpgrades(state);
+  const missingCapabilityIds = opportunity.requiredCapabilityIds.filter(
+    (capabilityId) => !unlockedUpgradeIds.has(capabilityId),
+  );
+
+  return {
+    available: missingCapabilityIds.length === 0,
+    missingCapabilityIds,
+  };
 }
 
 export function getChallengeDecisionDetails(challengeId, decisionId) {

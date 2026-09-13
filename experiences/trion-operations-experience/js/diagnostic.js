@@ -11,6 +11,8 @@ import {
   getChallengeOutcomeById,
   getConnectionMapRelationshipById,
   getOperationSnapshot,
+  getOpportunityAvailability,
+  getOpportunityById,
 } from "./operationModel.js";
 
 function assertDiagnosticState(state) {
@@ -213,6 +215,28 @@ function getHighestDimension(dimensions) {
   );
 }
 
+function getSelectedOpportunity(state) {
+  if (state.selectedOpportunityId == null) {
+    return null;
+  }
+
+  if (typeof state.selectedOpportunityId !== "string") {
+    throw new TypeError("Selected opportunity must be an identifier or null.");
+  }
+
+  const opportunity = getOpportunityById(state.selectedOpportunityId);
+
+  if (!opportunity) {
+    throw new Error(`Unknown selected opportunity: ${state.selectedOpportunityId}.`);
+  }
+
+  if (!getOpportunityAvailability(opportunity, state).available) {
+    throw new Error(`${opportunity.title} is selected before its prerequisites are available.`);
+  }
+
+  return opportunity;
+}
+
 export function isDiagnosticReady(state) {
   assertDiagnosticState(state);
   return hasCompletedExperience(state.completedChallenges);
@@ -246,6 +270,7 @@ export function calculateDiagnosticProfile(state) {
   const overall = getProfileBand(overallScore);
   const strongestDimension = getHighestDimension(maturityDimensions);
   const greatestOpportunity = getLowestDimension(maturityDimensions);
+  const selectedOpportunity = getSelectedOpportunity(state);
   const remainingFriction = operationSnapshot.frictionPoints.find(
     (frictionPoint) => frictionPoint.status === "open",
   );
@@ -259,6 +284,7 @@ export function calculateDiagnosticProfile(state) {
     dimensions,
     strongestDimension,
     greatestOpportunity,
+    selectedOpportunity,
     mainRemainingFriction: remainingFriction
       ? {
           title: remainingFriction.title,
@@ -268,7 +294,9 @@ export function calculateDiagnosticProfile(state) {
           title: "The next response bottleneck",
           description: greatestOpportunity.remainingFriction,
         },
-    recommendedNextStep: greatestOpportunity.recommendation,
+    recommendedNextStep: selectedOpportunity
+      ? selectedOpportunity.recommendation
+      : greatestOpportunity.recommendation,
     connectedRelationshipCount: operationSnapshot.connectedRelationshipCount,
     totalRelationshipCount: operationSnapshot.totalRelationshipCount,
     completedChallengeCount: state.completedChallenges.length,

@@ -94,6 +94,11 @@ export function renderDiagnosticProfile(state) {
         <aside>
           <span>Recommended next step</span>
           <strong>${profile.recommendedNextStep}</strong>
+          ${
+            profile.selectedOpportunity
+              ? `<small>Selected focus: ${profile.selectedOpportunity.title}</small>`
+              : ""
+          }
         </aside>
       </div>
     </section>

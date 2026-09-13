@@ -133,6 +133,10 @@
 :root[data-theme="dark"] .diagnostic-profile__facts div,
 :root[data-theme="dark"] .diagnostic-dimension,
 :root[data-theme="dark"] .diagnostic-profile__next > article,
+:root[data-theme="dark"] .opportunity-card,
+:root[data-theme="dark"] .opportunity-card__metrics div,
+:root[data-theme="dark"] .opportunity-selection-feedback,
+:root[data-theme="dark"] .opportunity-selection-feedback dl div,
 :root[data-theme="dark"] .challenge-card,
 :root[data-theme="dark"] .capability-card,
 :root[data-theme="dark"] .performance-table,
@@ -177,6 +181,25 @@
 
 :root[data-theme="dark"] .connection-map__path.is-connected {
   stroke: var(--trion-green);
+}
+
+:root[data-theme="dark"] .opportunity-card.is-diagnostic-focus {
+  background: var(--trion-blue-soft);
+}
+
+:root[data-theme="dark"] .opportunity-card.is-selected {
+  background: var(--trion-lilac);
+}
+
+:root[data-theme="dark"] .opportunity-selection-feedback.is-selected {
+  background: var(--trion-green-soft);
+}
+
+:root[data-theme="dark"] .opportunity-card.is-selected .opportunity-card__status,
+:root[data-theme="dark"] .opportunity-card.is-selected .opportunity-card__select {
+  border-color: var(--trion-action);
+  background: var(--trion-action);
+  color: var(--trion-on-action);
 }
 
 :root[data-theme="dark"] .workflow-panel--before {

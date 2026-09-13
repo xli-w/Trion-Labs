@@ -23,6 +23,7 @@ import {
   getControlRoomSignalById,
 } from "./miniGames/controlRoom.js";
 import { getChallengeReadiness, getChallengeModule } from "./miniGames/registry.js";
+import { getOpportunityById } from "./operationModel.js";
 import { dispatch, getState } from "./state.js";
 
 export function enterLab() {
@@ -68,6 +69,17 @@ export function viewExperienceSummary() {
 
 export function resetExperience() {
   return dispatch({ type: "RESET" });
+}
+
+export function selectOpportunity(opportunityId) {
+  if (!getOpportunityById(opportunityId)) {
+    throw new Error(`Unknown opportunity: ${opportunityId}`);
+  }
+
+  return dispatch({
+    type: "SELECT_OPPORTUNITY",
+    opportunityId,
+  });
 }
 
 export function getChallengeStatus(challengeId) {

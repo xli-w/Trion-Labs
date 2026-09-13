@@ -1,6 +1,9 @@
 import {
+  applySpreadsheetShuffleSimplification,
   chooseQualityLoopImprovement,
   chooseMissingMinutesImprovement,
+  chooseSpreadsheetShuffleAutomation,
+  chooseSpreadsheetShuffleStandardisation,
   closeChallengeBriefing,
   enterLab,
   identifyQualityLoopCause,
@@ -11,8 +14,12 @@ import {
   retryQualityLoopDiagnosis,
   retryQualityLoopImprovement,
   retryMissingMinutesDecision,
+  retrySpreadsheetShuffleAutomation,
+  retrySpreadsheetShuffleSimplification,
+  retrySpreadsheetShuffleStandardisation,
   reviewChallenge,
   selectQualityLoopNode,
+  toggleSpreadsheetShuffleStep,
 } from "./game.js";
 import {
   bindInteractions,
@@ -99,6 +106,45 @@ bindInteractions({
   "retry-quality-loop-improvement": () => {
     retryQualityLoopImprovement();
     focusElementById("quality-loop-decision");
+  },
+  "toggle-spreadsheet-shuffle-step": ({ stepId }) => {
+    toggleSpreadsheetShuffleStep(stepId);
+  },
+  "apply-spreadsheet-shuffle-simplification": () => {
+    const nextState = applySpreadsheetShuffleSimplification();
+
+    if (
+      nextState.spreadsheetShuffle.simplificationComplete ||
+      nextState.spreadsheetShuffle.simplificationError
+    ) {
+      focusElementById("spreadsheet-simplification-outcome");
+    }
+  },
+  "retry-spreadsheet-shuffle-simplification": () => {
+    retrySpreadsheetShuffleSimplification();
+    focusElementById("spreadsheet-shuffle-workflow");
+  },
+  "choose-spreadsheet-shuffle-standardisation": ({ optionId }) => {
+    const nextState = chooseSpreadsheetShuffleStandardisation(optionId);
+
+    if (nextState.spreadsheetShuffle.standardisationId === optionId) {
+      focusElementById("spreadsheet-standardisation-outcome");
+    }
+  },
+  "retry-spreadsheet-shuffle-standardisation": () => {
+    retrySpreadsheetShuffleStandardisation();
+    focusElementById("spreadsheet-standardisation");
+  },
+  "choose-spreadsheet-shuffle-automation": ({ optionId }) => {
+    const nextState = chooseSpreadsheetShuffleAutomation(optionId);
+
+    if (nextState.spreadsheetShuffle.automationId === optionId) {
+      focusElementById("spreadsheet-automation-outcome");
+    }
+  },
+  "retry-spreadsheet-shuffle-automation": () => {
+    retrySpreadsheetShuffleAutomation();
+    focusElementById("spreadsheet-automation");
   },
   reset: () => {
     resetExperience();

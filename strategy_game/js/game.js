@@ -8,6 +8,11 @@ import {
   getQualityLoopDecisionById,
   getQualityLoopNodeById,
 } from "./miniGames/qualityLoop.js";
+import {
+  getSpreadsheetShuffleAutomationById,
+  getSpreadsheetShuffleStandardisationById,
+  getSpreadsheetShuffleStepById,
+} from "./miniGames/spreadsheetShuffle.js";
 import { getChallengeReadiness, getChallengeModule } from "./miniGames/registry.js";
 import { dispatch, getState } from "./state.js";
 
@@ -150,4 +155,53 @@ export function chooseQualityLoopImprovement(decisionId) {
 
 export function retryQualityLoopImprovement() {
   return dispatch({ type: "RETRY_QUALITY_LOOP_IMPROVEMENT" });
+}
+
+export function toggleSpreadsheetShuffleStep(stepId) {
+  if (!getSpreadsheetShuffleStepById(stepId)) {
+    throw new Error(`Unknown Spreadsheet Shuffle workflow step: ${stepId}`);
+  }
+
+  return dispatch({
+    type: "TOGGLE_SPREADSHEET_SHUFFLE_STEP",
+    stepId,
+  });
+}
+
+export function applySpreadsheetShuffleSimplification() {
+  return dispatch({ type: "APPLY_SPREADSHEET_SHUFFLE_SIMPLIFICATION" });
+}
+
+export function retrySpreadsheetShuffleSimplification() {
+  return dispatch({ type: "RETRY_SPREADSHEET_SHUFFLE_SIMPLIFICATION" });
+}
+
+export function chooseSpreadsheetShuffleStandardisation(optionId) {
+  if (!getSpreadsheetShuffleStandardisationById(optionId)) {
+    throw new Error(`Unknown Spreadsheet Shuffle standardisation option: ${optionId}`);
+  }
+
+  return dispatch({
+    type: "CHOOSE_SPREADSHEET_SHUFFLE_STANDARDISATION",
+    optionId,
+  });
+}
+
+export function retrySpreadsheetShuffleStandardisation() {
+  return dispatch({ type: "RETRY_SPREADSHEET_SHUFFLE_STANDARDISATION" });
+}
+
+export function chooseSpreadsheetShuffleAutomation(optionId) {
+  if (!getSpreadsheetShuffleAutomationById(optionId)) {
+    throw new Error(`Unknown Spreadsheet Shuffle automation option: ${optionId}`);
+  }
+
+  return dispatch({
+    type: "CHOOSE_SPREADSHEET_SHUFFLE_AUTOMATION",
+    optionId,
+  });
+}
+
+export function retrySpreadsheetShuffleAutomation() {
+  return dispatch({ type: "RETRY_SPREADSHEET_SHUFFLE_AUTOMATION" });
 }

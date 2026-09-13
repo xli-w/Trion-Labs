@@ -416,6 +416,17 @@ button.workflow-step__card:hover {
   line-height: 1.45;
 }
 
+.workflow-panel__error {
+  margin: 10px 0 0;
+  padding: 9px 10px;
+  border-left: 2px solid var(--trion-amber);
+  background: var(--trion-amber-soft);
+  color: var(--trion-amber);
+  font-size: 0.64rem;
+  font-weight: 730;
+  line-height: 1.45;
+}
+
 .workflow-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -550,11 +561,6 @@ button.workflow-step__card:hover {
 
 .spreadsheet-choice-list .improvement-choice {
   min-height: 238px;
-}
-
-.spreadsheet-choice-list .improvement-choice.is-selected {
-  border-color: var(--trion-purple);
-  background: var(--trion-lilac);
 }
 
 .spreadsheet-option-outcome {

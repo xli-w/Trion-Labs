@@ -3,8 +3,10 @@ import { renderLabOverview } from "./views/labOverview.js";
 import { renderLanding } from "./views/landing.js";
 import { renderMissingMinutes } from "./views/missingMinutes.js";
 import { renderQualityLoop } from "./views/qualityLoop.js";
+import { renderSpreadsheetShuffle } from "./views/spreadsheetShuffle.js";
 import { missingMinutesChallengeId } from "./miniGames/missingMinutes.js";
 import { qualityLoopChallengeId } from "./miniGames/qualityLoop.js";
+import { spreadsheetShuffleChallengeId } from "./miniGames/spreadsheetShuffle.js";
 import { getChallengeReadiness } from "./miniGames/registry.js";
 
 const appRoot = document.querySelector("#app");
@@ -40,6 +42,12 @@ export function render(state) {
   ) {
     appRoot.innerHTML = renderQualityLoop(state);
     document.title = "Trion Labs | The Quality Loop";
+  } else if (
+    state.activeChallengeId === spreadsheetShuffleChallengeId &&
+    canRenderInteractiveChallenge(state, spreadsheetShuffleChallengeId)
+  ) {
+    appRoot.innerHTML = renderSpreadsheetShuffle(state);
+    document.title = "Trion Labs | The Spreadsheet Shuffle";
   } else {
     appRoot.innerHTML = renderChallengeBriefing(state);
     document.title = "Trion Labs | Challenge briefing";

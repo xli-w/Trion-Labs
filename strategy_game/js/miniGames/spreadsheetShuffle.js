@@ -290,6 +290,7 @@ export function createInitialSpreadsheetShuffleState() {
   return {
     selectedStepIds: [],
     simplificationComplete: false,
+    selectionError: null,
     simplificationError: null,
     standardisationId: null,
     standardisationError: null,

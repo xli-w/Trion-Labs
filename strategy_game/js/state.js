@@ -20,6 +20,15 @@ import {
   isQualityLoopReadyForDiagnosis,
   qualityLoopChallengeId,
 } from "./miniGames/qualityLoop.js";
+import {
+  getSpreadsheetShuffleAutomationById,
+  getSpreadsheetShuffleRemovalStatus,
+  getSpreadsheetShuffleStandardisationById,
+  getSpreadsheetShuffleStepById,
+  isSpreadsheetShuffleSimplified,
+  isSpreadsheetShuffleStandardised,
+  spreadsheetShuffleChallengeId,
+} from "./miniGames/spreadsheetShuffle.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
 const sectionNames = new Set(["overview", "challenges", "capabilities", "performance"]);
@@ -40,6 +49,10 @@ function cloneState(state) {
     qualityLoop: {
       ...state.qualityLoop,
       revealedConnectionIds: [...state.qualityLoop.revealedConnectionIds],
+    },
+    spreadsheetShuffle: {
+      ...state.spreadsheetShuffle,
+      selectedStepIds: [...state.spreadsheetShuffle.selectedStepIds],
     },
     completedChallenges: [...state.completedChallenges],
     unlockedUpgrades: [...state.unlockedUpgrades],
@@ -580,6 +593,309 @@ function reduce(state, action) {
           },
         },
         "Choose the first improvement that makes the material trace useful across production and quality.",
+      );
+
+    case "TOGGLE_SPREADSHEET_SHUFFLE_STEP": {
+      const step = getSpreadsheetShuffleStepById(action.stepId);
+
+      if (!step) {
+        throw new Error(`Unknown Spreadsheet Shuffle workflow step: ${action.stepId}`);
+      }
+
+      if (state.completedChallenges.includes(spreadsheetShuffleChallengeId)) {
+        return addNotification(
+          state,
+          "The Spreadsheet Shuffle is already complete. Review the Workflow Automation outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.spreadsheetShuffle;
+
+      if (isSpreadsheetShuffleSimplified(progress)) {
+        return addNotification(
+          state,
+          "Duplicate work has already been removed. Continue by standardising the planning route.",
+        );
+      }
+
+      const selectionStatus = getSpreadsheetShuffleRemovalStatus(progress);
+      const selected = progress.selectedStepIds.includes(step.id);
+
+      if (!selected && selectionStatus.selectedCount >= selectionStatus.removalBudget) {
+        const simplificationError =
+          "The simplification budget covers two steps. Clear one selection before reviewing another activity.";
+
+        return addNotification(
+          {
+            ...state,
+            spreadsheetShuffle: {
+              ...progress,
+              selectionError: simplificationError,
+            },
+          },
+          simplificationError,
+        );
+      }
+
+      const selectedStepIds = selected
+        ? progress.selectedStepIds.filter((stepId) => stepId !== step.id)
+        : [...progress.selectedStepIds, step.id];
+
+      return addNotification(
+        {
+          ...state,
+          spreadsheetShuffle: {
+            ...progress,
+            selectedStepIds,
+            selectionError: null,
+            simplificationError: null,
+          },
+        },
+        selected
+          ? `${step.label} is no longer marked for removal.`
+          : `${step.label} is marked for the simplification review.`,
+      );
+    }
+
+    case "APPLY_SPREADSHEET_SHUFFLE_SIMPLIFICATION": {
+      if (state.completedChallenges.includes(spreadsheetShuffleChallengeId)) {
+        return addNotification(
+          state,
+          "The Spreadsheet Shuffle is already complete. Review the Workflow Automation outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.spreadsheetShuffle;
+
+      if (isSpreadsheetShuffleSimplified(progress)) {
+        return addNotification(
+          state,
+          "Duplicate work has already been removed. Continue by standardising the planning route.",
+        );
+      }
+
+      const selectionStatus = getSpreadsheetShuffleRemovalStatus(progress);
+
+      if (!selectionStatus.canApply) {
+        const simplificationError =
+          "Select two activities before testing which duplicated work should be removed.";
+
+        return addNotification(
+          {
+            ...state,
+            spreadsheetShuffle: {
+              ...progress,
+              selectionError: null,
+              simplificationError,
+            },
+          },
+          simplificationError,
+        );
+      }
+
+      if (!selectionStatus.hasRequiredSteps) {
+        const simplificationError =
+          "Those choices may change a handoff, but the repeated production figures and manual reconciliation remain. Remove Copy production figures and Reconcile differences first.";
+
+        return addNotification(
+          {
+            ...state,
+            spreadsheetShuffle: {
+              ...progress,
+              selectionError: null,
+              simplificationError,
+            },
+          },
+          simplificationError,
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          spreadsheetShuffle: {
+            ...progress,
+            simplificationComplete: true,
+            selectionError: null,
+            simplificationError: null,
+            standardisationId: null,
+            standardisationError: null,
+            automationId: null,
+            automationError: null,
+          },
+        },
+        "Duplicate spreadsheet work is removed. The planning route is shorter and ready to standardise.",
+      );
+    }
+
+    case "RETRY_SPREADSHEET_SHUFFLE_SIMPLIFICATION":
+      if (state.completedChallenges.includes(spreadsheetShuffleChallengeId)) {
+        return addNotification(
+          state,
+          "The Spreadsheet Shuffle is already complete. Review the Workflow Automation outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          spreadsheetShuffle: {
+            ...state.spreadsheetShuffle,
+            selectedStepIds: [],
+            selectionError: null,
+            simplificationError: null,
+          },
+        },
+        "Review which activities copy or reconcile the same information before choosing another pair.",
+      );
+
+    case "CHOOSE_SPREADSHEET_SHUFFLE_STANDARDISATION": {
+      const option = getSpreadsheetShuffleStandardisationById(action.optionId);
+
+      if (!option) {
+        throw new Error(
+          `Unknown Spreadsheet Shuffle standardisation option: ${action.optionId}`,
+        );
+      }
+
+      if (state.completedChallenges.includes(spreadsheetShuffleChallengeId)) {
+        return addNotification(
+          state,
+          "The Spreadsheet Shuffle is already complete. Review the Workflow Automation outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.spreadsheetShuffle;
+
+      if (!isSpreadsheetShuffleSimplified(progress)) {
+        const standardisationError =
+          "Remove the duplicated work before choosing how the smaller planning route should be standardised.";
+
+        return addNotification(
+          {
+            ...state,
+            spreadsheetShuffle: {
+              ...progress,
+              standardisationError,
+            },
+          },
+          standardisationError,
+        );
+      }
+
+      const nextState = {
+        ...state,
+        spreadsheetShuffle: {
+          ...progress,
+          standardisationId: option.id,
+          standardisationError: null,
+          automationId: null,
+          automationError: null,
+        },
+      };
+
+      return addNotification(nextState, option.announcement);
+    }
+
+    case "RETRY_SPREADSHEET_SHUFFLE_STANDARDISATION":
+      if (state.completedChallenges.includes(spreadsheetShuffleChallengeId)) {
+        return addNotification(
+          state,
+          "The Spreadsheet Shuffle is already complete. Review the Workflow Automation outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          spreadsheetShuffle: {
+            ...state.spreadsheetShuffle,
+            standardisationId: null,
+            standardisationError: null,
+            automationId: null,
+            automationError: null,
+          },
+        },
+        "Choose the planning route that checks source context before creating and sharing one update.",
+      );
+
+    case "CHOOSE_SPREADSHEET_SHUFFLE_AUTOMATION": {
+      const option = getSpreadsheetShuffleAutomationById(action.optionId);
+
+      if (!option) {
+        throw new Error(`Unknown Spreadsheet Shuffle automation option: ${action.optionId}`);
+      }
+
+      if (state.completedChallenges.includes(spreadsheetShuffleChallengeId)) {
+        return addNotification(
+          state,
+          "The Spreadsheet Shuffle is already complete. Review the Workflow Automation outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.spreadsheetShuffle;
+
+      if (!isSpreadsheetShuffleStandardised(progress)) {
+        const automationError =
+          "Set one source-led planning route before choosing which work should be automated.";
+
+        return addNotification(
+          {
+            ...state,
+            spreadsheetShuffle: {
+              ...progress,
+              automationError,
+            },
+          },
+          automationError,
+        );
+      }
+
+      const nextState = {
+        ...state,
+        spreadsheetShuffle: {
+          ...progress,
+          automationId: option.id,
+          automationError: null,
+        },
+      };
+
+      if (!option.completesChallenge) {
+        return addNotification(nextState, option.announcement);
+      }
+
+      const completedState = applyChallengeCompletion(nextState, {
+        challengeId: spreadsheetShuffleChallengeId,
+        decision: {
+          id: option.id,
+          title: option.title,
+        },
+        kpiChanges: option.kpiChanges,
+        resourceCosts: option.resourceCosts,
+        unlockIds: option.unlockIds,
+      });
+
+      return addNotification(completedState, option.announcement);
+    }
+
+    case "RETRY_SPREADSHEET_SHUFFLE_AUTOMATION":
+      if (state.completedChallenges.includes(spreadsheetShuffleChallengeId)) {
+        return addNotification(
+          state,
+          "The Spreadsheet Shuffle is already complete. Review the Workflow Automation outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          spreadsheetShuffle: {
+            ...state.spreadsheetShuffle,
+            automationId: null,
+            automationError: null,
+          },
+        },
+        "Choose the automation that carries the standard source context into the schedule update.",
       );
 
     case "RESET": {

@@ -1,6 +1,10 @@
 import { challenges, getChallengeById } from "../data.js";
 import { missingMinutesChallengeId, missingMinutesModule } from "./missingMinutes.js";
 import { qualityLoopChallengeId, qualityLoopModule } from "./qualityLoop.js";
+import {
+  spreadsheetShuffleChallengeId,
+  spreadsheetShuffleModule,
+} from "./spreadsheetShuffle.js";
 
 function createChallengeContract(challenge) {
   return Object.freeze({
@@ -23,6 +27,8 @@ const registeredModules = new Map(
       ? missingMinutesModule
       : challenge.id === qualityLoopChallengeId
         ? qualityLoopModule
+      : challenge.id === spreadsheetShuffleChallengeId
+        ? spreadsheetShuffleModule
       : createChallengeContract(challenge),
   ]),
 );

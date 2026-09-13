@@ -105,11 +105,16 @@ function renderManualWorkflowStep(step, progress, completed) {
   const simplified = isSpreadsheetShuffleSimplified(progress);
   const selected = progress.selectedStepIds.includes(step.id);
   const removed = simplified && spreadsheetShuffleRequiredRemovalIds.includes(step.id);
+  const describedBy = progress.selectionError
+    ? "spreadsheet-removal-instructions spreadsheet-selection-error"
+    : "spreadsheet-removal-instructions";
   const stateLabel = removed
     ? "Removed from redesigned flow"
-    : selected
-      ? "Marked as duplicate work"
-      : "Select for review";
+    : simplified || completed
+      ? "Retained in redesigned flow"
+      : selected
+        ? "Marked as duplicate work"
+        : "Select for review";
   const body = `
     <span class="workflow-step__number" aria-hidden="true">${String(
       spreadsheetShuffleWorkflow.indexOf(step) + 1,
@@ -136,7 +141,7 @@ function renderManualWorkflowStep(step, progress, completed) {
         data-action="toggle-spreadsheet-shuffle-step"
         data-step-id="${step.id}"
         aria-pressed="${selected}"
-        aria-describedby="spreadsheet-removal-instructions"
+        aria-describedby="${describedBy}"
       >
         ${body}
       </button>
@@ -161,6 +166,12 @@ function renderWorkflowBoard(state) {
   const completed = state.completedChallenges.includes(spreadsheetShuffleChallengeId);
   const afterSnapshot = getSpreadsheetShuffleWorkflowSnapshot(progress);
   const hasRedesignedWorkflow = afterSnapshot.id !== "fragmented";
+  const afterStatus =
+    afterSnapshot.id === "automated"
+      ? "Connected flow"
+      : hasRedesignedWorkflow
+        ? "Taking shape"
+        : "Waiting for first move";
 
   return `
     <section class="spreadsheet-workflow-board" id="spreadsheet-shuffle-workflow" tabindex="-1" aria-labelledby="workflowBoardTitle">
@@ -198,6 +209,11 @@ function renderWorkflowBoard(state) {
               ? "The original route remains visible so the removed duplicate work can be compared with the redesigned flow."
               : "Use your two removal selections on work that repeats the same information rather than the handoff that merely exposes the delay."}
           </p>
+          ${
+            progress.selectionError
+              ? `<p class="workflow-panel__error" id="spreadsheet-selection-error" role="alert">${progress.selectionError}</p>`
+              : ""
+          }
           ${renderWorkflowMetrics(spreadsheetShuffleWorkflowSnapshots.fragmented)}
         </section>
 
@@ -211,7 +227,7 @@ function renderWorkflowBoard(state) {
               <span>After</span>
               <h3 id="redesignedWorkflowTitle">${hasRedesignedWorkflow ? afterSnapshot.label : "Redesigned route"}</h3>
             </div>
-            <strong>${hasRedesignedWorkflow ? "Taking shape" : "Waiting for first move"}</strong>
+            <strong>${afterStatus}</strong>
           </header>
           ${
             hasRedesignedWorkflow
@@ -303,18 +319,17 @@ function renderSimplificationSection(progress, removalStatus, completed) {
   `;
 }
 
-function renderOptionChoices(options, action, selectedId) {
+function renderOptionChoices(options, action) {
   return `
     <div class="improvement-choice-list spreadsheet-choice-list">
       ${options
         .map(
           (option, index) => `
             <button
-              class="improvement-choice ${selectedId === option.id ? "is-selected" : ""}"
+              class="improvement-choice"
               type="button"
               data-action="${action}"
               data-option-id="${option.id}"
-              aria-pressed="${selectedId === option.id}"
             >
               <span class="improvement-choice__number">0${index + 1}</span>
               <strong>${option.title}</strong>
@@ -403,7 +418,6 @@ function renderStandardisationSection(progress, completed) {
       ${renderOptionChoices(
         spreadsheetShuffleStandardisationOptions,
         "choose-spreadsheet-shuffle-standardisation",
-        progress.standardisationId,
       )}
     </section>
   `;
@@ -563,7 +577,6 @@ function renderAutomationSection(state, challenge) {
       ${renderOptionChoices(
         spreadsheetShuffleAutomationOptions,
         "choose-spreadsheet-shuffle-automation",
-        progress.automationId,
       )}
     </section>
   `;

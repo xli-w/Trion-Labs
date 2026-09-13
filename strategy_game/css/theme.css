@@ -157,6 +157,18 @@
     var(--trion-surface-elevated);
 }
 
+:root[data-theme="dark"] .workflow-panel--before {
+  background:
+    linear-gradient(145deg, rgba(74, 53, 31, 0.74) 0%, transparent 48%),
+    var(--trion-surface-elevated);
+}
+
+:root[data-theme="dark"] .workflow-panel--after {
+  background:
+    linear-gradient(145deg, rgba(23, 59, 50, 0.84) 0%, transparent 48%),
+    var(--trion-surface-elevated);
+}
+
 :root[data-theme="dark"] .operations-node.is-active,
 :root[data-theme="dark"] .challenge-card.is-current,
 :root[data-theme="dark"] .challenge-card:hover {

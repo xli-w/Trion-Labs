@@ -52,15 +52,20 @@ function renderOperationMap(state) {
   const hasProductionQualityIntegration = state.unlockedUpgrades.includes(
     "production-quality-integration",
   );
-  const insightLabel = hasProductionQualityIntegration
+  const hasWorkflowAutomation = state.unlockedUpgrades.includes("workflow-automation");
+  const insightLabel = hasWorkflowAutomation || hasProductionQualityIntegration
     ? "New shared capability"
     : "Current condition";
-  const insightTitle = hasProductionQualityIntegration
-    ? "Production and quality now share a traceable record."
-    : `${stage.name} operations need clearer shared context.`;
-  const insightCopy = hasProductionQualityIntegration
-    ? "Defect signals can be compared with the production conditions and material trace that created them."
-    : stage.description;
+  const insightTitle = hasWorkflowAutomation
+    ? "Planning updates now follow a shared, automated route."
+    : hasProductionQualityIntegration
+      ? "Production and quality now share a traceable record."
+      : `${stage.name} operations need clearer shared context.`;
+  const insightCopy = hasWorkflowAutomation
+    ? "Production and ERP context travel with the planning update, reducing copied figures and giving people a clearer schedule to work from."
+    : hasProductionQualityIntegration
+      ? "Defect signals can be compared with the production conditions and material trace that created them."
+      : stage.description;
 
   return `
     <div class="operations-layout">
@@ -120,7 +125,9 @@ function renderChallengeCards(state) {
                 ? "Investigate timeline"
                 : challenge.id === "quality-loop" && readiness.canLaunch
                   ? "Connect records"
-                  : "Review scenario";
+                    : challenge.id === "spreadsheet-shuffle" && readiness.canLaunch
+                      ? "Redesign workflow"
+                    : "Review scenario";
 
           return `
             <article class="challenge-card ${readiness.canLaunch ? "is-current" : ""}">

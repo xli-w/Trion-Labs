@@ -1,5 +1,6 @@
 import { createInitialMissingMinutesState } from "./miniGames/missingMinutes.js";
 import { createInitialQualityLoopState } from "./miniGames/qualityLoop.js";
+import { createInitialSpreadsheetShuffleState } from "./miniGames/spreadsheetShuffle.js";
 
 export const navigationItems = Object.freeze([
   { id: "overview", label: "Overview" },
@@ -321,6 +322,7 @@ export function createInitialGameState() {
     },
     missingMinutes: createInitialMissingMinutesState(),
     qualityLoop: createInitialQualityLoopState(),
+    spreadsheetShuffle: createInitialSpreadsheetShuffleState(),
     decisions: [],
     notifications: [],
     announcement: "Welcome to Trion Labs.",

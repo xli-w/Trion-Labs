@@ -39,6 +39,9 @@ development server with the same document root will also work.
   timeline, intervention rules, and focused interaction state.
 - `js/miniGames/qualityLoop.js` owns the second challenge's illustrative
   production-quality evidence links, diagnosis rules, and intervention state.
+- `js/miniGames/spreadsheetShuffle.js` owns the third challenge's illustrative
+  planning workflow, simplification rules, standardisation choices, and
+  automation decision state.
 - `../theme.js` owns the shared local colour preference used by the strategy
   experience and standalone mini-games.
 
@@ -72,11 +75,19 @@ Quality Integration. Other interventions explain why a standard or dashboard
 alone does not make disconnected case information actionable, then allow a
 retry.
 
+`The Spreadsheet Shuffle` is the third completed challenge. Visitors use a
+two-step simplification budget to remove copied production figures and the
+manual reconciliation they create. They then choose a source-led standard
+planning route before choosing what to automate. Automating the connected
+schedule update applies bounded productivity, visibility, cost, and delivery
+effects and unlocks Workflow Automation. Choices that preserve a spreadsheet
+workaround or email-based handoff explain the trade-off and offer a retry.
+
 ## Remaining foundation scope
 
 The challenge map provides complete scenario briefings and preserves the
 intended challenge sequence. The distinct 30-90 second interactive mechanics
-for challenges three through six remain deliberately isolated behind the
+for challenges four through six remain deliberately isolated behind the
 registry for later implementation. No backend, external API, framework, or
 visitor-progression persistence is used. The selected colour theme is stored
 locally so it remains in place across reloads and implemented mini-games.

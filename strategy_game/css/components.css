@@ -343,6 +343,30 @@
   box-shadow: 0 0 0 3px rgba(63, 129, 109, 0.12);
 }
 
+.operations-connection--production-systems {
+  top: 30%;
+  left: 31%;
+  width: 53%;
+  transform: rotate(27deg);
+  transform-origin: left center;
+}
+
+.operations-connection--production-systems.is-active {
+  transform: rotate(27deg) scaleX(1.08);
+}
+
+.operations-connection--production-planning {
+  top: 40%;
+  left: 17%;
+  width: 24%;
+  transform: rotate(90deg);
+  transform-origin: left center;
+}
+
+.operations-connection--production-planning.is-active {
+  transform: rotate(90deg) scaleX(1.08);
+}
+
 .operations-connection--logistics-systems {
   top: 40%;
   left: 83%;
@@ -353,6 +377,12 @@
 
 .operations-connection--logistics-systems.is-active {
   transform: rotate(90deg) scaleX(1.08);
+}
+
+.operations-connection--systems-people {
+  top: 70%;
+  left: 62%;
+  width: 8%;
 }
 
 .operations-node {
@@ -408,6 +438,32 @@
 .operations-node small {
   color: var(--trion-text-muted);
   font-size: 0.69rem;
+  line-height: 1.4;
+}
+
+.operations-map__summary {
+  z-index: 1;
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px 10px;
+  margin: 0;
+  padding-top: 13px;
+  border-top: 1px solid var(--trion-border);
+}
+
+.operations-map__summary strong {
+  color: var(--trion-purple);
+  font-size: 0.65rem;
+  font-weight: 790;
+  letter-spacing: -0.015em;
+}
+
+.operations-map__summary span {
+  color: var(--trion-text-muted);
+  font-size: 0.6rem;
+  font-weight: 650;
   line-height: 1.4;
 }
 

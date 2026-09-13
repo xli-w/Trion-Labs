@@ -114,6 +114,38 @@ export const operationAreas = Object.freeze([
   },
 ]);
 
+export const operationConnections = Object.freeze([
+  {
+    id: "production-systems",
+    unlockId: "connected-production-view",
+    description:
+      "Production loss records now carry the context needed for a shared operational view.",
+  },
+  {
+    id: "production-quality",
+    unlockId: "production-quality-integration",
+    description: "Production conditions and quality results can now be investigated together.",
+  },
+  {
+    id: "production-planning",
+    unlockId: "workflow-automation",
+    description:
+      "A standard planning flow now carries shared production and ERP context into the schedule.",
+  },
+  {
+    id: "logistics-systems",
+    unlockId: "logistics-production-visibility",
+    description:
+      "Material risk now reaches the production, planning, and delivery response earlier.",
+  },
+  {
+    id: "systems-people",
+    unlockId: "central-operational-view",
+    description:
+      "The right operational exception now reaches the people who can coordinate the response.",
+  },
+]);
+
 export const challenges = Object.freeze([
   {
     id: "missing-minutes",

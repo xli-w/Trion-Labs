@@ -5,6 +5,7 @@ import {
   hasCompletedExperience,
   kpiDefinitions,
   operationAreas,
+  operationConnections,
   upgrades,
 } from "../data.js";
 import { getChallengeReadiness } from "../miniGames/registry.js";
@@ -54,6 +55,10 @@ function isOperationAreaActive(area, state) {
     : state.capabilityStage >= area.activeAt;
 }
 
+function isOperationConnectionActive(connection, state) {
+  return state.unlockedUpgrades.includes(connection.unlockId);
+}
+
 function renderOperationMap(state) {
   const stage = getCapabilityStage(state.capabilityStage);
   const hasProductionQualityIntegration = state.unlockedUpgrades.includes(
@@ -66,6 +71,14 @@ function renderOperationMap(state) {
   const hasCentralOperationalView = state.unlockedUpgrades.includes(
     "central-operational-view",
   );
+  const activeOperationConnections = operationConnections.filter((connection) =>
+    isOperationConnectionActive(connection, state),
+  );
+  const connectedRelationshipCount = activeOperationConnections.length;
+  const relationshipSummary =
+    connectedRelationshipCount === 0
+      ? "Complete an operational question to make a relationship visible."
+      : "Each relationship gives people more useful context for the next decision.";
   const insightLabel = hasCentralOperationalView
     ? "Central operational view"
     : hasLogisticsProductionVisibility
@@ -94,24 +107,19 @@ function renderOperationMap(state) {
 
   return `
     <div class="operations-layout">
-      <div class="operations-map" data-stage="${state.capabilityStage}" aria-label="Operational model at ${stage.name} capability stage">
-        <span class="operations-connection operations-connection--production-quality ${hasProductionQualityIntegration ? "is-active" : ""}" aria-hidden="true"></span>
-        <span class="operations-connection operations-connection--logistics-systems ${hasLogisticsProductionVisibility ? "is-active" : ""}" aria-hidden="true"></span>
-        ${
-          hasProductionQualityIntegration
-            ? '<p class="sr-only">Production and quality information are connected in the operational model.</p>'
-            : ""
-        }
-        ${
-          hasLogisticsProductionVisibility
-            ? '<p class="sr-only">Logistics material risk is connected to the shared operational context.</p>'
-            : ""
-        }
-        ${
-          hasCentralOperationalView
-            ? '<p class="sr-only">A central operational view now filters the shared exception for the people who need to act.</p>'
-            : ""
-        }
+      <div class="operations-map" data-stage="${state.capabilityStage}" aria-label="Operational model at ${stage.name} capability stage with ${connectedRelationshipCount} connected relationship${connectedRelationshipCount === 1 ? "" : "s"}">
+        ${operationConnections
+          .map(
+            (connection) => `
+              <span class="operations-connection operations-connection--${connection.id} ${
+                isOperationConnectionActive(connection, state) ? "is-active" : ""
+              }" aria-hidden="true"></span>
+            `,
+          )
+          .join("")}
+        ${activeOperationConnections
+          .map((connection) => `<p class="sr-only">${connection.description}</p>`)
+          .join("")}
         ${operationAreas
           .map((area) => {
             const isActive = isOperationAreaActive(area, state);
@@ -125,6 +133,12 @@ function renderOperationMap(state) {
             `;
           })
           .join("")}
+        <p class="operations-map__summary">
+          <strong>${connectedRelationshipCount} connected relationship${
+            connectedRelationshipCount === 1 ? "" : "s"
+          }</strong>
+          <span>${relationshipSummary}</span>
+        </p>
       </div>
       <aside class="map-insight">
         <div>

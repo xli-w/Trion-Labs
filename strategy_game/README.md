@@ -109,6 +109,9 @@ The five challenges form one operational progression: understand the loss,
 connect the relevant information, simplify and automate a workflow, coordinate
 dependencies, then measure the shared decision. Completing The Control Room
 reveals a final overview that records the decisions, capabilities, and
-illustrative before-and-after KPI context. No backend, external API, framework,
-or visitor-progression persistence is used. The selected colour theme is stored
-locally so it remains in place across reloads and challenges.
+illustrative before-and-after KPI context. The operational model adds each
+named relationship as its related capability is unlocked, making the growing
+cross-functional context visible on desktop and narrow layouts. No backend,
+external API, framework, or visitor-progression persistence is used. The
+selected colour theme is stored locally so it remains in place across reloads
+and challenges.

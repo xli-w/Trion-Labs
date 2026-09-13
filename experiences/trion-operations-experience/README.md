@@ -1,22 +1,24 @@
-# Trion Labs
+# Trion Operations Experience
 
-Trion Labs is a standalone, front-end operational strategy experience. This
-initial implementation delivers the Phase 1 foundation: the landing experience,
-lab overview, operational model, central game state, navigation, reset flow,
-and five connected challenge modules.
+This is the active Trion Labs operational improvement experience.
+
+It is the primary product and the default path for ongoing design, UX, and frontend iteration. The earlier Fabric line simulator has been archived and is no longer the default working experience.
 
 ## Run locally
 
-The lab intentionally has no build step or runtime dependencies. From the
-repository root, serve the repository with a simple static development server:
+The experience intentionally has no build step or runtime dependencies. From the repository root, serve the project with a simple static server:
 
 ```bash
 python -m http.server 4173 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:4173/strategy_game/`. Serving the repository root keeps
-the shared `theme.js` module available to the experience. Any static
-development server with the same document root will also work.
+Then open:
+
+```text
+http://127.0.0.1:4173/experiences/trion-operations-experience/
+```
+
+The shared `theme.js` utility remains available from the repository root.
 
 ## Architecture
 

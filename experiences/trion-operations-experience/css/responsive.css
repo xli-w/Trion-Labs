@@ -85,7 +85,9 @@
 
   .diagnostic-profile__heading,
   .diagnostic-profile__section-heading,
-  .opportunity-prioritization__heading {
+  .opportunity-prioritization__heading,
+  .before-after-operating-model__heading,
+  .operating-model-flow__heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 8px;
@@ -102,6 +104,9 @@
   .diagnostic-profile__next,
   .opportunity-cards,
   .opportunity-selection-feedback dl,
+  .operating-model-comparison,
+  .operating-model-flow__comparison,
+  .operating-model-potential,
   .capability-layout,
   .performance-grid {
     grid-template-columns: 1fr;
@@ -175,7 +180,8 @@
   #challenges,
   #capabilities,
   #performance,
-  #opportunities {
+  #opportunities,
+  #before-after-operating-model {
     scroll-margin-top: 148px;
   }
 

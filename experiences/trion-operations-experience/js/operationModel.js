@@ -944,6 +944,120 @@ export const opportunities = Object.freeze([
   }),
 ]);
 
+export const operatingModelChanges = Object.freeze([
+  Object.freeze({
+    id: "contextual-production-loss",
+    label: "Production loss",
+    outcomeId: "missing-minutes-outcome",
+    before:
+      "Supervisors reconstruct lost time from incomplete stop records after the line has already fallen behind.",
+    after:
+      "Production loss carries reason, timing, machine, and shift context so recurring loss can be reviewed sooner.",
+    kpiIds: Object.freeze(["throughput", "productivity", "visibility"]),
+  }),
+  Object.freeze({
+    id: "connected-quality-investigation",
+    label: "Quality investigation",
+    outcomeId: "quality-loop-outcome",
+    before:
+      "Quality, production, and material records must be compared manually before a repeat defect can be contained.",
+    after:
+      "Quality results can be investigated with the production run and material trace that created them.",
+    kpiIds: Object.freeze(["quality", "visibility", "productivity"]),
+  }),
+  Object.freeze({
+    id: "source-led-planning-flow",
+    label: "Planning flow",
+    outcomeId: "spreadsheet-shuffle-outcome",
+    before:
+      "Production updates are copied into spreadsheets, reconciled, and emailed before the schedule can move.",
+    after:
+      "One standard, source-led planning update carries the right context into the schedule and handoff.",
+    kpiIds: Object.freeze(["productivity", "visibility", "cost", "delivery"]),
+  }),
+  Object.freeze({
+    id: "early-material-response",
+    label: "Material exception",
+    outcomeId: "delivery-domino-outcome",
+    before:
+      "A material delay reaches planning and customers only after available capacity is already constrained.",
+    after:
+      "Material, schedule, capacity, and customer risk form one earlier exception that teams can coordinate.",
+    kpiIds: Object.freeze(["delivery", "visibility", "throughput"]),
+  }),
+  Object.freeze({
+    id: "role-relevant-exception-view",
+    label: "Shared response",
+    outcomeId: "control-room-outcome",
+    before:
+      "Teams work from separate reports, so the cause, work response, and customer consequence are not held together.",
+    after:
+      "Management, production, and planning receive one shared exception with the detail each role needs to act.",
+    kpiIds: Object.freeze(["visibility", "productivity", "delivery", "throughput"]),
+  }),
+]);
+
+export const operatingModelFlow = Object.freeze({
+  before: Object.freeze([
+    Object.freeze({
+      id: "scattered-information",
+      label: "Information scattered",
+      detail: "Records sit across line events, quality, planning, and supplier updates.",
+    }),
+    Object.freeze({
+      id: "manual-reconciliation",
+      label: "Manual reconciliation",
+      detail: "People compare copies and handoffs before they can act.",
+    }),
+    Object.freeze({
+      id: "late-decisions",
+      label: "Late decisions",
+      detail: "The operational consequence becomes clear after it has affected the work.",
+    }),
+    Object.freeze({
+      id: "operational-disruption",
+      label: "Operational disruption",
+      detail: "Capacity and customer commitments carry the avoidable impact.",
+    }),
+  ]),
+  after: Object.freeze([
+    Object.freeze({
+      id: "connected-information",
+      label: "Connected information",
+      detail: "Relevant production, quality, planning, and logistics context travels together.",
+      requiredOutcomeIds: Object.freeze([
+        "quality-loop-outcome",
+        "spreadsheet-shuffle-outcome",
+        "delivery-domino-outcome",
+      ]),
+    }),
+    Object.freeze({
+      id: "clearer-visibility",
+      label: "Clearer visibility",
+      detail: "Losses and exceptions have the context needed for investigation.",
+      requiredOutcomeIds: Object.freeze([
+        "missing-minutes-outcome",
+        "control-room-outcome",
+      ]),
+    }),
+    Object.freeze({
+      id: "earlier-decisions",
+      label: "Earlier decisions",
+      detail: "The right roles can coordinate a response before disruption spreads.",
+      requiredOutcomeIds: Object.freeze([
+        "delivery-domino-outcome",
+        "control-room-outcome",
+      ]),
+    }),
+    Object.freeze({
+      id: "more-controlled-operation",
+      label: "More controlled operation",
+      detail: "The operation can measure outcomes and identify the next bottleneck.",
+      requiredOutcomeIds: Object.freeze(["control-room-outcome"]),
+    }),
+  ]),
+});
+
 export function getOperationalAreaById(areaId) {
   return operationalAreas.find((area) => area.id === areaId);
 }

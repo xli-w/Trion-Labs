@@ -14,6 +14,7 @@ import {
   operationalAreas,
   operationSystems,
 } from "../operationModel.js";
+import { renderBeforeAfterOperatingModel } from "./beforeAfterOperatingModel.js";
 import { renderDiagnosticProfile } from "./diagnosticProfile.js";
 import { renderOpportunityPrioritization } from "./opportunityPrioritization.js";
 import { renderFooter, renderHeader } from "./shared.js";
@@ -566,8 +567,8 @@ function renderExperienceSummary(state) {
           </ol>
         </section>
         <section aria-labelledby="summaryKpisTitle">
-          <p class="eyebrow">Before and after</p>
-          <h3 id="summaryKpisTitle">The operation has a clearer baseline for its next decision.</h3>
+          <p class="eyebrow">Illustrative KPI movement</p>
+          <h3 id="summaryKpisTitle">Measure the changes already made.</h3>
           <dl class="experience-summary__kpis">
             ${Object.entries(state.kpis)
               .map(
@@ -588,6 +589,7 @@ function renderExperienceSummary(state) {
       </div>
       ${renderDiagnosticProfile(state)}
       ${renderOpportunityPrioritization(state)}
+      ${renderBeforeAfterOperatingModel(state)}
       <div class="decision-outcome__actions experience-summary__actions">
         <button class="button button--primary" type="button" data-action="navigate" data-section="overview">
           Explore the operational approach <span class="button-arrow" aria-hidden="true">-></span>

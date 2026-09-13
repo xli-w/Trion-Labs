@@ -437,7 +437,12 @@ p {
 #overview,
 #challenges,
 #capabilities,
-#performance {
+#performance,
+#summary-journey,
+#diagnostic,
+#opportunities,
+#before-after-operating-model,
+#trion-approach {
   scroll-margin-top: 108px;
 }
 

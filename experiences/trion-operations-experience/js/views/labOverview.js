@@ -406,7 +406,15 @@ function renderExperienceSummary(state) {
           The five decisions now form one operating model rather than five separate responses.
         </p>
       </div>
-      <div class="experience-summary__layout">
+      <nav class="summary-nav-pills" aria-label="Transformation summary sections">
+        <span>Jump to:</span>
+        <a href="#summary-journey" class="summary-nav-pill">Decisions &amp; KPIs</a>
+        <a href="#diagnostic" class="summary-nav-pill">Diagnostic Profile</a>
+        <a href="#opportunities" class="summary-nav-pill">Next Opportunities</a>
+        <a href="#before-after-operating-model" class="summary-nav-pill">Operating Model</a>
+        <a href="#trion-approach" class="summary-nav-pill">Trion Approach</a>
+      </nav>
+      <div class="experience-summary__layout" id="summary-journey">
         <div class="experience-summary__intro">
           <p class="experience-summary__lead">
             You have improved visibility, connected information, and made the next improvement easier to find.

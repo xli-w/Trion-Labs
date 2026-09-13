@@ -977,6 +977,47 @@
   border-top: 1px solid var(--trion-border);
 }
 
+.summary-nav-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: -10px 0 28px;
+  padding: 12px 16px;
+  border: 1px solid var(--trion-border);
+  border-radius: var(--radius-medium);
+  background: var(--trion-surface-elevated);
+}
+
+.summary-nav-pills > span {
+  color: var(--trion-purple-muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+
+.summary-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 13px;
+  border: 1px solid var(--trion-border-strong);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--trion-purple);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 160ms ease;
+}
+
+.summary-nav-pill:hover {
+  border-color: var(--trion-purple-light);
+  background: var(--trion-lilac);
+  transform: translateY(-1px);
+}
+
 .experience-summary__layout,
 .experience-summary__evidence {
   display: grid;

@@ -35,7 +35,7 @@ export function renderDiagnosticProfile(state) {
   const profile = calculateDiagnosticProfile(state);
 
   return `
-    <section class="diagnostic-profile" aria-labelledby="diagnosticTitle">
+    <section class="diagnostic-profile" id="diagnostic" aria-labelledby="diagnosticTitle">
       <div class="diagnostic-profile__heading">
         <div>
           <p class="eyebrow">Illustrative diagnostic profile</p>

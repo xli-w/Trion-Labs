@@ -212,9 +212,11 @@ function renderSignalBoard(state, signalStatus) {
       <div class="control-room-workspace">
         <section class="control-room-signal-board" aria-label="Available operational information">
           <div class="control-room-signal-board__meta">
-            <span>Illustrative shift context</span>
-            <span>${signalStatus.selectedCount} of ${controlRoomSignalSelectionLimit} signals selected</span>
-            <span>${progress.signalsConfirmed ? "Focused view ready" : "Select the essentials"}</span>
+            <span class="control-room-meta-tag">Illustrative shift context</span>
+            <span class="control-room-counter-pill ${progress.signalsConfirmed ? "is-confirmed" : signalStatus.selectedCount === controlRoomSignalSelectionLimit ? "is-ready" : ""}">
+              <strong>${signalStatus.selectedCount}</strong> / ${controlRoomSignalSelectionLimit} signals selected
+            </span>
+            <span class="control-room-status-tag">${progress.signalsConfirmed ? "Focused view ready" : "Select the essentials"}</span>
           </div>
           <ul class="control-signal-list">
             ${controlRoomSignals
@@ -373,6 +375,13 @@ function renderAudienceBoard(state, audienceStatus) {
           Choose the three roles that need a priority response now. Other teams keep their relevant detail without being interrupted by this exception.
         </p>
       </header>
+      <div class="control-room-audience-board__meta">
+        <span class="control-room-meta-tag">Operational teams</span>
+        <span class="control-room-counter-pill ${progress.audiencesConfirmed ? "is-confirmed" : audienceStatus.selectedCount === controlRoomAudiencePriorityLimit ? "is-ready" : ""}">
+          <strong>${audienceStatus.selectedCount}</strong> / ${controlRoomAudiencePriorityLimit} roles selected
+        </span>
+        <span class="control-room-status-tag">${progress.audiencesConfirmed ? "Priority route confirmed" : "Select 3 priority roles"}</span>
+      </div>
       <div class="control-room-audience-layout">
         <ul class="audience-list">
           ${controlRoomAudiences

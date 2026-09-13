@@ -89,7 +89,8 @@
   box-shadow: var(--shadow-card);
 }
 
-.control-room-signal-board__meta {
+.control-room-signal-board__meta,
+.control-room-audience-board__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -101,9 +102,54 @@
   font-weight: 730;
 }
 
-.control-room-signal-board__meta span:first-child {
+.control-room-audience-board__meta {
+  margin-bottom: 20px;
+}
+
+.control-room-meta-tag {
   color: var(--trion-purple);
   font-weight: 820;
+}
+
+.control-room-counter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid var(--trion-border-strong);
+  border-radius: 999px;
+  background: var(--trion-surface);
+  color: var(--trion-text-muted);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: all 180ms ease;
+}
+
+.control-room-counter-pill strong {
+  color: var(--trion-purple);
+  font-size: 0.76rem;
+}
+
+.control-room-counter-pill.is-ready {
+  border-color: rgba(75, 53, 101, 0.4);
+  background: var(--trion-lilac);
+  color: var(--trion-purple);
+}
+
+.control-room-counter-pill.is-confirmed {
+  border-color: rgba(63, 129, 109, 0.45);
+  background: var(--trion-green-soft);
+  color: var(--trion-green);
+}
+
+.control-room-counter-pill.is-confirmed strong {
+  color: var(--trion-green);
+}
+
+.control-room-status-tag {
+  color: var(--trion-text-quiet);
+  font-size: 0.61rem;
 }
 
 .control-signal-list {

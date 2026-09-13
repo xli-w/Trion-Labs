@@ -41,12 +41,34 @@ import {
 import { subscribe } from "./state.js";
 import { initializeTheme, syncThemeToggle, toggleTheme } from "../../theme.js";
 
+const sectionFocusTargetIds = Object.freeze({
+  overview: "screen-title",
+  challenges: "challengesTitle",
+  capabilities: "capabilitiesTitle",
+  performance: "performanceTitle",
+  summary: "summary-title",
+});
+
+function focusSectionHeading(section) {
+  const focusTargetId = sectionFocusTargetIds[section];
+
+  if (!focusTargetId) {
+    throw new Error(`No focus target is registered for ${section}.`);
+  }
+
+  focusElementById(focusTargetId);
+}
+
 initializeTheme();
 
 subscribe((nextState, previousState) => {
   render(nextState);
 
-  if (previousState && nextState.currentScreen !== previousState.currentScreen) {
+  if (
+    previousState &&
+    (nextState.currentScreen !== previousState.currentScreen ||
+      nextState.activeChallengeId !== previousState.activeChallengeId)
+  ) {
     focusScreenHeading();
   }
 });
@@ -72,6 +94,7 @@ bindInteractions({
 
     if (nextState.activeSection === section) {
       scrollToSection(section);
+      focusSectionHeading(section);
     }
   },
   "review-challenge": ({ challengeId }) => {
@@ -79,12 +102,12 @@ bindInteractions({
 
     if (nextState.activeChallengeId === challengeId) {
       scrollToSection("screen-title");
-      focusScreenHeading();
     }
   },
   "close-challenge": () => {
     closeChallengeBriefing();
     scrollToSection("challenges");
+    focusSectionHeading("challenges");
   },
   "inspect-missing-minutes-event": ({ eventId }) => {
     inspectMissingMinutesEvent(eventId);

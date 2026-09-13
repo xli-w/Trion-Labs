@@ -128,8 +128,6 @@ export const deliveryDominoDecisions = Object.freeze([
         explanation: "Available work can move forward so the line avoids avoidable waiting.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze(["logistics-production-visibility"]),
     announcement:
       "Material risk now reaches planning and delivery before it disrupts the schedule. Logistics + Production Visibility is available.",
   }),
@@ -159,8 +157,6 @@ export const deliveryDominoDecisions = Object.freeze([
         explanation: "The line still waits if the schedule is not informed before the start.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "The logistics signal is clearer, but the production schedule and customer commitments remain disconnected.",
   }),
@@ -190,8 +186,6 @@ export const deliveryDominoDecisions = Object.freeze([
         explanation: "Holding capacity reduces useful output while the root information gap remains.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "The manual response protects a single promise, but it consumes capacity without connecting the next material exception to the plan.",
   }),

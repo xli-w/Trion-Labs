@@ -55,6 +55,33 @@ const sectionNames = new Set([
   "performance",
   "summary",
 ]);
+const maxNotifications = 8;
+const challengeInteractionIds = Object.freeze({
+  INSPECT_MISSING_MINUTES_EVENT: missingMinutesChallengeId,
+  CHOOSE_MISSING_MINUTES_IMPROVEMENT: missingMinutesChallengeId,
+  RETRY_MISSING_MINUTES_DECISION: missingMinutesChallengeId,
+  SELECT_QUALITY_LOOP_NODE: qualityLoopChallengeId,
+  IDENTIFY_QUALITY_LOOP_CAUSE: qualityLoopChallengeId,
+  RETRY_QUALITY_LOOP_DIAGNOSIS: qualityLoopChallengeId,
+  CHOOSE_QUALITY_LOOP_IMPROVEMENT: qualityLoopChallengeId,
+  RETRY_QUALITY_LOOP_IMPROVEMENT: qualityLoopChallengeId,
+  TOGGLE_SPREADSHEET_SHUFFLE_STEP: spreadsheetShuffleChallengeId,
+  APPLY_SPREADSHEET_SHUFFLE_SIMPLIFICATION: spreadsheetShuffleChallengeId,
+  RETRY_SPREADSHEET_SHUFFLE_SIMPLIFICATION: spreadsheetShuffleChallengeId,
+  CHOOSE_SPREADSHEET_SHUFFLE_STANDARDISATION: spreadsheetShuffleChallengeId,
+  RETRY_SPREADSHEET_SHUFFLE_STANDARDISATION: spreadsheetShuffleChallengeId,
+  CHOOSE_SPREADSHEET_SHUFFLE_AUTOMATION: spreadsheetShuffleChallengeId,
+  RETRY_SPREADSHEET_SHUFFLE_AUTOMATION: spreadsheetShuffleChallengeId,
+  INSPECT_DELIVERY_DOMINO_DEPENDENCY: deliveryDominoChallengeId,
+  CHOOSE_DELIVERY_DOMINO_IMPROVEMENT: deliveryDominoChallengeId,
+  RETRY_DELIVERY_DOMINO_IMPROVEMENT: deliveryDominoChallengeId,
+  TOGGLE_CONTROL_ROOM_SIGNAL: controlRoomChallengeId,
+  CONFIRM_CONTROL_ROOM_SIGNALS: controlRoomChallengeId,
+  TOGGLE_CONTROL_ROOM_AUDIENCE: controlRoomChallengeId,
+  CONFIRM_CONTROL_ROOM_AUDIENCES: controlRoomChallengeId,
+  CHOOSE_CONTROL_ROOM_DECISION: controlRoomChallengeId,
+  RETRY_CONTROL_ROOM_DECISION: controlRoomChallengeId,
+});
 const listeners = new Set();
 let currentState = createInitialGameState();
 
@@ -64,7 +91,6 @@ function cloneState(state) {
     kpis: Object.fromEntries(
       Object.entries(state.kpis).map(([key, value]) => [key, { ...value }]),
     ),
-    resources: { ...state.resources },
     missingMinutes: {
       ...state.missingMinutes,
       inspectedEventIds: [...state.missingMinutes.inspectedEventIds],
@@ -102,15 +128,17 @@ function cloneState(state) {
 }
 
 function addNotification(state, message) {
+  const notificationId = state.nextNotificationId + 1;
   const notification = {
-    id: state.notifications.length + 1,
+    id: notificationId,
     message,
   };
 
   return {
     ...state,
+    nextNotificationId: notificationId,
     announcement: message,
-    notifications: [...state.notifications, notification].slice(-8),
+    notifications: [...state.notifications, notification].slice(-maxNotifications),
   };
 }
 
@@ -138,37 +166,14 @@ function updateKpis(kpis, changes) {
       throw new Error(`KPI change for ${key} must include a finite delta.`);
     }
 
-    const previous = nextKpis[key].current;
+    const current = nextKpis[key].current;
     nextKpis[key] = {
       ...nextKpis[key],
-      previous,
-      current: Math.max(0, Math.min(100, previous + change.delta)),
+      current: Math.max(0, Math.min(100, current + change.delta)),
     };
   }
 
   return nextKpis;
-}
-
-function updateResources(resources, costs) {
-  const nextResources = { ...resources };
-
-  for (const [key, cost] of Object.entries(costs)) {
-    if (!Object.prototype.hasOwnProperty.call(nextResources, key)) {
-      throw new Error(`Unknown resource: ${key}`);
-    }
-
-    if (!Number.isInteger(cost) || cost < 0) {
-      throw new Error(`Resource cost for ${key} must be a non-negative integer.`);
-    }
-
-    if (cost > nextResources[key]) {
-      throw new Error(`Insufficient ${key} to complete this challenge.`);
-    }
-
-    nextResources[key] -= cost;
-  }
-
-  return nextResources;
 }
 
 function createKpiImpactSnapshot(kpis, nextKpis, changes) {
@@ -183,13 +188,41 @@ function createKpiImpactSnapshot(kpis, nextKpis, changes) {
   );
 }
 
+function assertCompletionDecision(challenge, decision) {
+  if (
+    !decision ||
+    typeof decision !== "object" ||
+    typeof decision.id !== "string" ||
+    decision.id.trim().length === 0 ||
+    typeof decision.title !== "string" ||
+    decision.title.trim().length === 0
+  ) {
+    throw new Error(
+      `Completing ${challenge.title} requires a decision with a non-empty id and title.`,
+    );
+  }
+
+  return {
+    id: decision.id,
+    title: decision.title,
+  };
+}
+
+function getCompletionUpgradeIds(challenge, additionalUnlockIds) {
+  if (additionalUnlockIds !== undefined && !Array.isArray(additionalUnlockIds)) {
+    throw new Error(`Additional unlocks for ${challenge.title} must be an array.`);
+  }
+
+  return [...(additionalUnlockIds ?? []), challenge.unlockId];
+}
+
 function applyChallengeCompletion(state, action) {
   const challenge = assertKnownChallenge(action.challengeId);
+  const decision = assertCompletionDecision(challenge, action.decision);
   const kpiChanges = action.kpiChanges ?? {};
   const nextKpis = updateKpis(state.kpis, kpiChanges);
-  const resources = updateResources(state.resources, action.resourceCosts ?? {});
   const unlockedUpgrades = [...state.unlockedUpgrades];
-  const upgradeIds = action.unlockIds ?? [challenge.unlockId];
+  const upgradeIds = getCompletionUpgradeIds(challenge, action.additionalUnlockIds);
 
   for (const upgradeId of upgradeIds) {
     if (!getUpgradeById(upgradeId)) {
@@ -203,16 +236,14 @@ function applyChallengeCompletion(state, action) {
 
   const completedChallenges = [...state.completedChallenges, challenge.id];
   const kpiImpact = createKpiImpactSnapshot(state.kpis, nextKpis, kpiChanges);
-  const decisions = action.decision
-    ? [
-        ...state.decisions,
-        {
-          challengeId: challenge.id,
-          ...action.decision,
-          kpiImpact,
-        },
-      ]
-    : state.decisions;
+  const decisions = [
+    ...state.decisions,
+    {
+      challengeId: challenge.id,
+      ...decision,
+      kpiImpact,
+    },
+  ];
 
   return {
     ...state,
@@ -220,10 +251,44 @@ function applyChallengeCompletion(state, action) {
     unlockedUpgrades,
     decisions,
     kpis: nextKpis,
-    resources,
     operationalScore: calculateOperationalScore(nextKpis),
     capabilityStage: deriveCapabilityStage(completedChallenges, unlockedUpgrades),
   };
+}
+
+function getActionChallengeId(action) {
+  return action.type === "COMPLETE_CHALLENGE"
+    ? action.challengeId
+    : challengeInteractionIds[action.type];
+}
+
+function getBlockedChallengeTransition(state, action) {
+  const challengeId = getActionChallengeId(action);
+
+  if (!challengeId) {
+    return null;
+  }
+
+  const challenge = getChallengeById(challengeId);
+
+  if (!challenge) {
+    return null;
+  }
+
+  const prerequisiteId = challenge.prerequisites.find(
+    (id) => !state.completedChallenges.includes(id),
+  );
+
+  if (!prerequisiteId) {
+    return null;
+  }
+
+  const prerequisite = assertKnownChallenge(prerequisiteId);
+
+  return addNotification(
+    state,
+    `${challenge.title} becomes available after ${prerequisite.title} is complete.`,
+  );
 }
 
 function deriveCapabilityStage(completedChallenges, unlockedUpgrades) {
@@ -433,8 +498,7 @@ function reduce(state, action) {
           title: decision.title,
         },
         kpiChanges: decision.kpiChanges,
-        resourceCosts: decision.resourceCosts,
-        unlockIds: decision.unlockIds,
+        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);
@@ -671,8 +735,7 @@ function reduce(state, action) {
           title: decision.title,
         },
         kpiChanges: decision.kpiChanges,
-        resourceCosts: decision.resourceCosts,
-        unlockIds: decision.unlockIds,
+        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);
@@ -974,8 +1037,7 @@ function reduce(state, action) {
           title: option.title,
         },
         kpiChanges: option.kpiChanges,
-        resourceCosts: option.resourceCosts,
-        unlockIds: option.unlockIds,
+        additionalUnlockIds: option.additionalUnlockIds,
       });
 
       return addNotification(completedState, option.announcement);
@@ -1113,8 +1175,7 @@ function reduce(state, action) {
           title: decision.title,
         },
         kpiChanges: decision.kpiChanges,
-        resourceCosts: decision.resourceCosts,
-        unlockIds: decision.unlockIds,
+        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);
@@ -1452,8 +1513,7 @@ function reduce(state, action) {
           title: decision.title,
         },
         kpiChanges: decision.kpiChanges,
-        resourceCosts: decision.resourceCosts,
-        unlockIds: decision.unlockIds,
+        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);
@@ -1494,6 +1554,10 @@ export function getState() {
 }
 
 export function subscribe(listener) {
+  if (typeof listener !== "function") {
+    throw new TypeError("A state subscriber must be a function.");
+  }
+
   listeners.add(listener);
   listener(getState(), null);
 
@@ -1501,5 +1565,11 @@ export function subscribe(listener) {
 }
 
 export function dispatch(action) {
-  return commit(reduce(currentState, action));
+  if (!action || typeof action.type !== "string") {
+    throw new TypeError("A game action must include a string type.");
+  }
+
+  const blockedTransition = getBlockedChallengeTransition(currentState, action);
+
+  return commit(blockedTransition ?? reduce(currentState, action));
 }

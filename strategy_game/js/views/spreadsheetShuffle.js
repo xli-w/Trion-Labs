@@ -1,4 +1,4 @@
-import { getChallengeById, kpiDefinitions } from "../data.js";
+import { getChallengeById } from "../data.js";
 import {
   getSpreadsheetShuffleAutomationById,
   getSpreadsheetShuffleRemovalStatus,
@@ -17,8 +17,8 @@ import {
 import {
   renderChallengeJourney,
   renderCompletionAction,
+  renderDecisionKpiImpact,
   renderFooter,
-  getRecordedKpiImpact,
   renderHeader,
 } from "./shared.js";
 
@@ -429,40 +429,6 @@ function renderStandardisationSection(progress, completed) {
   `;
 }
 
-function formatDelta(delta) {
-  return `${delta > 0 ? "+" : ""}${delta} pts`;
-}
-
-function renderKpiImpact(state, decision) {
-  return `
-    <dl class="decision-kpi-impact spreadsheet-kpi-impact">
-      ${relevantKpis
-        .map((key) => {
-          const impact = decision.kpiChanges[key];
-          const recordedImpact = getRecordedKpiImpact(
-            state,
-            spreadsheetShuffleChallengeId,
-            key,
-          );
-          const before = recordedImpact.before;
-          const after = recordedImpact.after;
-
-          return `
-            <div class="decision-kpi-impact__item">
-              <dt>${kpiDefinitions[key].label}</dt>
-              <dd>
-                <strong>${before}% <span aria-hidden="true">-></span> ${after}%</strong>
-                <span class="is-positive">${formatDelta(impact.delta)}</span>
-                <small>${impact.explanation}</small>
-              </dd>
-            </div>
-          `;
-        })
-        .join("")}
-    </dl>
-  `;
-}
-
 function renderWorkflowComparison() {
   const before = spreadsheetShuffleWorkflowSnapshots.fragmented;
   const after = spreadsheetShuffleWorkflowSnapshots.automated;
@@ -510,7 +476,14 @@ function renderCompletionOutcome(state, challenge, decision) {
         <p class="decision-outcome__summary">${decision.outcomeSummary}</p>
       </div>
       <p class="decision-outcome__detail">${decision.outcomeDetail}</p>
-      ${renderKpiImpact(state, decision)}
+      ${renderDecisionKpiImpact({
+        state,
+        challengeId: spreadsheetShuffleChallengeId,
+        decision,
+        kpiKeys: relevantKpis,
+        completed: true,
+        className: "spreadsheet-kpi-impact",
+      })}
       ${renderWorkflowComparison()}
       <blockquote class="workflow-principle">
         The biggest improvement was not adding another tool. It was removing unnecessary work and making the information flow consistent.

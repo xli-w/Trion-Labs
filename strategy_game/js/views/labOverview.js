@@ -125,7 +125,9 @@ function renderOperationMap(state) {
             const isActive = isOperationAreaActive(area, state);
 
             return `
-              <article class="operations-node ${isActive ? "is-active" : ""}">
+              <article class="operations-node operations-node--${area.id} ${
+                isActive ? "is-active" : ""
+              }">
                 <span>${area.label}</span>
                 <strong>${area.detail}</strong>
                 <small>${isActive ? "Context is available" : "Connection will unlock"}</small>
@@ -509,7 +511,7 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Operational health</p>
-              <h2 id="healthTitle">Make the condition visible.</h2>
+              <h2 id="healthTitle" tabindex="-1">Make the condition visible.</h2>
             </div>
             <p>These measures are the health system for the operation. Improvements will change only the measures they meaningfully affect.</p>
           </div>
@@ -520,7 +522,7 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">The operation</p>
-              <h2 id="modelTitle">One operation. Shared context.</h2>
+              <h2 id="modelTitle" tabindex="-1">One operation. Shared context.</h2>
             </div>
             <p>Every connection should create a practical new capability, not merely increase a number.</p>
           </div>
@@ -536,7 +538,7 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Challenge map</p>
-              <h2 id="challengesTitle">Five connected ways to build the flow.</h2>
+              <h2 id="challengesTitle" tabindex="-1">Five connected ways to build the flow.</h2>
             </div>
             <p>Start with the highlighted scenario, then follow the operational questions that each new capability makes possible.</p>
           </div>
@@ -547,7 +549,7 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Capability path</p>
-              <h2 id="capabilitiesTitle">Methods first. Connections with purpose.</h2>
+              <h2 id="capabilitiesTitle" tabindex="-1">Methods first. Connections with purpose.</h2>
             </div>
             <p>Trion methodology and practical integration form the improvement system, without hiding the real operational work.</p>
           </div>
@@ -558,7 +560,7 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Performance baseline</p>
-              <h2 id="performanceTitle">Measure what changes.</h2>
+              <h2 id="performanceTitle" tabindex="-1">Measure what changes.</h2>
             </div>
             <p>Use the starting condition to judge the next decision. A balanced improvement creates the conditions for the one after it.</p>
           </div>

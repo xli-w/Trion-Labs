@@ -132,11 +132,7 @@ export const missingMinutesDecisions = Object.freeze([
         explanation: "Reason, timing, and context are now captured together.",
       }),
     }),
-    resourceCosts: Object.freeze({
-      improvementCapacity: 1,
-      integrationCapacity: 1,
-    }),
-    unlockIds: Object.freeze(["understand", "connected-production-view"]),
+    additionalUnlockIds: Object.freeze(["understand"]),
     announcement:
       "Downtime context is now captured. Visibility improved and the Connected Production View is available.",
   }),
@@ -166,8 +162,6 @@ export const missingMinutesDecisions = Object.freeze([
         explanation: "Labels become more consistent, but the record remains incomplete.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "Downtime categories are more consistent, but the largest loss still lacks the context needed to act.",
   }),
@@ -197,8 +191,6 @@ export const missingMinutesDecisions = Object.freeze([
         explanation: "More people can see the same incomplete event record.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "The production record is more widely visible, but the unexplained breakdown still cannot be investigated reliably.",
   }),

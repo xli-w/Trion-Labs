@@ -1,4 +1,4 @@
-import { getChallengeById, kpiDefinitions } from "../data.js";
+import { getChallengeById } from "../data.js";
 import {
   controlRoomAudiencePriorityLimit,
   controlRoomAudiences,
@@ -16,8 +16,8 @@ import {
 import {
   renderChallengeJourney,
   renderCompletionAction,
+  renderDecisionKpiImpact,
   renderFooter,
-  getRecordedKpiImpact,
   renderHeader,
 } from "./shared.js";
 
@@ -485,56 +485,6 @@ function renderDecisionChoices(decisionError) {
   `;
 }
 
-function formatDelta(delta) {
-  if (delta === 0) {
-    return "No immediate change";
-  }
-
-  return `${delta > 0 ? "+" : ""}${delta} pts`;
-}
-
-function getKpiChangeClass(delta) {
-  if (delta > 0) {
-    return "is-positive";
-  }
-
-  if (delta < 0) {
-    return "is-negative";
-  }
-
-  return "is-neutral";
-}
-
-function renderKpiImpact(state, decision, completed) {
-  return `
-    <dl class="decision-kpi-impact control-room-kpi-impact">
-      ${relevantKpis
-        .map((key) => {
-          const impact = decision.kpiChanges[key];
-          const recordedImpact = completed
-            ? getRecordedKpiImpact(state, controlRoomChallengeId, key)
-            : null;
-          const before = recordedImpact ? recordedImpact.before : state.kpis[key].current;
-          const after = recordedImpact
-            ? recordedImpact.after
-            : Math.max(0, Math.min(100, before + impact.delta));
-
-          return `
-            <div class="decision-kpi-impact__item">
-              <dt>${kpiDefinitions[key].label}</dt>
-              <dd>
-                <strong>${before}% <span aria-hidden="true">-></span> ${after}%</strong>
-                <span class="${getKpiChangeClass(impact.delta)}">${formatDelta(impact.delta)}</span>
-                <small>${impact.explanation}</small>
-              </dd>
-            </div>
-          `;
-        })
-        .join("")}
-    </dl>
-  `;
-}
-
 function renderOutcomeComparison() {
   return `
     <section class="control-room-comparison" aria-labelledby="controlRoomComparisonTitle">
@@ -579,7 +529,14 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
         <p class="decision-outcome__summary">${decision.outcomeSummary}</p>
       </div>
       <p class="decision-outcome__detail">${decision.outcomeDetail}</p>
-      ${renderKpiImpact(state, decision, completed)}
+      ${renderDecisionKpiImpact({
+        state,
+        challengeId: controlRoomChallengeId,
+        decision,
+        kpiKeys: relevantKpis,
+        completed,
+        className: "control-room-kpi-impact",
+      })}
       ${
         completed
           ? `

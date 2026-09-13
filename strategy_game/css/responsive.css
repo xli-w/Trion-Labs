@@ -286,8 +286,8 @@
     display: none;
   }
 
-  .operations-node:nth-child(2),
-  .operations-node:nth-child(5) {
+  .operations-node--quality,
+  .operations-node--people {
     transform: none;
   }
 

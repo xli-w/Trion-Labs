@@ -78,19 +78,12 @@ export function completeChallenge({
   challengeId,
   decision,
   kpiChanges,
-  resourceCosts,
-  unlockIds,
-}) {
+  additionalUnlockIds,
+} = {}) {
   const challenge = getChallengeById(challengeId);
 
   if (!challenge) {
     throw new Error(`Unknown challenge: ${challengeId}`);
-  }
-
-  const readiness = getChallengeReadiness(challengeId, getState());
-
-  if (!readiness.canLaunch) {
-    throw new Error(`${challenge.title} cannot be completed before its prerequisite.`);
   }
 
   return dispatch({
@@ -98,8 +91,7 @@ export function completeChallenge({
     challengeId,
     decision,
     kpiChanges,
-    resourceCosts,
-    unlockIds,
+    additionalUnlockIds,
   });
 }
 

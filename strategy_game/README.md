@@ -50,9 +50,10 @@ development server with the same document root will also work.
 
 Each mini-game module owns only its focused interaction. On a completed
 decision it can call `completeChallenge()` from `js/game.js` with
-the challenge id, KPI changes, resource costs, decision record, and unlocked
-capability ids. The state store then records the result and updates the
-aggregate operational score and capability stage.
+the challenge id, decision record, KPI changes, and any additional method
+unlocks. The state store resolves the challenge's named capability, then
+records the result and updates the aggregate operational score and capability
+stage.
 
 ## Implemented interactive challenges
 

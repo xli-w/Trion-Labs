@@ -163,8 +163,7 @@ export const controlRoomDecisions = Object.freeze([
         explanation: "The customer impact is visible early enough to coordinate the response.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze(["measure", "central-operational-view"]),
+    additionalUnlockIds: Object.freeze(["measure"]),
     announcement:
       "The shared exception now reaches management, production, and planning in the context each needs. Central Operational View is available.",
   }),
@@ -194,8 +193,6 @@ export const controlRoomDecisions = Object.freeze([
         explanation: "The customer response is no easier to coordinate.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "The page contains more information, but the immediate material and delivery decision is still obscured.",
   }),
@@ -225,8 +222,6 @@ export const controlRoomDecisions = Object.freeze([
         explanation: "The customer response still depends on a manual comparison of updates.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "The reports are tailored, but management, production, and planning still do not share the same exception context.",
   }),

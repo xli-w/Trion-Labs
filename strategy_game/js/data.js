@@ -39,12 +39,12 @@ export const kpiDefinitions = Object.freeze({
 });
 
 export const initialKpis = Object.freeze({
-  throughput: { baseline: 58, current: 58, previous: 58, target: 78, unit: "%" },
-  quality: { baseline: 72, current: 72, previous: 72, target: 88, unit: "%" },
-  delivery: { baseline: 64, current: 64, previous: 64, target: 86, unit: "%" },
-  productivity: { baseline: 55, current: 55, previous: 55, target: 76, unit: "%" },
-  visibility: { baseline: 35, current: 35, previous: 35, target: 80, unit: "%" },
-  cost: { baseline: 68, current: 68, previous: 68, target: 82, unit: "%" },
+  throughput: { baseline: 58, current: 58, target: 78, unit: "%" },
+  quality: { baseline: 72, current: 72, target: 88, unit: "%" },
+  delivery: { baseline: 64, current: 64, target: 86, unit: "%" },
+  productivity: { baseline: 55, current: 55, target: 76, unit: "%" },
+  visibility: { baseline: 35, current: 35, target: 80, unit: "%" },
+  cost: { baseline: 68, current: 68, target: 82, unit: "%" },
 });
 
 export const capabilityStages = Object.freeze([
@@ -350,10 +350,6 @@ export function createInitialGameState() {
     operationalScore: calculateOperationalScore(kpis),
     capabilityStage: 1,
     kpis,
-    resources: {
-      improvementCapacity: 3,
-      integrationCapacity: 2,
-    },
     missingMinutes: createInitialMissingMinutesState(),
     qualityLoop: createInitialQualityLoopState(),
     spreadsheetShuffle: createInitialSpreadsheetShuffleState(),
@@ -361,6 +357,7 @@ export function createInitialGameState() {
     controlRoom: createInitialControlRoomState(),
     decisions: [],
     notifications: [],
+    nextNotificationId: 0,
     announcement: "Welcome to Trion Labs.",
   };
 }

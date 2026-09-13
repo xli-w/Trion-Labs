@@ -247,14 +247,10 @@ export const spreadsheetShuffleAutomationOptions = Object.freeze([
         explanation: "A more reliable schedule update helps teams see commitments earlier.",
       }),
     }),
-    resourceCosts: Object.freeze({
-      improvementCapacity: 1,
-    }),
-    unlockIds: Object.freeze([
+    additionalUnlockIds: Object.freeze([
       "simplify",
       "standardise",
       "automate",
-      "workflow-automation",
     ]),
     announcement:
       "The standard planning update now carries connected context into the schedule. Workflow Automation is available.",

@@ -74,16 +74,25 @@ export function render(state) {
 
 export function bindInteractions(handlers) {
   appRoot.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) {
+      return;
+    }
+
     const control = event.target.closest("[data-action]");
 
     if (!control || !appRoot.contains(control)) {
       return;
     }
 
-    const handler = handlers[control.dataset.action];
+    const action = control.dataset.action;
+    const handler = handlers[action];
 
-    if (!handler) {
-      return;
+    if (
+      !action ||
+      !Object.prototype.hasOwnProperty.call(handlers, action) ||
+      typeof handler !== "function"
+    ) {
+      throw new Error(`No interaction handler is registered for ${action ?? "this control"}.`);
     }
 
     event.preventDefault();

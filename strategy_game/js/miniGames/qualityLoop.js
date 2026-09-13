@@ -180,11 +180,7 @@ export const qualityLoopDecisions = Object.freeze([
         explanation: "Teams spend less time matching separate records before acting.",
       }),
     }),
-    resourceCosts: Object.freeze({
-      improvementCapacity: 1,
-      integrationCapacity: 1,
-    }),
-    unlockIds: Object.freeze(["connect", "production-quality-integration"]),
+    additionalUnlockIds: Object.freeze(["connect"]),
     announcement:
       "Production and quality now share case context. The defect trace is visible, and Production + Quality Integration is available.",
   }),
@@ -214,8 +210,6 @@ export const qualityLoopDecisions = Object.freeze([
         explanation: "Teams still reconcile the production and quality records manually.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "Quality recording is more consistent, but the production and material context remains disconnected.",
   }),
@@ -245,8 +239,6 @@ export const qualityLoopDecisions = Object.freeze([
         explanation: "Manual reconciliation is still required before the team can respond.",
       }),
     }),
-    resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze([]),
     announcement:
       "The defect rate is more widely visible, but the disconnected evidence still cannot point the team to its source.",
   }),

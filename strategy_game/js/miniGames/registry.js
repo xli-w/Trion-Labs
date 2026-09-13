@@ -1,46 +1,47 @@
 import { challenges, getChallengeById } from "../data.js";
-import { missingMinutesChallengeId, missingMinutesModule } from "./missingMinutes.js";
-import { qualityLoopChallengeId, qualityLoopModule } from "./qualityLoop.js";
-import {
-  spreadsheetShuffleChallengeId,
-  spreadsheetShuffleModule,
-} from "./spreadsheetShuffle.js";
-import {
-  deliveryDominoChallengeId,
-  deliveryDominoModule,
-} from "./deliveryDomino.js";
-import { controlRoomChallengeId, controlRoomModule } from "./controlRoom.js";
+import { missingMinutesModule } from "./missingMinutes.js";
+import { qualityLoopModule } from "./qualityLoop.js";
+import { spreadsheetShuffleModule } from "./spreadsheetShuffle.js";
+import { deliveryDominoModule } from "./deliveryDomino.js";
+import { controlRoomModule } from "./controlRoom.js";
 
-function createChallengeContract(challenge) {
-  return Object.freeze({
-    id: challenge.id,
-    interaction: challenge.mechanic,
-    createInitialState() {
-      return {
-        phase: "briefing",
-        selections: [],
-        decision: null,
-      };
-    },
-  });
-}
+const challengeModules = Object.freeze([
+  missingMinutesModule,
+  qualityLoopModule,
+  spreadsheetShuffleModule,
+  deliveryDominoModule,
+  controlRoomModule,
+]);
 
 const registeredModules = new Map(
-  challenges.map((challenge) => [
-    challenge.id,
-    challenge.id === missingMinutesChallengeId
-      ? missingMinutesModule
-      : challenge.id === qualityLoopChallengeId
-        ? qualityLoopModule
-      : challenge.id === spreadsheetShuffleChallengeId
-        ? spreadsheetShuffleModule
-      : challenge.id === deliveryDominoChallengeId
-        ? deliveryDominoModule
-      : challenge.id === controlRoomChallengeId
-        ? controlRoomModule
-      : createChallengeContract(challenge),
-  ]),
+  challengeModules.map((challengeModule) => [challengeModule.id, challengeModule]),
 );
+
+function validateChallengeRegistry() {
+  const challengeIds = new Set(challenges.map((challenge) => challenge.id));
+
+  if (challengeIds.size !== challenges.length) {
+    throw new Error("Challenge definitions must use unique ids.");
+  }
+
+  if (registeredModules.size !== challengeModules.length) {
+    throw new Error("Challenge modules must use unique ids.");
+  }
+
+  for (const challenge of challenges) {
+    if (!registeredModules.has(challenge.id)) {
+      throw new Error(`No focused module is registered for: ${challenge.id}`);
+    }
+  }
+
+  for (const challengeModule of challengeModules) {
+    if (!challengeIds.has(challengeModule.id)) {
+      throw new Error(`Module ${challengeModule.id} does not have a challenge definition.`);
+    }
+  }
+}
+
+validateChallengeRegistry();
 
 export function getChallengeModule(challengeId) {
   const challengeModule = registeredModules.get(challengeId);
@@ -64,6 +65,10 @@ export function getChallengeReadiness(challengeId, state) {
     (id) => !state.completedChallenges.includes(id),
   );
   const prerequisite = prerequisiteId ? getChallengeById(prerequisiteId) : null;
+
+  if (prerequisiteId && !prerequisite) {
+    throw new Error(`${challenge.title} has an unknown prerequisite: ${prerequisiteId}`);
+  }
 
   return {
     completed,

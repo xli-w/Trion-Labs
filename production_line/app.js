@@ -1,4 +1,4 @@
-import { initializeTheme, syncThemeToggle, toggleTheme } from "../theme.js";
+import { initializeTheme, syncThemeToggle, toggleTheme } from "./theme.js";
 
 initializeTheme();
 
@@ -55,11 +55,14 @@ const stations = [
     activeDetail: "Routing Finished Packs",
     next: "Infeed",
     handoffDetail: "The route is ready for the next ingredient set.",
-    eventTitle: "A finished pack reached Dispatch",
-    eventCopy: "The pallet lane accepted the next completed pack.",
+    eventTitle: "Dispatch cleared a finished pack",
+    eventCopy: "The pallet lane routed the completed pack and released the line for the next ingredient set.",
     eventTone: "event-mark-green",
   },
 ];
+
+const batchTarget = 400;
+const initialSelectedStation = "Blend";
 
 const initialValues = {
   completed: 128,
@@ -68,17 +71,22 @@ const initialValues = {
   step: 0,
 };
 
-const state = {
-  ...initialValues,
-  running: false,
-  selectedStation: "Blend",
-  hasInspectedStation: false,
-  hasCheckedQuality: false,
-  hasRunLine: false,
-  missionCompleteAnnounced: false,
-  timer: null,
-  toastTimer: null,
-};
+function createInitialState() {
+  return {
+    ...initialValues,
+    running: false,
+    selectedStation: initialSelectedStation,
+    hasInspectedStation: false,
+    hasCheckedQuality: false,
+    hasRunLine: false,
+    hasAdvancedHandoff: false,
+    missionCompleteAnnounced: false,
+    timer: null,
+    toastTimer: null,
+  };
+}
+
+const state = createInitialState();
 
 const elements = {
   toggleLine: document.querySelector("#toggleLine"),
@@ -101,6 +109,7 @@ const elements = {
   eventCount: document.querySelector("#eventCount"),
   batchProgress: document.querySelector("#batchProgress"),
   batchProgressText: document.querySelector("#batchProgressText"),
+  batchState: document.querySelector("#batchState"),
   completedPacks: document.querySelector("#completedPacks"),
   qualityMetric: document.querySelector("#qualityMetric"),
   lineRate: document.querySelector("#lineRate"),
@@ -143,8 +152,66 @@ const initialEvents = [
   },
 ];
 
+function stationForId(stationId) {
+  return stations.find((station) => station.id === stationId);
+}
+
 function currentStation() {
-  return stations[state.step];
+  const station = stations[state.step];
+
+  if (!station) {
+    throw new Error(`Invalid production step: ${state.step}`);
+  }
+
+  return station;
+}
+
+function selectedStation() {
+  const station = stationForId(state.selectedStation);
+
+  if (!station) {
+    throw new Error(`Invalid selected station: ${state.selectedStation}`);
+  }
+
+  return station;
+}
+
+function currentPace() {
+  const pace = paceSettings[state.pace];
+
+  if (!pace) {
+    throw new Error(`Invalid production pace: ${state.pace}`);
+  }
+
+  return pace;
+}
+
+function isValidPace(pace) {
+  return Number.isInteger(pace) && Boolean(paceSettings[pace]);
+}
+
+function isBatchComplete() {
+  return state.completed >= batchTarget;
+}
+
+function hasActiveRoute() {
+  return state.running || state.hasAdvancedHandoff;
+}
+
+function stopTimer() {
+  if (state.timer !== null) {
+    window.clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+function clearToast() {
+  if (state.toastTimer !== null) {
+    window.clearTimeout(state.toastTimer);
+    state.toastTimer = null;
+  }
+
+  elements.toast.classList.remove("visible");
 }
 
 function formatNumber(value) {
@@ -152,7 +219,7 @@ function formatNumber(value) {
 }
 
 function batchPercent() {
-  return Math.min(100, (state.completed / 400) * 100);
+  return Math.min(100, (state.completed / batchTarget) * 100);
 }
 
 function setText(element, value) {
@@ -161,9 +228,9 @@ function setText(element, value) {
 
 function updateMetrics() {
   const progress = batchPercent();
-  const pace = paceSettings[state.pace];
+  const pace = currentPace();
 
-  setText(elements.batchProgressText, `${Math.round(progress)}%`);
+  setText(elements.batchProgressText, `${Math.floor(progress)}%`);
   elements.batchProgress.style.width = `${progress}%`;
   elements.completedPacks.innerHTML = `${formatNumber(state.completed)} <small>packs</small>`;
   elements.qualityMetric.innerHTML = `${state.quality.toFixed(1)}<small>%</small>`;
@@ -171,7 +238,7 @@ function updateMetrics() {
 }
 
 function updatePace() {
-  const pace = paceSettings[state.pace];
+  const pace = currentPace();
   const progress = ((state.pace - 1) / 2) * 100;
 
   elements.pace.value = String(state.pace);
@@ -182,43 +249,67 @@ function updatePace() {
 
 function updateRunState() {
   const running = state.running;
+  const batchComplete = isBatchComplete();
 
   elements.productionFloor.classList.toggle("is-running", running);
   elements.toggleLine.classList.toggle("is-running", running);
   elements.lineState.classList.toggle("is-running", running);
   elements.runBadge.classList.toggle("is-running", running);
-  elements.toggleLineLabel.textContent = running ? "Pause Line" : "Start Line";
-  elements.lineStateText.textContent = running ? "Running" : "Paused";
-  elements.runBadge.lastElementChild.textContent = running ? "Running" : "Ready";
-  elements.advanceStep.disabled = running;
+  elements.toggleLine.disabled = batchComplete;
+  elements.pace.disabled = batchComplete;
+  elements.advanceStep.disabled = running || batchComplete;
+  elements.qualityCheck.disabled = state.hasCheckedQuality || batchComplete;
+  elements.toggleLineLabel.textContent = batchComplete ? "Batch Complete" : running ? "Pause Line" : "Start Line";
+  elements.lineStateText.textContent = batchComplete ? "Complete" : running ? "Running" : "Paused";
+  elements.runBadge.lastElementChild.textContent = batchComplete ? "Complete" : running ? "Running" : "Ready";
+  elements.batchState.textContent = batchComplete ? "Complete" : "In Production";
+  elements.advanceStep.textContent = batchComplete ? "Batch Complete" : "Advance One Handoff";
+  elements.qualityCheck.textContent = state.hasCheckedQuality ? "Quality Checked" : "Run Quality Check";
 }
 
 function updateStages() {
   const activeStation = currentStation();
+  const batchComplete = isBatchComplete();
+  const routeActive = hasActiveRoute();
 
-  elements.stageButtons.forEach((button, index) => {
-    const station = stations[index];
-    const isActive = state.running && station.id === activeStation.id;
-    const isComplete = state.running && index < state.step;
+  elements.stageButtons.forEach((button) => {
+    const station = stationForId(button.dataset.station);
+
+    if (!station) {
+      throw new Error(`Unknown station control: ${button.dataset.station}`);
+    }
+
+    const stationIndex = stations.indexOf(station);
+    const isCurrent = routeActive && !batchComplete && station.id === activeStation.id;
+    const isComplete = batchComplete || (routeActive && stationIndex < state.step);
     const detail = button.querySelector(".stage-detail");
     const status = button.querySelector(".stage-status");
 
-    button.classList.toggle("is-active", isActive);
+    button.classList.toggle("is-active", isCurrent);
     button.classList.toggle("is-complete", isComplete);
-    detail.textContent = isActive ? station.activeDetail : station.idleDetail;
-    status.textContent = isActive ? "Working" : isComplete ? "Done" : "Ready";
+    detail.textContent = isCurrent && state.running ? station.activeDetail : station.idleDetail;
+    status.textContent = isCurrent ? (state.running ? "Working" : "Paused") : isComplete ? "Done" : "Ready";
   });
+
+  if (batchComplete) {
+    elements.nextHandoff.textContent = "Batch complete";
+    elements.handoffDetail.textContent = `${formatNumber(batchTarget)} packs have reached Dispatch. Reset the line to begin a new batch.`;
+    elements.lineFooterMessage.textContent = "Batch target reached. Reset the line to begin again.";
+    return;
+  }
 
   elements.nextHandoff.textContent = `${activeStation.id} to ${activeStation.next}`;
   elements.handoffDetail.textContent = activeStation.handoffDetail;
   elements.lineFooterMessage.textContent = state.running
     ? `${activeStation.id} is active. The next handoff is visible on the line.`
+    : routeActive
+      ? `${activeStation.id} is paused. The next handoff is visible on the line.`
     : "Select a station to see what it is doing.";
 }
 
 function updateInspector() {
-  const station = stations.find((item) => item.id === state.selectedStation);
-  const isActive = station.id === currentStation().id && state.running;
+  const station = selectedStation();
+  const isCurrent = station.id === currentStation().id && hasActiveRoute();
 
   elements.stageButtons.forEach((button) => {
     const selected = button.dataset.station === station.id;
@@ -229,7 +320,8 @@ function updateInspector() {
   elements.inspectorNumber.textContent = station.number;
   elements.inspectorTitle.textContent = station.id;
   elements.inspectorDescription.textContent = station.description;
-  elements.inspectorTask.textContent = isActive ? station.activeDetail : station.idleDetail;
+  elements.inspectorTask.textContent =
+    isCurrent && state.running ? station.activeDetail : station.idleDetail;
   elements.inspectorRange.textContent = station.range;
   elements.inspectorContext.textContent = station.context;
 }
@@ -289,12 +381,18 @@ function addEvent(event) {
 }
 
 function showToast(message) {
-  window.clearTimeout(state.toastTimer);
+  clearToast();
   elements.toast.textContent = message;
   elements.toast.classList.add("visible");
   state.toastTimer = window.setTimeout(() => {
     elements.toast.classList.remove("visible");
+    state.toastTimer = null;
   }, 3000);
+}
+
+function reportUnavailableAction(message) {
+  elements.lineMessage.textContent = message;
+  showToast(message);
 }
 
 function updateAll() {
@@ -306,18 +404,35 @@ function updateAll() {
 }
 
 function advanceLine(manual = false) {
+  if (isBatchComplete()) {
+    if (manual) {
+      reportUnavailableAction("Batch B-241 is complete. Reset the line to begin a new batch.");
+    }
+
+    return false;
+  }
+
+  if (manual && state.running) {
+    reportUnavailableAction("Pause the line before advancing one handoff manually.");
+    return false;
+  }
+
+  if (!manual && !state.running) {
+    stopTimer();
+    return false;
+  }
+
   const station = currentStation();
+  let batchComplete = false;
+  state.hasAdvancedHandoff = true;
 
   if (station.id === "Dispatch") {
-    state.completed += 1;
+    state.completed = Math.min(batchTarget, state.completed + 1);
+    batchComplete = isBatchComplete();
   }
 
   state.step = (state.step + 1) % stations.length;
   const nextStation = currentStation();
-
-  updateMetrics();
-  updateStages();
-  updateInspector();
 
   const event = {
     title: station.eventTitle,
@@ -326,18 +441,49 @@ function advanceLine(manual = false) {
   };
   addEvent(event);
 
+  if (batchComplete) {
+    completeBatch();
+    return "complete";
+  }
+
+  updateMetrics();
+  updateStages();
+  updateInspector();
+
   const message = manual
     ? `Advanced from ${station.id} to ${nextStation.id}.`
     : `${station.id} handed the product to ${nextStation.id}.`;
   elements.lineMessage.textContent = message;
+
+  return "advanced";
+}
+
+function completeBatch() {
+  state.running = false;
+  stopTimer();
+  updateAll();
+
+  const message = `Batch B-241 has reached the target of ${formatNumber(batchTarget)} packs. Reset the line to begin a new batch.`;
+  elements.lineMessage.textContent = message;
+  showToast(`Batch target reached at ${formatNumber(batchTarget)} packs.`);
 }
 
 function startTimer() {
-  window.clearInterval(state.timer);
-  state.timer = window.setInterval(() => advanceLine(), paceSettings[state.pace].interval);
+  stopTimer();
+
+  if (!state.running || isBatchComplete()) {
+    return;
+  }
+
+  state.timer = window.setInterval(() => advanceLine(), currentPace().interval);
 }
 
 function toggleLine() {
+  if (isBatchComplete()) {
+    reportUnavailableAction("Batch B-241 is complete. Reset the line to begin a new batch.");
+    return;
+  }
+
   state.running = !state.running;
 
   if (state.running) {
@@ -350,8 +496,7 @@ function toggleLine() {
       tone: "event-mark-blue",
     });
   } else {
-    window.clearInterval(state.timer);
-    state.timer = null;
+    stopTimer();
     elements.lineMessage.textContent = "The line is paused at the current handoff.";
   }
 
@@ -366,18 +511,69 @@ function toggleColorTheme() {
   syncThemeToggle(elements.themeToggle);
 }
 
+function setPace(value) {
+  const pace = Number(value);
+
+  if (!isValidPace(pace)) {
+    elements.pace.value = String(state.pace);
+    reportUnavailableAction("Select a valid production pace.");
+    return false;
+  }
+
+  if (isBatchComplete()) {
+    elements.pace.value = String(state.pace);
+    reportUnavailableAction("Batch B-241 is complete. Reset the line to begin a new batch.");
+    return false;
+  }
+
+  state.pace = pace;
+  updatePace();
+
+  if (state.running) {
+    startTimer();
+  }
+
+  showToast(`${currentPace().label} pace selected.`);
+  return true;
+}
+
 function selectStation(stationId) {
-  state.selectedStation = stationId;
+  const station = stationForId(stationId);
+
+  if (!station) {
+    reportUnavailableAction("That station is unavailable. Select a station on this line.");
+    return false;
+  }
+
+  state.selectedStation = station.id;
   state.hasInspectedStation = true;
   updateInspector();
   updateMission();
-  elements.lineFooterMessage.textContent = `${stationId} is selected. Its current task is shown below.`;
+
+  if (isBatchComplete()) {
+    updateStages();
+  } else {
+    elements.lineFooterMessage.textContent = `${station.id} is selected. Its current task is shown below.`;
+  }
+
+  return true;
 }
 
 function runQualityCheck() {
+  if (isBatchComplete()) {
+    reportUnavailableAction("Batch B-241 is complete. Reset the line to begin a new batch.");
+    return false;
+  }
+
+  if (state.hasCheckedQuality) {
+    reportUnavailableAction("Quality has already been checked for this batch.");
+    return false;
+  }
+
   state.quality = Math.min(99.4, state.quality + 0.2);
   state.hasCheckedQuality = true;
   updateMetrics();
+  updateRunState();
   addEvent({
     title: "Quality check passed",
     copy: `First-pass yield is now reading ${state.quality.toFixed(1)}%.`,
@@ -386,21 +582,14 @@ function runQualityCheck() {
   elements.lineMessage.textContent = "Quality check complete. All sampled packs are within range.";
   showToast("Quality check passed. The line is within range.");
   updateMission();
+
+  return true;
 }
 
 function resetLine() {
-  window.clearInterval(state.timer);
-  state.timer = null;
-  state.running = false;
-  state.completed = initialValues.completed;
-  state.quality = initialValues.quality;
-  state.pace = initialValues.pace;
-  state.step = initialValues.step;
-  state.selectedStation = "Blend";
-  state.hasInspectedStation = false;
-  state.hasCheckedQuality = false;
-  state.hasRunLine = false;
-  state.missionCompleteAnnounced = false;
+  stopTimer();
+  clearToast();
+  Object.assign(state, createInitialState());
 
   renderEvents(initialEvents);
   updateAll();
@@ -417,19 +606,13 @@ elements.stageButtons.forEach((button) => {
 });
 
 elements.pace.addEventListener("input", () => {
-  state.pace = Number(elements.pace.value);
-  updatePace();
-
-  if (state.running) {
-    startTimer();
-  }
-
-  showToast(`${paceSettings[state.pace].label} pace selected.`);
+  setPace(elements.pace.value);
 });
 
 elements.advanceStep.addEventListener("click", () => {
-  advanceLine(true);
-  showToast("One handoff advanced.");
+  if (advanceLine(true) === "advanced") {
+    showToast("One handoff advanced.");
+  }
 });
 
 elements.qualityCheck.addEventListener("click", runQualityCheck);

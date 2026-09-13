@@ -1,4 +1,4 @@
-import { getChallengeById, kpiDefinitions } from "../data.js";
+import { getChallengeById } from "../data.js";
 import {
   getMissingMinutesDecisionById,
   getMissingMinutesEventById,
@@ -11,8 +11,8 @@ import {
 import {
   renderChallengeJourney,
   renderCompletionAction,
+  renderDecisionKpiImpact,
   renderFooter,
-  getRecordedKpiImpact,
   renderHeader,
 } from "./shared.js";
 
@@ -226,45 +226,6 @@ function renderDecisionChoices() {
   `;
 }
 
-function formatDelta(delta) {
-  if (delta === 0) {
-    return "No immediate change";
-  }
-
-  return `${delta > 0 ? "+" : ""}${delta} pts`;
-}
-
-function renderKpiImpact(state, decision, completed) {
-  return `
-    <dl class="decision-kpi-impact">
-      ${relevantKpis
-        .map((key) => {
-          const impact = decision.kpiChanges[key];
-          const recordedImpact = completed
-            ? getRecordedKpiImpact(state, missingMinutesChallengeId, key)
-            : null;
-          const before = recordedImpact ? recordedImpact.before : state.kpis[key].current;
-          const after = recordedImpact
-            ? recordedImpact.after
-            : Math.max(0, Math.min(100, before + impact.delta));
-          const changeClass = impact.delta > 0 ? "is-positive" : "is-neutral";
-
-          return `
-            <div class="decision-kpi-impact__item">
-              <dt>${kpiDefinitions[key].label}</dt>
-              <dd>
-                <strong>${before}% <span aria-hidden="true">-></span> ${after}%</strong>
-                <span class="${changeClass}">${formatDelta(impact.delta)}</span>
-                <small>${impact.explanation}</small>
-              </dd>
-            </div>
-          `;
-        })
-        .join("")}
-    </dl>
-  `;
-}
-
 function renderDecisionOutcome(state, decision, challenge, completed) {
   const outcomeLabel = completed ? "Outcome and measure" : "Decision consequence";
   const outcomeClass = completed ? "is-complete" : "is-incomplete";
@@ -284,7 +245,13 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
         <p class="decision-outcome__summary">${decision.outcomeSummary}</p>
       </div>
       <p class="decision-outcome__detail">${decision.outcomeDetail}</p>
-      ${renderKpiImpact(state, decision, completed)}
+      ${renderDecisionKpiImpact({
+        state,
+        challengeId: missingMinutesChallengeId,
+        decision,
+        kpiKeys: relevantKpis,
+        completed,
+      })}
       <p class="scenario-disclaimer">
         Illustrative scenario outcome. These changes show the relationship between better event context and the next operational decision; they are not a forecast.
       </p>

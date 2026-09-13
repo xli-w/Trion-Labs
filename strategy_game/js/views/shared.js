@@ -1,4 +1,9 @@
-import { challenges, hasCompletedExperience, navigationItems } from "../data.js";
+import {
+  challenges,
+  hasCompletedExperience,
+  kpiDefinitions,
+  navigationItems,
+} from "../data.js";
 import { isDarkTheme } from "../../../theme.js";
 
 function getChallengeIndex(challenge) {
@@ -25,6 +30,99 @@ export function getRecordedKpiImpact(state, challengeId, kpiKey) {
   }
 
   return kpiImpact;
+}
+
+function formatKpiDelta(delta) {
+  if (delta === 0) {
+    return "No immediate change";
+  }
+
+  return `${delta > 0 ? "+" : ""}${delta} pts`;
+}
+
+function getKpiChangeClass(delta) {
+  if (delta > 0) {
+    return "is-positive";
+  }
+
+  if (delta < 0) {
+    return "is-negative";
+  }
+
+  return "is-neutral";
+}
+
+function getDisplayedKpiImpact(state, challengeId, kpiKey, impact, completed) {
+  const kpi = state.kpis[kpiKey];
+
+  if (!kpi || !kpiDefinitions[kpiKey]) {
+    throw new Error(`Unknown KPI impact key: ${kpiKey}`);
+  }
+
+  if (completed) {
+    return getRecordedKpiImpact(state, challengeId, kpiKey);
+  }
+
+  return {
+    before: kpi.current,
+    after: Math.max(0, Math.min(100, kpi.current + impact.delta)),
+  };
+}
+
+export function renderDecisionKpiImpact({
+  state,
+  challengeId,
+  decision,
+  kpiKeys,
+  completed,
+  className = "",
+}) {
+  if (!Array.isArray(kpiKeys) || kpiKeys.length === 0) {
+    throw new Error("A decision KPI impact requires at least one KPI key.");
+  }
+
+  if (!decision || typeof decision !== "object") {
+    throw new Error("A decision KPI impact requires a decision.");
+  }
+
+  const modifierClass = className ? ` ${className}` : "";
+
+  return `
+    <dl class="decision-kpi-impact${modifierClass}">
+      ${kpiKeys
+        .map((kpiKey) => {
+          const impact = decision.kpiChanges?.[kpiKey];
+
+          if (
+            !impact ||
+            !Number.isFinite(impact.delta) ||
+            typeof impact.explanation !== "string"
+          ) {
+            throw new Error(`Decision KPI impact is missing valid ${kpiKey} data.`);
+          }
+
+          const displayedImpact = getDisplayedKpiImpact(
+            state,
+            challengeId,
+            kpiKey,
+            impact,
+            completed,
+          );
+
+          return `
+            <div class="decision-kpi-impact__item">
+              <dt>${kpiDefinitions[kpiKey].label}</dt>
+              <dd>
+                <strong>${displayedImpact.before}% <span aria-hidden="true">-></span> ${displayedImpact.after}%</strong>
+                <span class="${getKpiChangeClass(impact.delta)}">${formatKpiDelta(impact.delta)}</span>
+                <small>${impact.explanation}</small>
+              </dd>
+            </div>
+          `;
+        })
+        .join("")}
+    </dl>
+  `;
 }
 
 function renderBrand() {

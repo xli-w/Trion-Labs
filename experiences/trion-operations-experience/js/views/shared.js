@@ -406,6 +406,7 @@ export function renderHeader(state, screen) {
 
   return `
     <header class="site-header">
+      <a class="skip-link" href="#screen-title">Skip to main content</a>
       ${renderBrand()}
       ${navigation}
       ${actions}

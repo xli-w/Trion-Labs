@@ -50,7 +50,8 @@ The shared `theme.js` utility remains available from the repository root.
   the before-and-after operating-model renderer, and focused renderers for
   implemented mini-games, plus the Trion approach renderer. `js/ui.js`
   orchestrates those screens and translates DOM actions into controller
-  callbacks.
+  callbacks. The shared header includes a keyboard skip route to the current
+  screen heading.
 - `js/miniGames/registry.js` registers the five challenge contracts and exposes
   their progression rules without coupling their focused mechanics to the shell.
 - `js/miniGames/missingMinutes.js` owns the first challenge's illustrative

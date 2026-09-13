@@ -67,6 +67,27 @@ a:focus-visible {
   outline-offset: 3px;
 }
 
+.skip-link {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 30;
+  padding: 9px 12px;
+  border: 1px solid var(--trion-border-strong);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--trion-purple);
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 h1,
 h2,
 h3,

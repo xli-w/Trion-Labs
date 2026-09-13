@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A self-contained Trion Fabric Labs mini production line simulation."
+    />
+    <title>Trion Fabric Labs | Mini Production Line</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="labs-shell">
+      <header class="app-header">
+        <a class="brand" href="#lineSimulator" aria-label="Trion Fabric Labs home">
+          <svg class="brand-mark" viewBox="0 0 36 36" aria-hidden="true">
+            <path d="M18 2 32 10v16l-14 8L4 26V10L18 2Z" />
+            <path d="M18 9v18M10 14h16M10 22h16" />
+            <circle cx="18" cy="9" r="2.2" />
+            <circle cx="10" cy="14" r="2.2" />
+            <circle cx="26" cy="14" r="2.2" />
+            <circle cx="10" cy="22" r="2.2" />
+            <circle cx="26" cy="22" r="2.2" />
+            <circle cx="18" cy="27" r="2.2" />
+          </svg>
+          <span class="brand-copy">
+            <strong>trion</strong>
+            <span>Fabric / Labs</span>
+          </span>
+        </a>
+
+        <div class="header-actions">
+          <span class="sandbox-badge"><i></i> Sandbox Mode</span>
+          <button class="reset-button" id="resetLine" type="button">Reset Line</button>
+        </div>
+      </header>
+
+      <section class="intro-grid">
+        <div class="intro-copy">
+          <p class="eyebrow">Mini Production Line</p>
+          <h1>Make Every Handoff<br /><em>Easy to See.</em></h1>
+          <p class="intro-text">
+            A simple, fictional production line that shows how one shared view
+            can make the next best action clear.
+          </p>
+
+          <div class="line-actions">
+            <button class="primary-button" id="toggleLine" type="button">
+              <span class="button-icon" aria-hidden="true"></span>
+              <span id="toggleLineLabel">Start Line</span>
+            </button>
+            <span class="line-state" id="lineState">
+              <i></i>
+              <span id="lineStateText">Paused</span>
+            </span>
+          </div>
+          <p class="line-message" id="lineMessage" aria-live="polite">
+            Ready to start batch B-241.
+          </p>
+          <section class="guided-demo" aria-labelledby="guidedDemoTitle">
+            <div class="guided-demo-heading">
+              <span id="guidedDemoTitle">Guided Demo</span>
+              <strong id="missionProgress" aria-live="polite">0 of 3 complete</strong>
+            </div>
+            <ol class="guided-steps">
+              <li data-mission-step="inspect"><span>1</span>Inspect a Station</li>
+              <li data-mission-step="quality"><span>2</span>Check Product Quality</li>
+              <li data-mission-step="run"><span>3</span>Run the Line</li>
+            </ol>
+          </section>
+        </div>
+
+        <section class="batch-card" aria-labelledby="batchTitle">
+          <div class="batch-heading">
+            <div>
+              <p class="card-label">Current Batch</p>
+              <h2 id="batchTitle">B-241</h2>
+            </div>
+            <span class="batch-chip">In Production</span>
+          </div>
+          <p class="product-name">Oat Bar, 42 g</p>
+
+          <dl class="batch-details">
+            <div>
+              <dt>Target</dt>
+              <dd>400 packs</dd>
+            </div>
+            <div>
+              <dt>Line</dt>
+              <dd>Line 01</dd>
+            </div>
+            <div>
+              <dt>Shift</dt>
+              <dd>Morning</dd>
+            </div>
+          </dl>
+
+          <div class="batch-progress">
+            <div>
+              <span>Batch Progress</span>
+              <strong id="batchProgressText">32%</strong>
+            </div>
+            <span class="progress-track" aria-hidden="true"><i id="batchProgress"></i></span>
+          </div>
+        </section>
+      </section>
+
+      <section class="simulator-layout" id="lineSimulator">
+        <section class="line-panel" aria-labelledby="lineTitle">
+          <header class="panel-heading">
+            <div>
+              <p class="card-label">Today's Route</p>
+              <h2 id="lineTitle">From Ingredient to Dispatch</h2>
+            </div>
+            <span class="run-badge" id="runBadge"><i></i><span>Ready</span></span>
+          </header>
+
+          <div class="production-floor" id="productionFloor">
+            <div class="floor-meta">
+              <span>One pack. Four handoffs. One shared view.</span>
+              <span class="floor-key"><i></i> Active Station</span>
+            </div>
+
+            <div class="context-strip" aria-label="Fabric context sources">
+              <span class="context-title">Fabric Context</span>
+              <span class="context-source context-source-planning"><i></i> Order + Recipe</span>
+              <span class="context-source context-source-machine"><i></i> Machine Signal</span>
+              <span class="context-source context-source-quality"><i></i> Quality Check</span>
+              <span class="context-source context-source-logistics"><i></i> Dispatch Status</span>
+            </div>
+
+            <div class="stage-row" aria-label="Production line stations">
+              <button class="stage" type="button" data-station="Infeed" aria-pressed="false">
+                <span class="stage-number">01</span>
+                <span class="station-icon station-icon-infeed" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 7h16v11H4zM8 4h8M8 12h.01M12 12h.01M16 12h.01M7 18v2m10-2v2" /></svg>
+                </span>
+                <span class="stage-name">Infeed</span>
+                <span class="stage-detail">Ingredients Staged</span>
+                <span class="stage-status">Ready</span>
+              </button>
+
+              <span class="connector" aria-hidden="true"></span>
+
+              <button class="stage selected" type="button" data-station="Blend" aria-pressed="true">
+                <span class="stage-number">02</span>
+                <span class="station-icon station-icon-blend" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M7 4h10M8 4v5l-3 8a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3l-3-8V4M9 13h6M10 17h4" /></svg>
+                </span>
+                <span class="stage-name">Blend</span>
+                <span class="stage-detail">Recipe Loaded</span>
+                <span class="stage-status">Ready</span>
+              </button>
+
+              <span class="connector" aria-hidden="true"></span>
+
+              <button class="stage" type="button" data-station="Pack" aria-pressed="false">
+                <span class="stage-number">03</span>
+                <span class="station-icon station-icon-pack" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="m5 8 7-4 7 4v8l-7 4-7-4zM5 8l7 4 7-4M12 12v8" /></svg>
+                </span>
+                <span class="stage-name">Pack</span>
+                <span class="stage-detail">Sealer Ready</span>
+                <span class="stage-status">Ready</span>
+              </button>
+
+              <span class="connector" aria-hidden="true"></span>
+
+              <button class="stage" type="button" data-station="Dispatch" aria-pressed="false">
+                <span class="stage-number">04</span>
+                <span class="station-icon station-icon-dispatch" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>
+                </span>
+                <span class="stage-name">Dispatch</span>
+                <span class="stage-detail">Pallet Lane Clear</span>
+                <span class="stage-status">Ready</span>
+              </button>
+            </div>
+
+            <div class="conveyor" aria-hidden="true">
+              <span class="conveyor-belt"></span>
+              <span class="pack-token token-one"><i></i><b>B</b></span>
+              <span class="pack-token token-two"><i></i><b>B</b></span>
+              <span class="pack-token token-three"><i></i><b>B</b></span>
+              <span class="pack-token token-four"><i></i><b>B</b></span>
+            </div>
+          </div>
+
+          <footer class="line-panel-footer">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span id="lineFooterMessage">Select a station to see what it is doing.</span>
+          </footer>
+        </section>
+
+        <aside class="control-panel" aria-labelledby="controlTitle">
+          <div>
+            <p class="card-label">Operate the Demo</p>
+            <h2 id="controlTitle">Set the Pace</h2>
+            <p class="control-intro">The simulation stays fictional, but the interactions are real.</p>
+          </div>
+
+          <div class="handoff-card">
+            <span>Next Handoff</span>
+            <strong id="nextHandoff">Infeed to Blend</strong>
+            <p id="handoffDetail">Ingredients are ready for the mixer.</p>
+          </div>
+
+          <label class="pace-control" for="pace">
+            <span>Production Pace <output id="paceValue">Standard</output></span>
+            <input id="pace" type="range" min="1" max="3" value="2" />
+            <span class="pace-labels"><small>Calm</small><small>Fast</small></span>
+          </label>
+
+          <div class="small-actions">
+            <button class="secondary-button" id="advanceStep" type="button">
+              Advance One Handoff
+            </button>
+            <button class="secondary-button" id="qualityCheck" type="button">
+              Run Quality Check
+            </button>
+          </div>
+
+          <section class="event-section" aria-labelledby="eventTitle">
+            <div class="event-heading">
+              <h3 id="eventTitle">Line Notes</h3>
+              <span id="eventCount">3 notes</span>
+            </div>
+            <ol class="event-list" id="eventList" aria-live="polite">
+              <li>
+                <span class="event-mark event-mark-green" aria-hidden="true"></span>
+                <div><strong>Batch B-241 is staged</strong><p>Ingredients are ready at Infeed.</p></div>
+                <time>Now</time>
+              </li>
+              <li>
+                <span class="event-mark event-mark-blue" aria-hidden="true"></span>
+                <div><strong>Recipe checked</strong><p>Blend has the correct specification.</p></div>
+                <time>2m</time>
+              </li>
+              <li>
+                <span class="event-mark event-mark-purple" aria-hidden="true"></span>
+                <div><strong>Dispatch lane clear</strong><p>There is space for the next pallet.</p></div>
+                <time>5m</time>
+              </li>
+            </ol>
+          </section>
+        </aside>
+      </section>
+
+      <section class="lower-grid">
+        <section class="snapshot-panel" aria-labelledby="snapshotTitle">
+          <div class="panel-heading compact">
+            <div>
+              <p class="card-label">Line Snapshot</p>
+              <h2 id="snapshotTitle">A Clear View of This Run</h2>
+            </div>
+            <span class="snapshot-time">Updated Now</span>
+          </div>
+
+          <dl class="metrics">
+            <div>
+              <dt>Completed</dt>
+              <dd id="completedPacks">128 <small>packs</small></dd>
+            </div>
+            <div>
+              <dt>First-Pass Yield</dt>
+              <dd id="qualityMetric">98.6<small>%</small></dd>
+            </div>
+            <div>
+              <dt>Line Rate</dt>
+              <dd id="lineRate">32 <small>/ min</small></dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="inspector-panel" aria-labelledby="inspectorTitle">
+          <div class="inspector-number" id="inspectorNumber">02</div>
+          <div class="inspector-copy">
+            <p class="card-label">Selected Station</p>
+            <h2 id="inspectorTitle">Blend</h2>
+            <p id="inspectorDescription">The mixer combines the staged ingredients to the current recipe.</p>
+            <dl class="inspector-details">
+              <div><dt>Current Task</dt><dd id="inspectorTask">Recipe Loaded</dd></div>
+              <div><dt>Operating Range</dt><dd id="inspectorRange">18-22 rpm</dd></div>
+              <div><dt>Fabric Context</dt><dd id="inspectorContext">Machine Signal</dd></div>
+            </dl>
+          </div>
+        </section>
+      </section>
+
+      <footer class="app-footer">
+        <span>Trion Fabric Labs</span>
+        <span>Fictional data only. This page does not connect to plant systems.</span>
+      </footer>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

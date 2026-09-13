@@ -1,0 +1,341 @@
+@media (max-width: 1080px) {
+  .landing-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.68fr);
+    gap: 48px;
+  }
+
+  .landing-diagram {
+    min-height: 390px;
+  }
+
+  .diagram-node {
+    min-width: 100px;
+    padding: 11px 12px;
+  }
+
+  .loop-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .challenge-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 840px) {
+  .site-header {
+    flex-wrap: wrap;
+    padding: 18px 0;
+  }
+
+  .site-header > .header-actions {
+    margin-left: auto;
+  }
+
+  .lab-navigation {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    padding-top: 6px;
+  }
+
+  .navigation-button {
+    flex: 0 0 auto;
+  }
+
+  .landing-hero,
+  .lab-hero,
+  .section-heading,
+  .briefing-header,
+  .briefing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-hero {
+    min-height: auto;
+    padding-top: 72px;
+  }
+
+  .landing-diagram {
+    width: min(100%, 590px);
+    min-height: 420px;
+    margin: 0 auto;
+  }
+
+  .section-heading {
+    gap: 16px;
+  }
+
+  .operations-layout,
+  .capability-layout,
+  .performance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .map-insight {
+    min-height: 210px;
+  }
+
+  .capability-layout > .resource-card {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 0.4fr);
+    align-items: center;
+  }
+
+  .capability-layout > .resource-card > h3,
+  .capability-layout > .resource-card > p {
+    grid-column: 1;
+  }
+
+  .capability-layout > .resource-card > .resource-list {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+
+  .capability-group__header {
+    align-items: start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .capability-group__header p {
+    max-width: none;
+    text-align: left;
+  }
+
+  .briefing-status {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+
+  .briefing-status p {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 620px) {
+  :root {
+    --page-gutter: 18px;
+  }
+
+  .site-header {
+    gap: 14px;
+    min-height: auto;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .text-button {
+    display: none;
+  }
+
+  .button--quiet {
+    min-height: 34px;
+  }
+
+  #how-it-works,
+  #overview,
+  #challenges,
+  #capabilities,
+  #performance {
+    scroll-margin-top: 148px;
+  }
+
+  .landing-title,
+  .lab-title,
+  .briefing-title {
+    font-size: clamp(2.7rem, 13vw, 4rem);
+  }
+
+  .landing-copy {
+    font-size: 0.95rem;
+  }
+
+  .landing-diagram {
+    min-height: 340px;
+  }
+
+  .diagram-caption {
+    top: 19px;
+    left: 19px;
+  }
+
+  .diagram-node {
+    min-width: 89px;
+    padding: 9px 10px;
+  }
+
+  .diagram-node span {
+    font-size: 0.49rem;
+  }
+
+  .diagram-node strong {
+    font-size: 0.67rem;
+  }
+
+  .diagram-node--production {
+    top: 84px;
+    left: 4%;
+  }
+
+  .diagram-node--quality {
+    top: 62px;
+    right: 4%;
+  }
+
+  .diagram-node--planning {
+    right: 1%;
+    bottom: 85px;
+  }
+
+  .diagram-node--people {
+    bottom: 37px;
+    left: 12%;
+  }
+
+  .diagram-core {
+    width: 92px;
+    height: 92px;
+    font-size: 0.65rem;
+  }
+
+  .diagram-core::before {
+    width: 114px;
+    height: 114px;
+  }
+
+  .diagram-core::after {
+    width: 136px;
+    height: 136px;
+  }
+
+  .hero-proof {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .loop-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .loop-list li {
+    min-height: 120px;
+    padding: 15px;
+  }
+
+  .loop-number {
+    margin-bottom: 18px;
+  }
+
+  .lab-summary {
+    padding: 17px;
+  }
+
+  .score-ring {
+    width: 82px;
+    height: 82px;
+  }
+
+  .score-ring::before {
+    width: 66px;
+    height: 66px;
+  }
+
+  .kpi-grid,
+  .challenge-grid,
+  .capability-list {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-card {
+    min-height: 130px;
+  }
+
+  .operations-map {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .operations-map::before,
+  .operations-map::after {
+    display: none;
+  }
+
+  .operations-node:nth-child(2),
+  .operations-node:nth-child(5) {
+    transform: none;
+  }
+
+  .operations-node:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .capability-layout > .resource-card {
+    grid-template-columns: 1fr;
+  }
+
+  .capability-layout > .resource-card > .resource-list {
+    grid-row: auto;
+    grid-column: auto;
+  }
+
+  .performance-table th,
+  .performance-table td {
+    padding: 13px 14px;
+  }
+
+  .performance-table thead th {
+    font-size: 0.53rem;
+  }
+
+  .performance-table tbody th,
+  .performance-table td strong {
+    font-size: 0.72rem;
+  }
+
+  .performance-table td small {
+    font-size: 0.6rem;
+  }
+
+  .site-footer {
+    align-items: flex-start;
+    min-height: auto;
+    flex-direction: column;
+    padding: 27px 0;
+  }
+
+  .briefing-page {
+    padding-top: 36px;
+  }
+
+  .briefing-back {
+    margin-bottom: 31px;
+  }
+
+  .briefing-status {
+    grid-template-columns: 1fr;
+  }
+
+  .briefing-status p {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

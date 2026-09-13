@@ -49,10 +49,28 @@ function renderKpiCards(state) {
 
 function renderOperationMap(state) {
   const stage = getCapabilityStage(state.capabilityStage);
+  const hasProductionQualityIntegration = state.unlockedUpgrades.includes(
+    "production-quality-integration",
+  );
+  const insightLabel = hasProductionQualityIntegration
+    ? "New shared capability"
+    : "Current condition";
+  const insightTitle = hasProductionQualityIntegration
+    ? "Production and quality now share a traceable record."
+    : `${stage.name} operations need clearer shared context.`;
+  const insightCopy = hasProductionQualityIntegration
+    ? "Defect signals can be compared with the production conditions and material trace that created them."
+    : stage.description;
 
   return `
     <div class="operations-layout">
       <div class="operations-map" data-stage="${state.capabilityStage}" aria-label="Operational model at ${stage.name} capability stage">
+        <span class="operations-connection operations-connection--production-quality ${hasProductionQualityIntegration ? "is-active" : ""}" aria-hidden="true"></span>
+        ${
+          hasProductionQualityIntegration
+            ? '<p class="sr-only">Production and quality information are connected in the operational model.</p>'
+            : ""
+        }
         ${operationAreas
           .map(
             (area) => `
@@ -67,10 +85,10 @@ function renderOperationMap(state) {
       </div>
       <aside class="map-insight">
         <div>
-          <span>Current condition</span>
-          <strong>${stage.name} operations need clearer shared context.</strong>
+          <span>${insightLabel}</span>
+          <strong>${insightTitle}</strong>
         </div>
-        <p>${stage.description}</p>
+        <p>${insightCopy}</p>
       </aside>
     </div>
   `;
@@ -96,11 +114,13 @@ function renderChallengeCards(state) {
           const readiness = getChallengeReadiness(challenge.id, state);
           const stateClass = readiness.completed || readiness.canLaunch ? "is-available" : "";
           const actionLabel =
-            challenge.id === "missing-minutes"
-              ? readiness.completed
-                ? "Review outcome"
-                : "Investigate timeline"
-              : "Review scenario";
+            readiness.completed
+              ? "Review outcome"
+              : challenge.id === "missing-minutes"
+                ? "Investigate timeline"
+                : challenge.id === "quality-loop" && readiness.canLaunch
+                  ? "Connect records"
+                  : "Review scenario";
 
           return `
             <article class="challenge-card ${readiness.canLaunch ? "is-current" : ""}">

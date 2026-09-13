@@ -1,13 +1,18 @@
 import {
+  chooseQualityLoopImprovement,
   chooseMissingMinutesImprovement,
   closeChallengeBriefing,
   enterLab,
+  identifyQualityLoopCause,
   inspectMissingMinutesEvent,
   navigateToSection,
   resetExperience,
   returnToLanding,
+  retryQualityLoopDiagnosis,
+  retryQualityLoopImprovement,
   retryMissingMinutesDecision,
   reviewChallenge,
+  selectQualityLoopNode,
 } from "./game.js";
 import {
   bindInteractions,
@@ -69,6 +74,31 @@ bindInteractions({
   "retry-missing-minutes-decision": () => {
     retryMissingMinutesDecision();
     focusElementById("missing-minutes-decision");
+  },
+  "select-quality-loop-node": ({ nodeId }) => {
+    selectQualityLoopNode(nodeId);
+  },
+  "identify-quality-loop-cause": ({ diagnosisId }) => {
+    const nextState = identifyQualityLoopCause(diagnosisId);
+
+    if (nextState.qualityLoop.diagnosisId === diagnosisId) {
+      focusElementById("quality-loop-diagnosis-outcome");
+    }
+  },
+  "retry-quality-loop-diagnosis": () => {
+    retryQualityLoopDiagnosis();
+    focusElementById("quality-loop-diagnosis");
+  },
+  "choose-quality-loop-improvement": ({ decisionId }) => {
+    const nextState = chooseQualityLoopImprovement(decisionId);
+
+    if (nextState.qualityLoop.improvementId === decisionId) {
+      focusElementById("quality-loop-outcome");
+    }
+  },
+  "retry-quality-loop-improvement": () => {
+    retryQualityLoopImprovement();
+    focusElementById("quality-loop-decision");
   },
   reset: () => {
     resetExperience();

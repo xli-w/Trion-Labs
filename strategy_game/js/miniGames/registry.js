@@ -1,5 +1,6 @@
 import { challenges, getChallengeById } from "../data.js";
 import { missingMinutesChallengeId, missingMinutesModule } from "./missingMinutes.js";
+import { qualityLoopChallengeId, qualityLoopModule } from "./qualityLoop.js";
 
 function createChallengeContract(challenge) {
   return Object.freeze({
@@ -20,6 +21,8 @@ const registeredModules = new Map(
     challenge.id,
     challenge.id === missingMinutesChallengeId
       ? missingMinutesModule
+      : challenge.id === qualityLoopChallengeId
+        ? qualityLoopModule
       : createChallengeContract(challenge),
   ]),
 );

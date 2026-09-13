@@ -1,4 +1,5 @@
 import { createInitialMissingMinutesState } from "./miniGames/missingMinutes.js";
+import { createInitialQualityLoopState } from "./miniGames/qualityLoop.js";
 
 export const navigationItems = Object.freeze([
   { id: "overview", label: "Overview" },
@@ -82,19 +83,19 @@ export const operationAreas = Object.freeze([
     id: "quality",
     label: "Quality",
     detail: "Defects and first-time-right data",
-    activeAt: 2,
+    activeAt: 3,
   },
   {
     id: "logistics",
     label: "Logistics",
     detail: "Material and delivery dependencies",
-    activeAt: 3,
+    activeAt: 5,
   },
   {
     id: "planning",
     label: "Planning",
     detail: "Capacity, orders, and constraints",
-    activeAt: 3,
+    activeAt: 4,
   },
   {
     id: "people",
@@ -237,7 +238,7 @@ export const upgrades = Object.freeze([
   {
     id: "production-quality-integration",
     type: "Connection",
-    title: "Production + Quality",
+    title: "Production + Quality Integration",
     description: "Quality results can be understood in production context.",
   },
   {
@@ -319,6 +320,7 @@ export function createInitialGameState() {
       integrationCapacity: 2,
     },
     missingMinutes: createInitialMissingMinutesState(),
+    qualityLoop: createInitialQualityLoopState(),
     decisions: [],
     notifications: [],
     announcement: "Welcome to Trion Labs.",

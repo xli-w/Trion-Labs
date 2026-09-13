@@ -3,6 +3,11 @@ import {
   getMissingMinutesDecisionById,
   getMissingMinutesEventById,
 } from "./miniGames/missingMinutes.js";
+import {
+  getQualityLoopDiagnosisById,
+  getQualityLoopDecisionById,
+  getQualityLoopNodeById,
+} from "./miniGames/qualityLoop.js";
 import { getChallengeReadiness, getChallengeModule } from "./miniGames/registry.js";
 import { dispatch, getState } from "./state.js";
 
@@ -104,4 +109,45 @@ export function chooseMissingMinutesImprovement(decisionId) {
 
 export function retryMissingMinutesDecision() {
   return dispatch({ type: "RETRY_MISSING_MINUTES_DECISION" });
+}
+
+export function selectQualityLoopNode(nodeId) {
+  if (!getQualityLoopNodeById(nodeId)) {
+    throw new Error(`Unknown Quality Loop record: ${nodeId}`);
+  }
+
+  return dispatch({
+    type: "SELECT_QUALITY_LOOP_NODE",
+    nodeId,
+  });
+}
+
+export function identifyQualityLoopCause(diagnosisId) {
+  if (!getQualityLoopDiagnosisById(diagnosisId)) {
+    throw new Error(`Unknown Quality Loop diagnosis: ${diagnosisId}`);
+  }
+
+  return dispatch({
+    type: "IDENTIFY_QUALITY_LOOP_CAUSE",
+    diagnosisId,
+  });
+}
+
+export function retryQualityLoopDiagnosis() {
+  return dispatch({ type: "RETRY_QUALITY_LOOP_DIAGNOSIS" });
+}
+
+export function chooseQualityLoopImprovement(decisionId) {
+  if (!getQualityLoopDecisionById(decisionId)) {
+    throw new Error(`Unknown Quality Loop improvement: ${decisionId}`);
+  }
+
+  return dispatch({
+    type: "CHOOSE_QUALITY_LOOP_IMPROVEMENT",
+    decisionId,
+  });
+}
+
+export function retryQualityLoopImprovement() {
+  return dispatch({ type: "RETRY_QUALITY_LOOP_IMPROVEMENT" });
 }

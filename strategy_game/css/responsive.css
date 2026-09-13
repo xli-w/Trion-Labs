@@ -265,7 +265,8 @@
   }
 
   .operations-map::before,
-  .operations-map::after {
+  .operations-map::after,
+  .operations-connection {
     display: none;
   }
 

@@ -2,17 +2,29 @@ import { renderChallengeBriefing } from "./views/challengeBriefing.js";
 import { renderLabOverview } from "./views/labOverview.js";
 import { renderLanding } from "./views/landing.js";
 import { renderMissingMinutes } from "./views/missingMinutes.js";
+import { renderQualityLoop } from "./views/qualityLoop.js";
 import { missingMinutesChallengeId } from "./miniGames/missingMinutes.js";
+import { qualityLoopChallengeId } from "./miniGames/qualityLoop.js";
+import { getChallengeReadiness } from "./miniGames/registry.js";
 
 const appRoot = document.querySelector("#app");
 const announcementRegion = document.querySelector("#appAnnouncement");
 let latestScrollRequest = 0;
+let renderVersion = 0;
 
 if (!appRoot || !announcementRegion) {
   throw new Error("Trion Labs requires an app root and announcement region.");
 }
 
+function canRenderInteractiveChallenge(state, challengeId) {
+  const readiness = getChallengeReadiness(challengeId, state);
+
+  return readiness.canLaunch || readiness.completed;
+}
+
 export function render(state) {
+  renderVersion += 1;
+
   if (state.currentScreen === "landing") {
     appRoot.innerHTML = renderLanding(state);
     document.title = "Trion Labs | Find the friction. Build the flow.";
@@ -22,6 +34,12 @@ export function render(state) {
   } else if (state.activeChallengeId === missingMinutesChallengeId) {
     appRoot.innerHTML = renderMissingMinutes(state);
     document.title = "Trion Labs | The Missing Minutes";
+  } else if (
+    state.activeChallengeId === qualityLoopChallengeId &&
+    canRenderInteractiveChallenge(state, qualityLoopChallengeId)
+  ) {
+    appRoot.innerHTML = renderQualityLoop(state);
+    document.title = "Trion Labs | The Quality Loop";
   } else {
     appRoot.innerHTML = renderChallengeBriefing(state);
     document.title = "Trion Labs | Challenge briefing";
@@ -52,9 +70,10 @@ export function bindInteractions(handlers) {
 export function scrollToSection(sectionId) {
   const requestId = latestScrollRequest + 1;
   latestScrollRequest = requestId;
+  const requestedRenderVersion = renderVersion;
 
   window.requestAnimationFrame(() => {
-    if (requestId !== latestScrollRequest) {
+    if (requestId !== latestScrollRequest || requestedRenderVersion !== renderVersion) {
       return;
     }
 
@@ -73,7 +92,13 @@ export function scrollToSection(sectionId) {
 }
 
 export function focusScreenHeading() {
+  const requestedRenderVersion = renderVersion;
+
   window.requestAnimationFrame(() => {
+    if (requestedRenderVersion !== renderVersion) {
+      return;
+    }
+
     const screenHeading = document.querySelector("#screen-title");
 
     if (screenHeading instanceof HTMLElement) {
@@ -83,7 +108,13 @@ export function focusScreenHeading() {
 }
 
 export function focusElementById(elementId) {
+  const requestedRenderVersion = renderVersion;
+
   window.requestAnimationFrame(() => {
+    if (requestedRenderVersion !== renderVersion) {
+      return;
+    }
+
     const element = document.getElementById(elementId);
 
     if (!(element instanceof HTMLElement)) {

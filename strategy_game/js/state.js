@@ -12,6 +12,14 @@ import {
   isMissingMinutesReadyForDecision,
   missingMinutesChallengeId,
 } from "./miniGames/missingMinutes.js";
+import {
+  getQualityLoopConnectionByNodeIds,
+  getQualityLoopDecisionById,
+  getQualityLoopDiagnosisById,
+  getQualityLoopNodeById,
+  isQualityLoopReadyForDiagnosis,
+  qualityLoopChallengeId,
+} from "./miniGames/qualityLoop.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
 const sectionNames = new Set(["overview", "challenges", "capabilities", "performance"]);
@@ -28,6 +36,10 @@ function cloneState(state) {
     missingMinutes: {
       ...state.missingMinutes,
       inspectedEventIds: [...state.missingMinutes.inspectedEventIds],
+    },
+    qualityLoop: {
+      ...state.qualityLoop,
+      revealedConnectionIds: [...state.qualityLoop.revealedConnectionIds],
     },
     completedChallenges: [...state.completedChallenges],
     unlockedUpgrades: [...state.unlockedUpgrades],
@@ -330,6 +342,244 @@ function reduce(state, action) {
           },
         },
         "Review the production timeline and choose another first intervention.",
+      );
+
+    case "SELECT_QUALITY_LOOP_NODE": {
+      const node = getQualityLoopNodeById(action.nodeId);
+
+      if (!node) {
+        throw new Error(`Unknown Quality Loop record: ${action.nodeId}`);
+      }
+
+      if (state.completedChallenges.includes(qualityLoopChallengeId)) {
+        return addNotification(
+          state,
+          "The Quality Loop is already complete. Review the Production + Quality Integration outcome from the challenge map.",
+        );
+      }
+
+      const selectedNodeId = state.qualityLoop.selectedNodeId;
+
+      if (!selectedNodeId) {
+        return addNotification(
+          {
+            ...state,
+            qualityLoop: {
+              ...state.qualityLoop,
+              selectedNodeId: node.id,
+              connectionError: null,
+            },
+          },
+          `${node.label} selected. Choose a second record to compare its incident context.`,
+        );
+      }
+
+      if (selectedNodeId === node.id) {
+        return addNotification(
+          {
+            ...state,
+            qualityLoop: {
+              ...state.qualityLoop,
+              selectedNodeId: null,
+              connectionError: null,
+            },
+          },
+          `${node.label} selection cleared.`,
+        );
+      }
+
+      const selectedNode = getQualityLoopNodeById(selectedNodeId);
+
+      if (!selectedNode) {
+        throw new Error(`Unknown selected Quality Loop record: ${selectedNodeId}`);
+      }
+
+      const connection = getQualityLoopConnectionByNodeIds(selectedNode.id, node.id);
+
+      if (!connection) {
+        const connectionError = `${selectedNode.label} and ${node.label} do not share a useful incident trace in this scenario. Choose another record or select ${selectedNode.label} again to clear it.`;
+
+        return addNotification(
+          {
+            ...state,
+            qualityLoop: {
+              ...state.qualityLoop,
+              connectionError,
+            },
+          },
+          connectionError,
+        );
+      }
+
+      const alreadyRevealed = state.qualityLoop.revealedConnectionIds.includes(connection.id);
+      const revealedConnectionIds = alreadyRevealed
+        ? state.qualityLoop.revealedConnectionIds
+        : [...state.qualityLoop.revealedConnectionIds, connection.id];
+
+      return addNotification(
+        {
+          ...state,
+          qualityLoop: {
+            ...state.qualityLoop,
+            selectedNodeId: null,
+            revealedConnectionIds,
+            lastConnectionId: connection.id,
+            connectionError: null,
+            diagnosisError: null,
+          },
+        },
+        alreadyRevealed
+          ? `${connection.title} is already connected on the evidence map.`
+          : connection.announcement,
+      );
+    }
+
+    case "IDENTIFY_QUALITY_LOOP_CAUSE": {
+      const diagnosis = getQualityLoopDiagnosisById(action.diagnosisId);
+
+      if (!diagnosis) {
+        throw new Error(`Unknown Quality Loop diagnosis: ${action.diagnosisId}`);
+      }
+
+      if (state.completedChallenges.includes(qualityLoopChallengeId)) {
+        return addNotification(
+          state,
+          "The Quality Loop is already complete. Review the Production + Quality Integration outcome from the challenge map.",
+        );
+      }
+
+      if (!isQualityLoopReadyForDiagnosis(state.qualityLoop)) {
+        const diagnosisError =
+          "Connect the three lead records before identifying the most likely source of the defect spike.";
+
+        return addNotification(
+          {
+            ...state,
+            qualityLoop: {
+              ...state.qualityLoop,
+              diagnosisError,
+            },
+          },
+          diagnosisError,
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          qualityLoop: {
+            ...state.qualityLoop,
+            selectedNodeId: null,
+            diagnosisId: diagnosis.id,
+            improvementId: null,
+            diagnosisError: null,
+            decisionError: null,
+          },
+        },
+        diagnosis.announcement,
+      );
+    }
+
+    case "RETRY_QUALITY_LOOP_DIAGNOSIS":
+      if (state.completedChallenges.includes(qualityLoopChallengeId)) {
+        return addNotification(
+          state,
+          "The Quality Loop is already complete. Review the Production + Quality Integration outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          qualityLoop: {
+            ...state.qualityLoop,
+            selectedNodeId: null,
+            diagnosisId: null,
+            improvementId: null,
+            diagnosisError: null,
+            decisionError: null,
+          },
+        },
+        "Review the connected evidence and test another explanation for the defect spike.",
+      );
+
+    case "CHOOSE_QUALITY_LOOP_IMPROVEMENT": {
+      const decision = getQualityLoopDecisionById(action.decisionId);
+
+      if (!decision) {
+        throw new Error(`Unknown Quality Loop improvement: ${action.decisionId}`);
+      }
+
+      if (state.completedChallenges.includes(qualityLoopChallengeId)) {
+        return addNotification(
+          state,
+          "The Quality Loop is already complete. Review the Production + Quality Integration outcome from the challenge map.",
+        );
+      }
+
+      const diagnosis = getQualityLoopDiagnosisById(state.qualityLoop.diagnosisId);
+
+      if (!diagnosis || !diagnosis.isLikelyCause) {
+        const decisionError =
+          "Confirm the material-batch evidence before choosing the improvement that should make future investigations possible.";
+
+        return addNotification(
+          {
+            ...state,
+            qualityLoop: {
+              ...state.qualityLoop,
+              decisionError,
+            },
+          },
+          decisionError,
+        );
+      }
+
+      const nextState = {
+        ...state,
+        qualityLoop: {
+          ...state.qualityLoop,
+          improvementId: decision.id,
+          decisionError: null,
+        },
+      };
+
+      if (!decision.completesChallenge) {
+        return addNotification(nextState, decision.announcement);
+      }
+
+      const completedState = applyChallengeCompletion(nextState, {
+        challengeId: qualityLoopChallengeId,
+        decision: {
+          id: decision.id,
+          title: decision.title,
+        },
+        kpiChanges: decision.kpiChanges,
+        resourceCosts: decision.resourceCosts,
+        unlockIds: decision.unlockIds,
+      });
+
+      return addNotification(completedState, decision.announcement);
+    }
+
+    case "RETRY_QUALITY_LOOP_IMPROVEMENT":
+      if (state.completedChallenges.includes(qualityLoopChallengeId)) {
+        return addNotification(
+          state,
+          "The Quality Loop is already complete. Review the Production + Quality Integration outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          qualityLoop: {
+            ...state.qualityLoop,
+            improvementId: null,
+            decisionError: null,
+          },
+        },
+        "Choose the first improvement that makes the material trace useful across production and quality.",
       );
 
     case "RESET": {

@@ -8,14 +8,15 @@ and extension boundaries for the six challenge modules.
 ## Run locally
 
 The lab intentionally has no build step or runtime dependencies. From the
-repository root, serve the folder with a simple static development server:
+repository root, serve the repository with a simple static development server:
 
 ```bash
-python -m http.server 4173 --bind 127.0.0.1 --directory labs/strategy_game
+python -m http.server 4173 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:4173`. Any static development server that serves
-`labs/strategy_game` as its root will also work.
+Open `http://127.0.0.1:4173/strategy_game/`. Serving the repository root keeps
+the shared `theme.js` module available to the experience. Any static
+development server with the same document root will also work.
 
 ## Architecture
 
@@ -29,12 +30,15 @@ Open `http://127.0.0.1:4173`. Any static development server that serves
 - `js/game.js` is the application-facing game service. UI code calls it rather
   than changing state directly.
 - `js/views/` owns the semantic landing, overview, and challenge-briefing
-  renderers. `js/ui.js` orchestrates those screens and translates DOM actions
-  into controller callbacks.
+  renderers, plus focused renderers for implemented mini-games. `js/ui.js`
+  orchestrates those screens and translates DOM actions into controller
+  callbacks.
 - `js/miniGames/registry.js` registers the six challenge contracts and exposes
   their progression rules without coupling their future mechanics to the shell.
 - `js/miniGames/missingMinutes.js` owns the first challenge's illustrative
   timeline, intervention rules, and focused interaction state.
+- `js/miniGames/qualityLoop.js` owns the second challenge's illustrative
+  production-quality evidence links, diagnosis rules, and intervention state.
 - `../theme.js` owns the shared local colour preference used by the strategy
   experience and standalone mini-games.
 
@@ -44,7 +48,7 @@ the challenge id, KPI changes, resource costs, decision record, and unlocked
 capability ids. The state store then records the result and updates the
 aggregate operational score and capability stage.
 
-## First interactive challenge
+## Implemented interactive challenges
 
 `The Missing Minutes` is the first completed challenge. It uses an illustrative
 two-hour production timeline rather than live factory data. Visitors inspect
@@ -57,11 +61,22 @@ Suboptimal interventions explain their trade-off and offer a retry; they do not
 persist KPI changes or mark the challenge complete. Reset restores the full
 challenge and operational state.
 
-## Scope of this foundation
+`The Quality Loop` is the second completed challenge. Visitors select pairs of
+illustrative production, quality, material, machine, shift, and process records
+to reveal their shared context. Three lead connections show that the defect
+spike follows material batch MB-482, while the machine and shift records remain
+useful context rather than the likely source. After testing the cause, visitors
+choose the first improvement. Connecting production and quality records applies
+a bounded quality, visibility, and productivity effect and unlocks Production +
+Quality Integration. Other interventions explain why a standard or dashboard
+alone does not make disconnected case information actionable, then allow a
+retry.
+
+## Remaining foundation scope
 
 The challenge map provides complete scenario briefings and preserves the
 intended challenge sequence. The distinct 30-90 second interactive mechanics
-are deliberately isolated behind the registry for the next implementation
-phase. No backend, external API, framework, or visitor-progression persistence is used.
-The selected colour theme is stored locally so it remains in place across
-reloads and current mini-games.
+for challenges three through six remain deliberately isolated behind the
+registry for later implementation. No backend, external API, framework, or
+visitor-progression persistence is used. The selected colour theme is stored
+locally so it remains in place across reloads and implemented mini-games.

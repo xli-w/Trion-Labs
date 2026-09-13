@@ -1,4 +1,5 @@
 import { navigationItems } from "../data.js";
+import { isDarkTheme } from "../../../theme.js";
 
 function renderBrand() {
   return `
@@ -17,6 +18,21 @@ function renderBrand() {
         <strong>trion</strong>
         <span>Fabric / Labs</span>
       </span>
+    </button>
+  `;
+}
+
+function renderThemeToggle() {
+  return `
+    <button
+      class="theme-toggle"
+      id="theme-toggle"
+      type="button"
+      data-action="toggle-theme"
+      aria-pressed="${isDarkTheme()}"
+    >
+      <span class="theme-toggle__mark" aria-hidden="true"></span>
+      <span>Dark mode</span>
     </button>
   `;
 }
@@ -49,6 +65,7 @@ export function renderHeader(state, screen) {
     ? `
       <div class="header-actions">
         <button class="text-button" type="button" data-action="how-it-works">How it works</button>
+        ${renderThemeToggle()}
         <button class="button button--primary button--quiet" type="button" data-action="enter-lab">
           Enter the Lab <span class="button-arrow" aria-hidden="true">-></span>
         </button>
@@ -56,6 +73,7 @@ export function renderHeader(state, screen) {
     `
     : `
       <div class="header-actions">
+        ${renderThemeToggle()}
         <button class="button button--secondary button--quiet" type="button" data-action="reset">
           Start again
         </button>

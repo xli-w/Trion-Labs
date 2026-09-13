@@ -9,7 +9,8 @@
     />
     <title>Trion Fabric Labs | Mini Production Line</title>
     <link rel="stylesheet" href="styles.css" />
-    <script src="app.js" defer></script>
+    <link rel="stylesheet" href="theme.css" />
+    <script type="module" src="app.js"></script>
   </head>
   <body>
     <main class="labs-shell">
@@ -33,6 +34,10 @@
 
         <div class="header-actions">
           <span class="sandbox-badge"><i></i> Sandbox Mode</span>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+            <span class="theme-toggle__mark" aria-hidden="true"></span>
+            <span>Dark mode</span>
+          </button>
           <button class="reset-button" id="resetLine" type="button">Reset Line</button>
         </div>
       </header>

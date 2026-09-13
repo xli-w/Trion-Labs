@@ -1,3 +1,7 @@
+import { initializeTheme, syncThemeToggle, toggleTheme } from "../theme.js";
+
+initializeTheme();
+
 const stations = [
   {
     id: "Infeed",
@@ -80,6 +84,7 @@ const elements = {
   toggleLine: document.querySelector("#toggleLine"),
   toggleLineLabel: document.querySelector("#toggleLineLabel"),
   resetLine: document.querySelector("#resetLine"),
+  themeToggle: document.querySelector("#themeToggle"),
   lineState: document.querySelector("#lineState"),
   lineStateText: document.querySelector("#lineStateText"),
   lineMessage: document.querySelector("#lineMessage"),
@@ -171,7 +176,7 @@ function updatePace() {
 
   elements.pace.value = String(state.pace);
   elements.paceValue.textContent = pace.label;
-  elements.pace.style.background = `linear-gradient(90deg, var(--blue) 0 ${progress}%, #dad3df ${progress}% 100%)`;
+  elements.pace.style.background = `linear-gradient(90deg, var(--blue) 0 ${progress}%, var(--pace-track) ${progress}% 100%)`;
   updateMetrics();
 }
 
@@ -356,6 +361,11 @@ function toggleLine() {
   updateMission();
 }
 
+function toggleColorTheme() {
+  toggleTheme();
+  syncThemeToggle(elements.themeToggle);
+}
+
 function selectStation(stationId) {
   state.selectedStation = stationId;
   state.hasInspectedStation = true;
@@ -400,6 +410,7 @@ function resetLine() {
 
 elements.toggleLine.addEventListener("click", toggleLine);
 elements.resetLine.addEventListener("click", resetLine);
+elements.themeToggle.addEventListener("click", toggleColorTheme);
 
 elements.stageButtons.forEach((button) => {
   button.addEventListener("click", () => selectStation(button.dataset.station));
@@ -425,3 +436,4 @@ elements.qualityCheck.addEventListener("click", runQualityCheck);
 
 renderEvents(initialEvents);
 updateAll();
+syncThemeToggle(elements.themeToggle);

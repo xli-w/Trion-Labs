@@ -1,0 +1,233 @@
+:root {
+  --action: #281a39;
+  --action-hover: #3a2851;
+  --on-action: #ffffff;
+  --surface: #fcfbfd;
+  --surface-strong: #f1eef4;
+  --pace-track: #dad3df;
+  --blue-highlight: #77a4e5;
+  --blue-flow: #a9c7f2;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle[aria-pressed="true"] {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.theme-toggle__mark {
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.theme-toggle[aria-pressed="true"] .theme-toggle__mark {
+  background: currentColor;
+  box-shadow: 0 0 0 3px rgba(43, 100, 184, 0.14);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --purple: #f2edf8;
+  --purple-mid: #d4c3e7;
+  --purple-soft: #30263d;
+  --blue: #a9c5ff;
+  --blue-soft: #1f2e4a;
+  --green: #8bc8af;
+  --green-soft: #173b32;
+  --amber: #f0bf85;
+  --amber-soft: #4a351f;
+  --ink: #f2edf8;
+  --muted: #c9bfd2;
+  --quiet: #a69aad;
+  --canvas: #15111c;
+  --panel: #241d2e;
+  --line: #403649;
+  --line-strong: #5d5167;
+  --shadow: 0 12px 34px rgba(0, 0, 0, 0.32);
+  --action: #69498e;
+  --action-hover: #7956a2;
+  --surface: #1d1725;
+  --surface-strong: #30263d;
+  --pace-track: #4b4055;
+  --blue-highlight: #7598d1;
+  --blue-flow: #7fa2dc;
+}
+
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 96% 4%, rgba(121, 86, 162, 0.24), transparent 27rem),
+    radial-gradient(circle at 6% 80%, rgba(169, 197, 255, 0.1), transparent 28rem),
+    var(--canvas);
+}
+
+:root[data-theme="dark"] .brand-mark path:nth-child(2),
+:root[data-theme="dark"] .brand-mark circle {
+  fill: var(--canvas);
+  stroke: var(--canvas);
+}
+
+:root[data-theme="dark"] .primary-button,
+:root[data-theme="dark"] .stage.selected,
+:root[data-theme="dark"] .pack-token,
+:root[data-theme="dark"] .inspector-number,
+:root[data-theme="dark"] .toast {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--on-action);
+}
+
+:root[data-theme="dark"] .primary-button:hover {
+  background: var(--action-hover);
+}
+
+:root[data-theme="dark"] .reset-button,
+:root[data-theme="dark"] .secondary-button,
+:root[data-theme="dark"] .guided-steps span,
+:root[data-theme="dark"] .context-source {
+  background: var(--panel);
+}
+
+:root[data-theme="dark"] .batch-card {
+  background:
+    radial-gradient(circle at 95% 0%, rgba(169, 197, 255, 0.16), transparent 42%),
+    var(--panel);
+}
+
+:root[data-theme="dark"] .progress-track {
+  background: var(--blue-soft);
+}
+
+:root[data-theme="dark"] .progress-track i {
+  background: linear-gradient(90deg, var(--blue), var(--blue-highlight));
+}
+
+:root[data-theme="dark"] .run-badge,
+:root[data-theme="dark"] .stage-status {
+  background: var(--surface-strong);
+  color: var(--quiet);
+}
+
+:root[data-theme="dark"] .production-floor {
+  border-color: var(--line);
+  background:
+    linear-gradient(rgba(242, 237, 248, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(242, 237, 248, 0.06) 1px, transparent 1px),
+    radial-gradient(circle at 50% 5%, rgba(169, 197, 255, 0.16), transparent 36%),
+    var(--surface);
+}
+
+:root[data-theme="dark"] .context-source-planning {
+  border-color: var(--line-strong);
+}
+
+:root[data-theme="dark"] .context-source-machine {
+  border-color: var(--blue);
+}
+
+:root[data-theme="dark"] .context-source-quality {
+  border-color: var(--green);
+}
+
+:root[data-theme="dark"] .context-source-logistics {
+  border-color: var(--amber);
+}
+
+:root[data-theme="dark"] .stage {
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+:root[data-theme="dark"] .stage:hover {
+  border-color: var(--line-strong);
+}
+
+:root[data-theme="dark"] .stage.selected .stage-number {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+:root[data-theme="dark"] .stage.selected .stage-detail {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+:root[data-theme="dark"] .connector {
+  background: var(--line-strong);
+}
+
+:root[data-theme="dark"] .connector::after {
+  border-top-color: var(--line-strong);
+  border-right-color: var(--line-strong);
+}
+
+:root[data-theme="dark"] .production-floor.is-running .connector {
+  background: linear-gradient(90deg, var(--blue), var(--blue-flow));
+}
+
+:root[data-theme="dark"] .conveyor {
+  background: var(--surface-strong);
+}
+
+:root[data-theme="dark"] .conveyor::before {
+  background: var(--line);
+}
+
+:root[data-theme="dark"] .conveyor::after {
+  background: repeating-linear-gradient(90deg, transparent 0 17px, rgba(242, 237, 248, 0.14) 17px 19px);
+}
+
+:root[data-theme="dark"] .conveyor-belt {
+  border-color: var(--line-strong);
+  background: repeating-linear-gradient(90deg, var(--line) 0 15px, var(--surface) 15px 30px);
+}
+
+:root[data-theme="dark"] .control-panel {
+  background:
+    radial-gradient(circle at 100% 0, rgba(169, 197, 255, 0.16), transparent 37%),
+    var(--panel);
+}
+
+:root[data-theme="dark"] .handoff-card {
+  border-color: var(--line);
+  background: var(--surface);
+}
+
+:root[data-theme="dark"] .event-list li {
+  border-top-color: var(--line);
+}
+
+:root[data-theme="dark"] .inspector-panel {
+  background:
+    radial-gradient(circle at 0% 100%, rgba(169, 197, 255, 0.16), transparent 40%),
+    var(--panel);
+}
+
+@media (max-width: 520px) {
+  .app-header {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 0;
+  }
+
+  .app-header .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

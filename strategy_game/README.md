@@ -35,6 +35,8 @@ Open `http://127.0.0.1:4173`. Any static development server that serves
   their progression rules without coupling their future mechanics to the shell.
 - `js/miniGames/missingMinutes.js` owns the first challenge's illustrative
   timeline, intervention rules, and focused interaction state.
+- `../theme.js` owns the shared local colour preference used by the strategy
+  experience and standalone mini-games.
 
 Future mini-game modules should own only their focused interaction. On a
 completed decision they can call `completeChallenge()` from `js/game.js` with
@@ -60,4 +62,6 @@ challenge and operational state.
 The challenge map provides complete scenario briefings and preserves the
 intended challenge sequence. The distinct 30-90 second interactive mechanics
 are deliberately isolated behind the registry for the next implementation
-phase. No backend, external API, framework, or persistent storage is used.
+phase. No backend, external API, framework, or visitor-progression persistence is used.
+The selected colour theme is stored locally so it remains in place across
+reloads and current mini-games.

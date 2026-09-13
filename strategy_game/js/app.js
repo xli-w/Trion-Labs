@@ -17,6 +17,9 @@ import {
   scrollToSection,
 } from "./ui.js";
 import { subscribe } from "./state.js";
+import { initializeTheme, syncThemeToggle, toggleTheme } from "../../theme.js";
+
+initializeTheme();
 
 subscribe((nextState, previousState) => {
   render(nextState);
@@ -33,6 +36,10 @@ bindInteractions({
   },
   "how-it-works": () => {
     scrollToSection("how-it-works");
+  },
+  "toggle-theme": () => {
+    toggleTheme();
+    syncThemeToggle(document.querySelector("#theme-toggle"));
   },
   landing: () => {
     returnToLanding();

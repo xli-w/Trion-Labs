@@ -1058,6 +1058,143 @@ export const operatingModelFlow = Object.freeze({
   ]),
 });
 
+export const trionWebsiteUrl = "https://www.trion-transformation.com/";
+
+export const trionFrameworks = Object.freeze({
+  "site-walks": Object.freeze({
+    title: "Site Walks",
+    description: "See the work, handoffs, and friction where they happen.",
+  }),
+  "maturity-scorecard": Object.freeze({
+    title: "Digital & Operational Maturity Scorecard",
+    description: "Create a practical reading of current strengths, gaps, and readiness.",
+  }),
+  "digital-landscape-map": Object.freeze({
+    title: "Digital Landscape Map",
+    description: "Map the systems, information, and dependencies around the operation.",
+  }),
+  "opportunity-action-register": Object.freeze({
+    title: "Opportunity & Action Register",
+    description: "Turn visible friction into practical, prioritised next actions.",
+  }),
+  "transformation-roadmap": Object.freeze({
+    title: "Transformation Roadmap",
+    description: "Sequence the next improvements around value, readiness, and risk.",
+  }),
+  "quick-win-automation-sprints": Object.freeze({
+    title: "Quick Win Automation Sprints",
+    description: "Apply focused automation to repeatable, well-understood work.",
+  }),
+  "operational-intelligence": Object.freeze({
+    title: "Operational intelligence and reporting",
+    description: "Measure the signals and outcomes that guide the next decision.",
+  }),
+});
+
+export const trionApproachSteps = Object.freeze([
+  Object.freeze({
+    id: "understand",
+    title: "Understand",
+    description: "Map the current operation and identify the friction behind the visible signal.",
+    frameworkIds: Object.freeze(["site-walks", "digital-landscape-map"]),
+  }),
+  Object.freeze({
+    id: "simplify",
+    title: "Simplify",
+    description: "Remove duplicated steps and handoffs that do not improve the decision.",
+    frameworkIds: Object.freeze(["opportunity-action-register"]),
+  }),
+  Object.freeze({
+    id: "standardise",
+    title: "Standardise",
+    description: "Agree consistent definitions, ownership, and ways of working before scaling change.",
+    frameworkIds: Object.freeze(["maturity-scorecard", "opportunity-action-register"]),
+  }),
+  Object.freeze({
+    id: "connect",
+    title: "Connect",
+    description: "Bring the relevant systems, data, tools, and people together around the next decision.",
+    frameworkIds: Object.freeze(["digital-landscape-map", "operational-intelligence"]),
+  }),
+  Object.freeze({
+    id: "automate",
+    title: "Automate",
+    description: "Remove repetitive work where the process, source, and owner are already clear.",
+    frameworkIds: Object.freeze(["quick-win-automation-sprints"]),
+  }),
+  Object.freeze({
+    id: "measure",
+    title: "Measure",
+    description: "Track the outcome, learn from it, and prioritise the next improvement.",
+    frameworkIds: Object.freeze(["operational-intelligence", "transformation-roadmap"]),
+  }),
+]);
+
+export const trionFabricStatement = Object.freeze({
+  title: "The principles behind Fabric",
+  description:
+    "Fabric brings useful relationships between processes, data, tools, systems, and people into a shared operational view.",
+  boundary:
+    "This illustrative experience is not connected to a live factory, visitor data, or real-time production systems.",
+});
+
+export const trionCtaRecommendations = Object.freeze([
+  Object.freeze({
+    id: "downtime-site-walk",
+    opportunityIds: Object.freeze(["standardise-downtime-response"]),
+    diagnosticDimensionIds: Object.freeze(["process-efficiency"]),
+    title: "Start with the work where the loss appears.",
+    description:
+      "A focused walkthrough can map the recurring downtime response with the people who record, investigate, and act on it.",
+    label: "Explore a shop-floor walkthrough",
+  }),
+  Object.freeze({
+    id: "quality-information-map",
+    opportunityIds: Object.freeze(["quality-containment-workflow"]),
+    diagnosticDimensionIds: Object.freeze(["data-connection"]),
+    title: "Map the information that should travel with the quality signal.",
+    description:
+      "A practical landscape map can show where production, material, and quality context still needs to meet the containment decision.",
+    label: "Explore a Digital Landscape Map",
+  }),
+  Object.freeze({
+    id: "material-response-review",
+    opportunityIds: Object.freeze(["material-exception-playbook"]),
+    diagnosticDimensionIds: Object.freeze(["operational-responsiveness"]),
+    title: "Make the next material exception easier to coordinate.",
+    description:
+      "A short operational review can define the decisions, owners, and information needed before a late delivery disrupts the work.",
+    label: "Discuss an operational challenge",
+  }),
+  Object.freeze({
+    id: "exception-ownership-roadmap",
+    opportunityIds: Object.freeze(["standardise-exception-ownership"]),
+    diagnosticDimensionIds: Object.freeze(["operational-responsiveness"]),
+    title: "Turn shared information into a clearer operating rhythm.",
+    description:
+      "A roadmap can sequence the ownership, escalation, and review habits that make a shared exception view useful in practice.",
+    label: "Explore the Transformation Roadmap",
+  }),
+  Object.freeze({
+    id: "planning-automation-sprint",
+    opportunityIds: Object.freeze(["automate-planning-exception-triage"]),
+    diagnosticDimensionIds: Object.freeze(["automation-readiness"]),
+    title: "Focus automation on one repeatable planning decision.",
+    description:
+      "A focused automation sprint can test where a clear process and shared source context can remove repetitive triage work.",
+    label: "Explore Quick Win Automation Sprints",
+  }),
+  Object.freeze({
+    id: "improvement-roadmap",
+    opportunityIds: Object.freeze([]),
+    diagnosticDimensionIds: Object.freeze(["improvement-potential", "visibility"]),
+    title: "Map the current operation and choose the next practical improvement.",
+    description:
+      "A structured diagnostic can connect the visible friction, current readiness, and next actions without assuming a system replacement is the answer.",
+    label: "Explore Trion's approach",
+  }),
+]);
+
 export function getOperationalAreaById(areaId) {
   return operationalAreas.find((area) => area.id === areaId);
 }

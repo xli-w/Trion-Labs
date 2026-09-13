@@ -28,6 +28,10 @@
   .diagnostic-dimensions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .trion-approach-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 840px) {
@@ -87,7 +91,8 @@
   .diagnostic-profile__section-heading,
   .opportunity-prioritization__heading,
   .before-after-operating-model__heading,
-  .operating-model-flow__heading {
+  .operating-model-flow__heading,
+  .trion-approach__heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 8px;
@@ -107,6 +112,8 @@
   .operating-model-comparison,
   .operating-model-flow__comparison,
   .operating-model-potential,
+  .trion-fabric-note,
+  .trion-cta,
   .capability-layout,
   .performance-grid {
     grid-template-columns: 1fr;
@@ -181,7 +188,8 @@
   #capabilities,
   #performance,
   #opportunities,
-  #before-after-operating-model {
+  #before-after-operating-model,
+  #trion-approach {
     scroll-margin-top: 148px;
   }
 
@@ -290,7 +298,8 @@
   .kpi-grid,
   .challenge-grid,
   .capability-list,
-  .diagnostic-dimensions {
+  .diagnostic-dimensions,
+  .trion-approach-steps {
     grid-template-columns: 1fr;
   }
 

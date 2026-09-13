@@ -29,12 +29,15 @@ The shared `theme.js` utility remains available from the repository root.
 - `js/operationModel.js` owns the fictional operation, baseline KPI metadata,
   operational areas, friction points, challenge outcomes, named decision effects,
   progression-ready connection-map data, diagnostic dimensions, and next-step
-  opportunity definitions, plus before-and-after operating-model statements.
+  opportunity definitions, before-and-after operating-model statements, and
+  Trion approach, framework, Fabric-boundary, and CTA recommendation content.
 - `js/diagnostic.js` derives an illustrative operational profile from current
   KPI condition, completed outcomes, capabilities, connected relationships, and
   the selected next improvement when one has been prioritised.
 - `js/beforeAfter.js` derives operating-model changes, flow steps, and remaining
   potential from completed outcomes and the selected next improvement.
+- `js/trionApproach.js` derives the final approach and CTA recommendation from
+  the diagnostic profile and selected next improvement.
 - `js/data.js` owns app-wide progression data and the initial-state factory,
   reusing the shared KPI definitions from the operation model.
 - `js/state.js` owns the immutable-style central state store, resolves each
@@ -45,8 +48,9 @@ The shared `theme.js` utility remains available from the repository root.
 - `js/views/` owns the semantic landing, overview, and challenge-briefing
   renderers, the diagnostic-profile and opportunity-prioritisation renderers,
   the before-and-after operating-model renderer, and focused renderers for
-  implemented mini-games. `js/ui.js` orchestrates those screens and translates
-  DOM actions into controller callbacks.
+  implemented mini-games, plus the Trion approach renderer. `js/ui.js`
+  orchestrates those screens and translates DOM actions into controller
+  callbacks.
 - `js/miniGames/registry.js` registers the five challenge contracts and exposes
   their progression rules without coupling their focused mechanics to the shell.
 - `js/miniGames/missingMinutes.js` owns the first challenge's illustrative

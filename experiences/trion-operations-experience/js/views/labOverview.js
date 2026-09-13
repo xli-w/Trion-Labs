@@ -17,6 +17,7 @@ import {
 import { renderBeforeAfterOperatingModel } from "./beforeAfterOperatingModel.js";
 import { renderDiagnosticProfile } from "./diagnosticProfile.js";
 import { renderOpportunityPrioritization } from "./opportunityPrioritization.js";
+import { renderTrionApproach } from "./trionApproach.js";
 import { renderFooter, renderHeader } from "./shared.js";
 
 function formatKpiValue(kpi) {
@@ -590,10 +591,8 @@ function renderExperienceSummary(state) {
       ${renderDiagnosticProfile(state)}
       ${renderOpportunityPrioritization(state)}
       ${renderBeforeAfterOperatingModel(state)}
+      ${renderTrionApproach(state)}
       <div class="decision-outcome__actions experience-summary__actions">
-        <button class="button button--primary" type="button" data-action="navigate" data-section="overview">
-          Explore the operational approach <span class="button-arrow" aria-hidden="true">-></span>
-        </button>
         <button class="button button--secondary" type="button" data-action="reset">
           Start again
         </button>

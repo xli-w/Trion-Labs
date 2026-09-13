@@ -137,6 +137,7 @@
 :root[data-theme="dark"] .opportunity-card__metrics div,
 :root[data-theme="dark"] .opportunity-selection-feedback,
 :root[data-theme="dark"] .opportunity-selection-feedback dl div,
+:root[data-theme="dark"] .trion-approach-step,
 :root[data-theme="dark"] .challenge-card,
 :root[data-theme="dark"] .capability-card,
 :root[data-theme="dark"] .performance-table,
@@ -158,6 +159,7 @@
 :root[data-theme="dark"] .button--primary,
 :root[data-theme="dark"] .map-insight,
 :root[data-theme="dark"] .diagnostic-profile__next > aside,
+:root[data-theme="dark"] .trion-cta,
 :root[data-theme="dark"] .timeline-event--running,
 :root[data-theme="dark"] .timeline-key__item--running::before,
 :root[data-theme="dark"] .capability-outcome {
@@ -200,6 +202,15 @@
   border-color: var(--trion-action);
   background: var(--trion-action);
   color: var(--trion-on-action);
+}
+
+:root[data-theme="dark"] .trion-cta .button--primary {
+  background: var(--trion-surface-elevated);
+  color: var(--trion-purple);
+}
+
+:root[data-theme="dark"] .trion-cta .button--primary:hover {
+  background: var(--trion-lilac);
 }
 
 :root[data-theme="dark"] .workflow-panel--before {

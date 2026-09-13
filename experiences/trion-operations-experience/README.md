@@ -28,7 +28,9 @@ The shared `theme.js` utility remains available from the repository root.
   responsive rules.
 - `js/operationModel.js` owns the fictional operation, baseline KPI metadata,
   operational areas, friction points, challenge outcomes, named decision effects,
-  and progression-ready connection-map data.
+  progression-ready connection-map data, and diagnostic dimensions.
+- `js/diagnostic.js` derives an illustrative operational profile from current
+  KPI condition, completed outcomes, capabilities, and connected relationships.
 - `js/data.js` owns app-wide progression data and the initial-state factory,
   reusing the shared KPI definitions from the operation model.
 - `js/state.js` owns the immutable-style central state store, resolves each
@@ -37,9 +39,9 @@ The shared `theme.js` utility remains available from the repository root.
 - `js/game.js` is the application-facing game service. UI code calls it rather
   than changing state directly.
 - `js/views/` owns the semantic landing, overview, and challenge-briefing
-  renderers, plus focused renderers for implemented mini-games. `js/ui.js`
-  orchestrates those screens and translates DOM actions into controller
-  callbacks.
+  renderers, the diagnostic-profile renderer, and focused renderers for
+  implemented mini-games. `js/ui.js` orchestrates those screens and translates
+  DOM actions into controller callbacks.
 - `js/miniGames/registry.js` registers the five challenge contracts and exposes
   their progression rules without coupling their focused mechanics to the shell.
 - `js/miniGames/missingMinutes.js` owns the first challenge's illustrative

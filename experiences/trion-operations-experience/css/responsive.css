@@ -24,6 +24,10 @@
   .challenge-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .diagnostic-dimensions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 840px) {
@@ -79,6 +83,13 @@
     gap: 7px;
   }
 
+  .diagnostic-profile__heading,
+  .diagnostic-profile__section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
   .challenge-operation-context {
     grid-template-columns: 1fr;
   }
@@ -86,6 +97,8 @@
   .starting-snapshot__layout,
   .starting-snapshot__support,
   .connection-map-layout,
+  .diagnostic-profile__summary,
+  .diagnostic-profile__next,
   .capability-layout,
   .performance-grid {
     grid-template-columns: 1fr;
@@ -266,7 +279,8 @@
 
   .kpi-grid,
   .challenge-grid,
-  .capability-list {
+  .capability-list,
+  .diagnostic-dimensions {
     grid-template-columns: 1fr;
   }
 

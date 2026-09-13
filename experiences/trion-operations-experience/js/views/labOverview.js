@@ -14,6 +14,7 @@ import {
   operationalAreas,
   operationSystems,
 } from "../operationModel.js";
+import { renderDiagnosticProfile } from "./diagnosticProfile.js";
 import { renderFooter, renderHeader } from "./shared.js";
 
 function formatKpiValue(kpi) {
@@ -584,6 +585,7 @@ function renderExperienceSummary(state) {
           </dl>
         </section>
       </div>
+      ${renderDiagnosticProfile(state)}
       <div class="decision-outcome__actions experience-summary__actions">
         <button class="button button--primary" type="button" data-action="navigate" data-section="overview">
           Explore the operational approach <span class="button-arrow" aria-hidden="true">-></span>

@@ -129,6 +129,10 @@
 :root[data-theme="dark"] .connection-map,
 :root[data-theme="dark"] .connection-map__node,
 :root[data-theme="dark"] .connection-map__relationship,
+:root[data-theme="dark"] .diagnostic-profile__summary-copy,
+:root[data-theme="dark"] .diagnostic-profile__facts div,
+:root[data-theme="dark"] .diagnostic-dimension,
+:root[data-theme="dark"] .diagnostic-profile__next > article,
 :root[data-theme="dark"] .challenge-card,
 :root[data-theme="dark"] .capability-card,
 :root[data-theme="dark"] .performance-table,
@@ -149,6 +153,7 @@
 :root[data-theme="dark"] .diagram-core,
 :root[data-theme="dark"] .button--primary,
 :root[data-theme="dark"] .map-insight,
+:root[data-theme="dark"] .diagnostic-profile__next > aside,
 :root[data-theme="dark"] .timeline-event--running,
 :root[data-theme="dark"] .timeline-key__item--running::before,
 :root[data-theme="dark"] .capability-outcome {

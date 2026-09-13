@@ -552,6 +552,272 @@ export const challengeOutcomes = Object.freeze([
   }),
 ]);
 
+export const diagnosticBands = Object.freeze([
+  Object.freeze({ id: "strong", minimum: 75, label: "Strong" }),
+  Object.freeze({ id: "established", minimum: 50, label: "Established" }),
+  Object.freeze({ id: "developing", minimum: 0, label: "Developing" }),
+]);
+
+export const diagnosticProfileBands = Object.freeze([
+  Object.freeze({
+    minimum: 75,
+    label: "Connected and improving",
+    description:
+      "Northstar has stronger shared context and can use it to identify the next operational improvement.",
+  }),
+  Object.freeze({
+    minimum: 50,
+    label: "Building connected capability",
+    description:
+      "Northstar has made useful connections, but important handoffs still need a clearer, more consistent response.",
+  }),
+  Object.freeze({
+    minimum: 0,
+    label: "Fragmented but visible",
+    description:
+      "Northstar can see the signals, but needs to connect the people, process, and information behind them.",
+  }),
+]);
+
+export const diagnosticDimensions = Object.freeze([
+  Object.freeze({
+    id: "visibility",
+    label: "Visibility",
+    description: "How clearly teams can see the signal, context, and current operating condition.",
+    scoring: Object.freeze({
+      base: 0,
+      kpiWeights: Object.freeze({ visibility: 0.55 }),
+      outcomePoints: Object.freeze({
+        "missing-minutes-outcome": 3,
+        "quality-loop-outcome": 5,
+        "control-room-outcome": 4,
+      }),
+      capabilityPoints: Object.freeze({
+        "connected-production-view": 2,
+        "production-quality-integration": 2,
+        "central-operational-view": 4,
+      }),
+      connectionPoints: Object.freeze({
+        "production-event-context": 2,
+        "production-quality-context": 2,
+        "shared-decision-context": 2,
+        "decision-to-outcome": 2,
+      }),
+      operationalScoreWeight: 0,
+    }),
+    interpretations: Object.freeze({
+      strong:
+        "The right people can see operational signals with the context needed to investigate them.",
+      established:
+        "Some useful context is visible, but teams still need to compare information before acting.",
+      developing:
+        "The operation has signals, but they are not yet consistently useful to the people making decisions.",
+    }),
+    remainingFriction:
+      "Keep checking whether the next signal reaches the people who need to act on it.",
+    recommendation:
+      "Use the shared operational view to make the next recurring loss or exception visible earlier.",
+  }),
+  Object.freeze({
+    id: "process-efficiency",
+    label: "Process efficiency",
+    description: "How reliably work moves without unnecessary duplication, waiting, or rework.",
+    scoring: Object.freeze({
+      base: 8,
+      kpiWeights: Object.freeze({
+        productivity: 0.26,
+        throughput: 0.14,
+        cost: 0.1,
+      }),
+      outcomePoints: Object.freeze({
+        "missing-minutes-outcome": 3,
+        "spreadsheet-shuffle-outcome": 10,
+        "delivery-domino-outcome": 4,
+      }),
+      capabilityPoints: Object.freeze({
+        simplify: 4,
+        standardise: 5,
+        automate: 6,
+        "workflow-automation": 5,
+      }),
+      connectionPoints: Object.freeze({
+        "planning-erp-context": 4,
+        "material-risk-response": 3,
+      }),
+      operationalScoreWeight: 0,
+    }),
+    interpretations: Object.freeze({
+      strong:
+        "The planning and response flow is more consistent, with less repeated work around the decision.",
+      established:
+        "Some avoidable work has been removed, but the next handoff or delay should be investigated.",
+      developing:
+        "The operation still loses time to duplicated work, unclear handoffs, or delayed response.",
+    }),
+    remainingFriction:
+      "The next opportunity is to find the remaining duplicated handoff or avoidable delay before automating further.",
+    recommendation:
+      "Use the connected view to trace the next repeated handoff, then simplify and standardise it before adding more automation.",
+  }),
+  Object.freeze({
+    id: "data-connection",
+    label: "Data connection",
+    description: "How well production, quality, planning, and logistics context can be used together.",
+    scoring: Object.freeze({
+      base: 5,
+      kpiWeights: Object.freeze({ visibility: 0.08 }),
+      outcomePoints: Object.freeze({
+        "quality-loop-outcome": 7,
+        "spreadsheet-shuffle-outcome": 6,
+        "delivery-domino-outcome": 4,
+        "control-room-outcome": 2,
+      }),
+      capabilityPoints: Object.freeze({
+        connect: 2,
+        "production-quality-integration": 5,
+        "workflow-automation": 5,
+        "logistics-production-visibility": 4,
+        "central-operational-view": 3,
+      }),
+      connectionPoints: Object.freeze({
+        "production-quality-context": 5,
+        "planning-erp-context": 4,
+        "material-risk-response": 4,
+        "shared-decision-context": 2,
+        "decision-to-outcome": 2,
+      }),
+      operationalScoreWeight: 0,
+    }),
+    interpretations: Object.freeze({
+      strong:
+        "Relevant records now travel together, so teams can investigate conditions and consequences in context.",
+      established:
+        "Some important records are connected, but a useful decision still depends on manual comparison.",
+      developing:
+        "Data exists in separate places and does not yet give teams enough shared context to act.",
+    }),
+    remainingFriction:
+      "New connections should be judged by whether they make a real decision easier, not by how much data is available.",
+    recommendation:
+      "Use the connected records to identify the next information gap that still delays an evidence-based decision.",
+  }),
+  Object.freeze({
+    id: "operational-responsiveness",
+    label: "Operational responsiveness",
+    description: "How early teams can see a disruption, coordinate a response, and protect commitments.",
+    scoring: Object.freeze({
+      base: 8,
+      kpiWeights: Object.freeze({
+        delivery: 0.22,
+        throughput: 0.13,
+        visibility: 0.06,
+      }),
+      outcomePoints: Object.freeze({
+        "delivery-domino-outcome": 12,
+        "control-room-outcome": 7,
+      }),
+      capabilityPoints: Object.freeze({
+        "logistics-production-visibility": 6,
+        "central-operational-view": 6,
+      }),
+      connectionPoints: Object.freeze({
+        "material-risk-response": 5,
+        "shared-decision-context": 4,
+        "decision-to-outcome": 3,
+      }),
+      operationalScoreWeight: 0,
+    }),
+    interpretations: Object.freeze({
+      strong:
+        "Material, capacity, and customer context can reach the people coordinating the response sooner.",
+      established:
+        "The operation can respond to some exceptions earlier, but the response still depends on clear ownership.",
+      developing:
+        "Disruptions reach planning, production, or delivery too late for teams to protect the best response.",
+    }),
+    remainingFriction:
+      "Keep testing whether an exception reaches the right role before it affects work or customer commitments.",
+    recommendation:
+      "Review the next exception path from signal to response and remove the delay that prevents earlier coordination.",
+  }),
+  Object.freeze({
+    id: "automation-readiness",
+    label: "Automation readiness",
+    description: "Whether the work is simple and consistent enough for automation to add practical value.",
+    scoring: Object.freeze({
+      base: 5,
+      kpiWeights: Object.freeze({
+        productivity: 0.1,
+        visibility: 0.07,
+      }),
+      outcomePoints: Object.freeze({
+        "spreadsheet-shuffle-outcome": 18,
+      }),
+      capabilityPoints: Object.freeze({
+        simplify: 8,
+        standardise: 12,
+        automate: 14,
+        "workflow-automation": 8,
+      }),
+      connectionPoints: Object.freeze({
+        "planning-erp-context": 6,
+      }),
+      operationalScoreWeight: 0,
+    }),
+    interpretations: Object.freeze({
+      strong:
+        "A standard, source-led workflow is ready for focused automation where it removes repetitive work.",
+      established:
+        "Some work is ready to automate, but the process and information route need one more consistency check.",
+      developing:
+        "Automation would risk speeding up a workaround before the work and information route are clear.",
+    }),
+    remainingFriction:
+      "Automation should remain focused on repetitive, standard work rather than adding technology around a workaround.",
+    recommendation:
+      "Use a short process review to confirm the next repetitive task has one clear owner, source, and standard route before automating it.",
+  }),
+  Object.freeze({
+    id: "improvement-potential",
+    label: "Improvement potential",
+    description: "How ready the operation is to use better context to find and prioritise its next bottleneck.",
+    scoring: Object.freeze({
+      base: 10,
+      kpiWeights: Object.freeze({}),
+      outcomePoints: Object.freeze({
+        "missing-minutes-outcome": 3,
+        "quality-loop-outcome": 3,
+        "spreadsheet-shuffle-outcome": 3,
+        "delivery-domino-outcome": 3,
+        "control-room-outcome": 3,
+      }),
+      capabilityPoints: Object.freeze({
+        understand: 3,
+        connect: 3,
+        measure: 8,
+        "central-operational-view": 8,
+      }),
+      connectionPoints: Object.freeze({
+        "shared-decision-context": 4,
+        "decision-to-outcome": 3,
+      }),
+      operationalScoreWeight: 0.2,
+    }),
+    interpretations: Object.freeze({
+      strong:
+        "Northstar can use connected evidence and a shared view to identify the next valuable improvement.",
+      established:
+        "Northstar has a useful foundation for the next improvement, but still needs to prioritise the best first move.",
+      developing:
+        "The next improvement is difficult to prioritise because the operation does not yet share enough useful context.",
+    }),
+    remainingFriction:
+      "The next bottleneck still needs to be identified and prioritised from the shared operational context.",
+    recommendation:
+      "Compare the remaining improvement opportunities by impact, effort, risk, and readiness before choosing the next first step.",
+  }),
+]);
+
 export function getOperationalAreaById(areaId) {
   return operationalAreas.find((area) => area.id === areaId);
 }

@@ -136,7 +136,7 @@ export const missingMinutesDecisions = Object.freeze([
       improvementCapacity: 1,
       integrationCapacity: 1,
     }),
-    unlockIds: Object.freeze(["connected-production-view"]),
+    unlockIds: Object.freeze(["understand", "connected-production-view"]),
     announcement:
       "Downtime context is now captured. Visibility improved and the Connected Production View is available.",
   }),

@@ -24,7 +24,7 @@ export function renderLanding(state) {
               </button>
             </div>
             <ul class="hero-proof" aria-label="What the lab includes">
-              <li><i aria-hidden="true">+</i>Six practical challenges</li>
+              <li><i aria-hidden="true">+</i>Five connected challenges</li>
               <li><i aria-hidden="true">+</i>One connected operation</li>
               <li><i aria-hidden="true">+</i>Visible consequences</li>
             </ul>

@@ -9,7 +9,13 @@ import {
   getDeliveryDominoTraceStatus,
   isDeliveryDominoDependencyAvailable,
 } from "../miniGames/deliveryDomino.js";
-import { renderFooter, renderHeader } from "./shared.js";
+import {
+  renderChallengeJourney,
+  renderCompletionAction,
+  renderFooter,
+  getRecordedKpiImpact,
+  renderHeader,
+} from "./shared.js";
 
 const relevantKpis = ["delivery", "visibility", "throughput"];
 
@@ -402,9 +408,12 @@ function renderKpiImpact(state, decision, completed) {
       ${relevantKpis
         .map((key) => {
           const impact = decision.kpiChanges[key];
-          const before = completed ? state.kpis[key].previous : state.kpis[key].current;
-          const after = completed
-            ? state.kpis[key].current
+          const recordedImpact = completed
+            ? getRecordedKpiImpact(state, deliveryDominoChallengeId, key)
+            : null;
+          const before = recordedImpact ? recordedImpact.before : state.kpis[key].current;
+          const after = recordedImpact
+            ? recordedImpact.after
             : Math.max(0, Math.min(100, before + impact.delta));
 
           return `
@@ -461,7 +470,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
     >
       <div class="decision-outcome__header">
         <div>
-          <p class="eyebrow">${completed ? "Reveal and measure" : "Decision consequence"}</p>
+          <p class="eyebrow">${completed ? "Outcome and measure" : "Decision consequence"}</p>
           <h2 id="deliveryOutcomeTitle">${decision.outcomeTitle}</h2>
         </div>
         <p class="decision-outcome__summary">${decision.outcomeSummary}</p>
@@ -494,9 +503,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
               </p>
             </section>
             <div class="decision-outcome__actions">
-              <button class="button button--primary" type="button" data-action="close-challenge">
-                Return to challenge map <span class="button-arrow" aria-hidden="true">-></span>
-              </button>
+              ${renderCompletionAction(challenge)}
             </div>
           `
           : `
@@ -562,14 +569,14 @@ export function renderDeliveryDomino(state) {
 
           <header class="challenge-game-header">
             <div>
-              <p class="eyebrow">Challenge 04 / See the wider operation</p>
+              <p class="eyebrow">Challenge ${challenge.number} / ${challenge.phase}</p>
               <h1 id="screen-title" tabindex="-1">The Delivery Domino</h1>
               <p>
                 A late material delivery is visible in logistics, but its consequence is still hidden from the production plan and customer commitments. Trace the dependency chain before choosing where to intervene.
               </p>
             </div>
             <aside class="challenge-game-brief" aria-label="Challenge objective">
-              <span>Mission 04</span>
+              <span>Operational focus</span>
               <strong>Turn one late delivery into an early, shared operational response.</strong>
               <dl>
                 <div>
@@ -588,6 +595,7 @@ export function renderDeliveryDomino(state) {
             </aside>
           </header>
 
+          ${renderChallengeJourney(state, challenge)}
           ${renderMissionTrail(state, status)}
           ${renderDependencyBoard(state, status)}
           ${renderDecisionSection(state, challenge, status)}

@@ -33,18 +33,18 @@ export const kpiDefinitions = Object.freeze({
     description: "How clearly the operation can be understood.",
   },
   cost: {
-    label: "Cost",
-    description: "The resources consumed to achieve the result.",
+    label: "Cost control",
+    description: "How well avoidable resource use is controlled.",
   },
 });
 
 export const initialKpis = Object.freeze({
-  throughput: { current: 58, previous: 58, target: 78, unit: "%" },
-  quality: { current: 72, previous: 72, target: 88, unit: "%" },
-  delivery: { current: 64, previous: 64, target: 86, unit: "%" },
-  productivity: { current: 55, previous: 55, target: 76, unit: "%" },
-  visibility: { current: 35, previous: 35, target: 80, unit: "%" },
-  cost: { current: 68, previous: 68, target: 82, unit: "%" },
+  throughput: { baseline: 58, current: 58, previous: 58, target: 78, unit: "%" },
+  quality: { baseline: 72, current: 72, previous: 72, target: 88, unit: "%" },
+  delivery: { baseline: 64, current: 64, previous: 64, target: 86, unit: "%" },
+  productivity: { baseline: 55, current: 55, previous: 55, target: 76, unit: "%" },
+  visibility: { baseline: 35, current: 35, previous: 35, target: 80, unit: "%" },
+  cost: { baseline: 68, current: 68, previous: 68, target: 82, unit: "%" },
 });
 
 export const capabilityStages = Object.freeze([
@@ -119,6 +119,8 @@ export const challenges = Object.freeze([
     id: "missing-minutes",
     number: "01",
     title: "The Missing Minutes",
+    phase: "Understand",
+    journeySummary: "Make lost time visible before trying to improve it.",
     story:
       "A production line is missing its target. It appears to be running, but time is being lost in several places.",
     objective: "Find the largest avoidable loss before choosing how to improve the line.",
@@ -133,6 +135,8 @@ export const challenges = Object.freeze([
     id: "quality-loop",
     number: "02",
     title: "The Quality Loop",
+    phase: "Connect",
+    journeySummary: "Link the quality signal to the production context that created it.",
     story:
       "Defects are increasing, but nobody agrees why. Production, quality, and process information are disconnected.",
     objective: "Connect the evidence that reveals the most likely source of the repeat defects.",
@@ -147,6 +151,8 @@ export const challenges = Object.freeze([
     id: "spreadsheet-shuffle",
     number: "03",
     title: "The Spreadsheet Shuffle",
+    phase: "Simplify and automate",
+    journeySummary: "Remove repeated work before automating one reliable planning flow.",
     story:
       "A planner spends the morning reconciling spreadsheets, copying updates, and emailing information between systems.",
     objective: "Remove duplicate effort before deciding which part of the workflow should be automated.",
@@ -161,6 +167,8 @@ export const challenges = Object.freeze([
     id: "delivery-domino",
     number: "04",
     title: "The Delivery Domino",
+    phase: "Coordinate dependencies",
+    journeySummary: "Trace one disruption across the operation so people can act before it spreads.",
     story:
       "A late material delivery threatens several customer orders. The problem crosses logistics, production, planning, and delivery.",
     objective: "Trace the consequence of the delay and intervene where it prevents the most disruption.",
@@ -175,6 +183,8 @@ export const challenges = Object.freeze([
     id: "control-room",
     number: "05",
     title: "The Control Room",
+    phase: "Measure and improve",
+    journeySummary: "Focus shared information on the people who need to make the next decision.",
     story:
       "Management has plenty of data but no clear operational view. Important signals compete with distracting information.",
     objective: "Build a useful view by selecting the information that supports the next operational decision.",
@@ -185,20 +195,6 @@ export const challenges = Object.freeze([
     unlockLabel: "Central Operational View",
     prerequisites: ["delivery-domino"],
   },
-  {
-    id: "improvement-challenge",
-    number: "06",
-    title: "The Improvement Challenge",
-    story:
-      "The operation has improved, but gains need to be sustained. Another bottleneck is already becoming visible.",
-    objective: "Choose the next improvement by weighing impact, effort, risk, data quality, and readiness.",
-    mechanic: "Opportunity prioritisation",
-    focus: ["Impact", "Effort", "Risk", "Data quality"],
-    principle: "Transformation is iterative, measurable, and continuous.",
-    unlockId: "continuous-improvement",
-    unlockLabel: "Continuous Improvement",
-    prerequisites: ["control-room"],
-  },
 ]);
 
 export const upgrades = Object.freeze([
@@ -207,6 +203,12 @@ export const upgrades = Object.freeze([
     type: "Method",
     title: "Understand",
     description: "Reveal the real process, data, and dependencies.",
+  },
+  {
+    id: "connect",
+    type: "Method",
+    title: "Connect",
+    description: "Relate information around the decision people need to make.",
   },
   {
     id: "simplify",
@@ -262,12 +264,6 @@ export const upgrades = Object.freeze([
     title: "Central Operational View",
     description: "Relevant people can act from one shared view of work.",
   },
-  {
-    id: "continuous-improvement",
-    type: "Connection",
-    title: "Continuous Improvement",
-    description: "The operation can measure, learn, and improve again.",
-  },
 ]);
 
 const scoreWeights = Object.freeze({
@@ -290,6 +286,10 @@ export function calculateOperationalScore(kpis) {
 
 export function getChallengeById(challengeId) {
   return challenges.find((challenge) => challenge.id === challengeId);
+}
+
+export function hasCompletedExperience(completedChallenges) {
+  return challenges.every((challenge) => completedChallenges.includes(challenge.id));
 }
 
 export function getUpgradeById(upgradeId) {

@@ -1,4 +1,4 @@
-import { getChallengeById, initialKpis, kpiDefinitions } from "../data.js";
+import { getChallengeById, kpiDefinitions } from "../data.js";
 import {
   getMissingMinutesDecisionById,
   getMissingMinutesEventById,
@@ -8,7 +8,13 @@ import {
   missingMinutesSummary,
   missingMinutesTimeline,
 } from "../miniGames/missingMinutes.js";
-import { renderFooter, renderHeader } from "./shared.js";
+import {
+  renderChallengeJourney,
+  renderCompletionAction,
+  renderFooter,
+  getRecordedKpiImpact,
+  renderHeader,
+} from "./shared.js";
 
 const relevantKpis = ["throughput", "productivity", "visibility"];
 
@@ -37,7 +43,7 @@ function renderMissionTrail(state, status) {
   const challengeCompleted = state.completedChallenges.includes(missingMinutesChallengeId);
   const hasStartedInvestigation = progress.inspectedEventIds.length > 0;
   const hasDecisionOutcome = Boolean(progress.decisionId);
-  const collectedClues = Math.min(status.inspectedLossEvents, status.requiredLossEvents);
+  const reviewedEvidence = Math.min(status.inspectedLossEvents, status.requiredLossEvents);
   const steps = [
     {
       number: "01",
@@ -48,8 +54,8 @@ function renderMissionTrail(state, status) {
     },
     {
       number: "02",
-      label: "Collect clues",
-      detail: `${collectedClues} / ${status.requiredLossEvents} revealed`,
+      label: "Review evidence",
+      detail: `${reviewedEvidence} / ${status.requiredLossEvents} records`,
       completed: status.canDecide || hasDecisionOutcome || challengeCompleted,
       current: hasStartedInvestigation && !status.canDecide,
     },
@@ -106,7 +112,7 @@ function renderTimelineEvent(event, progress) {
         <span class="timeline-event__label">${event.label}</span>
         <strong class="timeline-event__duration">${inspected ? event.duration : "?"}<small> min</small></strong>
         <span class="timeline-event__time">${inspected ? `${event.start} - ${event.end}` : "Scan event"}</span>
-        <span class="timeline-event__state">${inspected ? "Clue found" : "Reveal clue"}</span>
+        <span class="timeline-event__state">${inspected ? "Record reviewed" : "Review record"}</span>
       </button>
     </li>
   `;
@@ -116,7 +122,7 @@ function renderEventInspector(event) {
   if (!event) {
     return `
       <aside class="event-inspector event-inspector--empty" aria-labelledby="eventInspectorTitle">
-        <p class="eyebrow">Mission file</p>
+        <p class="eyebrow">Evidence file</p>
         <h3 id="eventInspectorTitle">Start the scan.</h3>
         <p>
           Each revealed record adds the evidence needed to make the first improvement meaningful.
@@ -132,9 +138,9 @@ function renderEventInspector(event) {
 
   return `
     <aside class="event-inspector event-inspector--${event.tone}" aria-labelledby="eventInspectorTitle">
-      <p class="eyebrow">Mission file</p>
+      <p class="eyebrow">Evidence file</p>
       <h3 id="eventInspectorTitle">${event.label} <span>${event.duration} minutes</span></h3>
-      <span class="event-inspector__status">Clue logged</span>
+      <span class="event-inspector__status">Record reviewed</span>
       <dl class="event-inspector__facts">
         <div>
           <dt>Time</dt>
@@ -174,7 +180,7 @@ function renderEvidenceGate(status, decisionError) {
       <ul class="decision-gate__checks">
         <li class="${status.inspectedLossEvents >= status.requiredLossEvents ? "is-complete" : ""}">
           <span>${Math.min(status.inspectedLossEvents, status.requiredLossEvents)} / ${status.requiredLossEvents}</span>
-          Loss clues revealed
+          Loss records reviewed
         </li>
         <li class="${status.hasLargestAvoidableLoss ? "is-complete" : ""}">
           <span>${status.hasLargestAvoidableLoss ? "Viewed" : "Still needed"}</span>
@@ -190,8 +196,8 @@ function renderDecisionChoices() {
     <section class="improvement-decision" id="missing-minutes-decision" tabindex="-1" aria-labelledby="decisionTitle">
       <div class="improvement-decision__header">
         <div>
-          <p class="eyebrow">Make the call</p>
-          <h2 id="decisionTitle">Choose the first move.</h2>
+          <p class="eyebrow">Choose an intervention</p>
+          <h2 id="decisionTitle">Choose the first improvement.</h2>
         </div>
         <p>
           Which action makes the largest unexplained loss more useful for the team trying to improve it?
@@ -228,14 +234,19 @@ function formatDelta(delta) {
   return `${delta > 0 ? "+" : ""}${delta} pts`;
 }
 
-function renderKpiImpact(decision) {
+function renderKpiImpact(state, decision, completed) {
   return `
     <dl class="decision-kpi-impact">
       ${relevantKpis
         .map((key) => {
           const impact = decision.kpiChanges[key];
-          const before = initialKpis[key].current;
-          const after = before + impact.delta;
+          const recordedImpact = completed
+            ? getRecordedKpiImpact(state, missingMinutesChallengeId, key)
+            : null;
+          const before = recordedImpact ? recordedImpact.before : state.kpis[key].current;
+          const after = recordedImpact
+            ? recordedImpact.after
+            : Math.max(0, Math.min(100, before + impact.delta));
           const changeClass = impact.delta > 0 ? "is-positive" : "is-neutral";
 
           return `
@@ -254,8 +265,8 @@ function renderKpiImpact(decision) {
   `;
 }
 
-function renderDecisionOutcome(decision, challenge, completed) {
-  const outcomeLabel = completed ? "Reveal and measure" : "Decision consequence";
+function renderDecisionOutcome(state, decision, challenge, completed) {
+  const outcomeLabel = completed ? "Outcome and measure" : "Decision consequence";
   const outcomeClass = completed ? "is-complete" : "is-incomplete";
 
   return `
@@ -273,7 +284,7 @@ function renderDecisionOutcome(decision, challenge, completed) {
         <p class="decision-outcome__summary">${decision.outcomeSummary}</p>
       </div>
       <p class="decision-outcome__detail">${decision.outcomeDetail}</p>
-      ${renderKpiImpact(decision)}
+      ${renderKpiImpact(state, decision, completed)}
       <p class="scenario-disclaimer">
         Illustrative scenario outcome. These changes show the relationship between better event context and the next operational decision; they are not a forecast.
       </p>
@@ -291,9 +302,7 @@ function renderDecisionOutcome(decision, challenge, completed) {
               </p>
             </section>
             <div class="decision-outcome__actions">
-              <button class="button button--primary" type="button" data-action="close-challenge">
-                Return to challenge map <span class="button-arrow" aria-hidden="true">-></span>
-              </button>
+              ${renderCompletionAction(challenge)}
             </div>
           `
           : `
@@ -321,11 +330,11 @@ function renderDecisionSection(state, challenge, status) {
       throw new Error("The Missing Minutes completion requires a decision outcome.");
     }
 
-    return renderDecisionOutcome(completionDecision, challenge, true);
+    return renderDecisionOutcome(state, completionDecision, challenge, true);
   }
 
   if (selectedDecision) {
-    return renderDecisionOutcome(selectedDecision, challenge, false);
+    return renderDecisionOutcome(state, selectedDecision, challenge, false);
   }
 
   if (status.canDecide) {
@@ -359,14 +368,14 @@ export function renderMissingMinutes(state) {
 
           <header class="challenge-game-header">
             <div>
-              <p class="eyebrow">Challenge 01 / Understand</p>
+              <p class="eyebrow">Challenge ${challenge.number} / ${challenge.phase}</p>
               <h1 id="screen-title" tabindex="-1">The Missing Minutes</h1>
               <p>
                 Line 03 is missing its target. It appears to be running, but several kinds of lost time are hiding in the same shift record.
               </p>
             </div>
             <aside class="challenge-game-brief" aria-label="Challenge objective">
-              <span>Mission 01</span>
+              <span>Operational focus</span>
               <strong>Find the largest avoidable loss before choosing the first move.</strong>
               <dl>
                 <div>
@@ -378,13 +387,14 @@ export function renderMissingMinutes(state) {
                   <dd>${missingMinutesSummary.unexplainedLossMinutes} minutes</dd>
                 </div>
                 <div>
-                  <dt>Clues collected</dt>
+                  <dt>Evidence reviewed</dt>
                   <dd>${Math.min(status.inspectedLossEvents, status.requiredLossEvents)} / ${status.requiredLossEvents}</dd>
                 </div>
               </dl>
             </aside>
           </header>
 
+          ${renderChallengeJourney(state, challenge)}
           ${renderMissionTrail(state, status)}
 
           <section class="timeline-investigation" aria-labelledby="timelineTitle">
@@ -392,7 +402,7 @@ export function renderMissingMinutes(state) {
               <div>
                 <p class="eyebrow">Investigation board</p>
                 <h2 id="timelineTitle">Reveal the shift record.</h2>
-                <p>Select an event to turn its trace into a clue. Duration, plan status, and cause will show in the mission file.</p>
+                <p>Select an event to review its trace. Duration, plan status, and cause will appear in the evidence file.</p>
               </div>
             </div>
 

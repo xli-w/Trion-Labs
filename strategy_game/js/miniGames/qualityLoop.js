@@ -184,7 +184,7 @@ export const qualityLoopDecisions = Object.freeze([
       improvementCapacity: 1,
       integrationCapacity: 1,
     }),
-    unlockIds: Object.freeze(["production-quality-integration"]),
+    unlockIds: Object.freeze(["connect", "production-quality-integration"]),
     announcement:
       "Production and quality now share case context. The defect trace is visible, and Production + Quality Integration is available.",
   }),

@@ -3,7 +3,7 @@
 Trion Labs is a standalone, front-end operational strategy experience. This
 initial implementation delivers the Phase 1 foundation: the landing experience,
 lab overview, operational model, central game state, navigation, reset flow,
-and extension boundaries for the six challenge modules.
+and five connected challenge modules.
 
 ## Run locally
 
@@ -33,8 +33,8 @@ development server with the same document root will also work.
   renderers, plus focused renderers for implemented mini-games. `js/ui.js`
   orchestrates those screens and translates DOM actions into controller
   callbacks.
-- `js/miniGames/registry.js` registers the six challenge contracts and exposes
-  their progression rules without coupling their future mechanics to the shell.
+- `js/miniGames/registry.js` registers the five challenge contracts and exposes
+  their progression rules without coupling their focused mechanics to the shell.
 - `js/miniGames/missingMinutes.js` owns the first challenge's illustrative
   timeline, intervention rules, and focused interaction state.
 - `js/miniGames/qualityLoop.js` owns the second challenge's illustrative
@@ -48,8 +48,8 @@ development server with the same document root will also work.
 - `../theme.js` owns the shared local colour preference used by the strategy
   experience and standalone mini-games.
 
-Future mini-game modules should own only their focused interaction. On a
-completed decision they can call `completeChallenge()` from `js/game.js` with
+Each mini-game module owns only its focused interaction. On a completed
+decision it can call `completeChallenge()` from `js/game.js` with
 the challenge id, KPI changes, resource costs, decision record, and unlocked
 capability ids. The state store then records the result and updates the
 aggregate operational score and capability stage.
@@ -103,11 +103,12 @@ unlocks the Central Operational View. An overloaded management page and
 separate static reports explain why more information or tailored reports alone
 do not create an actionable shared decision.
 
-## Remaining foundation scope
+## Experience completion
 
-The challenge map provides complete scenario briefings and preserves the
-intended challenge sequence. The distinct 30-90 second interactive mechanic
-for the sixth Improvement Challenge remains deliberately isolated behind the
-registry for later implementation. No backend, external API, framework, or
-visitor-progression persistence is used. The selected colour theme is stored
-locally so it remains in place across reloads and implemented mini-games.
+The five challenges form one operational progression: understand the loss,
+connect the relevant information, simplify and automate a workflow, coordinate
+dependencies, then measure the shared decision. Completing The Control Room
+reveals a final overview that records the decisions, capabilities, and
+illustrative before-and-after KPI context. No backend, external API, framework,
+or visitor-progression persistence is used. The selected colour theme is stored
+locally so it remains in place across reloads and challenges.

@@ -29,6 +29,7 @@ import {
   toggleSpreadsheetShuffleStep,
   toggleControlRoomAudience,
   toggleControlRoomSignal,
+  viewExperienceSummary,
 } from "./game.js";
 import {
   bindInteractions,
@@ -67,11 +68,19 @@ bindInteractions({
     scrollToSection("top");
   },
   navigate: ({ section }) => {
-    navigateToSection(section);
-    scrollToSection(section);
+    const nextState = navigateToSection(section);
+
+    if (nextState.activeSection === section) {
+      scrollToSection(section);
+    }
   },
   "review-challenge": ({ challengeId }) => {
-    reviewChallenge(challengeId);
+    const nextState = reviewChallenge(challengeId);
+
+    if (nextState.activeChallengeId === challengeId) {
+      scrollToSection("screen-title");
+      focusScreenHeading();
+    }
   },
   "close-challenge": () => {
     closeChallengeBriefing();
@@ -201,6 +210,14 @@ bindInteractions({
   "retry-control-room-decision": () => {
     retryControlRoomDecision();
     focusElementById("control-room-decision");
+  },
+  "view-experience-summary": () => {
+    const nextState = viewExperienceSummary();
+
+    if (nextState.activeSection === "summary") {
+      scrollToSection("summary");
+      focusElementById("summary-title");
+    }
   },
   reset: () => {
     resetExperience();

@@ -62,6 +62,10 @@ export function closeChallengeBriefing() {
   return dispatch({ type: "CLOSE_CHALLENGE" });
 }
 
+export function viewExperienceSummary() {
+  return dispatch({ type: "VIEW_EXPERIENCE_SUMMARY" });
+}
+
 export function resetExperience() {
   return dispatch({ type: "RESET" });
 }

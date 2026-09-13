@@ -13,7 +13,13 @@ import {
   getControlRoomSignalById,
   getControlRoomSignalSelectionStatus,
 } from "../miniGames/controlRoom.js";
-import { renderFooter, renderHeader } from "./shared.js";
+import {
+  renderChallengeJourney,
+  renderCompletionAction,
+  renderFooter,
+  getRecordedKpiImpact,
+  renderHeader,
+} from "./shared.js";
 
 const relevantKpis = ["visibility", "productivity", "delivery"];
 
@@ -505,9 +511,12 @@ function renderKpiImpact(state, decision, completed) {
       ${relevantKpis
         .map((key) => {
           const impact = decision.kpiChanges[key];
-          const before = completed ? state.kpis[key].previous : state.kpis[key].current;
-          const after = completed
-            ? state.kpis[key].current
+          const recordedImpact = completed
+            ? getRecordedKpiImpact(state, controlRoomChallengeId, key)
+            : null;
+          const before = recordedImpact ? recordedImpact.before : state.kpis[key].current;
+          const after = recordedImpact
+            ? recordedImpact.after
             : Math.max(0, Math.min(100, before + impact.delta));
 
           return `
@@ -564,7 +573,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
     >
       <div class="decision-outcome__header">
         <div>
-          <p class="eyebrow">${completed ? "Reveal and measure" : "Decision consequence"}</p>
+          <p class="eyebrow">${completed ? "Outcome and measure" : "Decision consequence"}</p>
           <h2 id="controlRoomOutcomeTitle">${decision.outcomeTitle}</h2>
         </div>
         <p class="decision-outcome__summary">${decision.outcomeSummary}</p>
@@ -597,9 +606,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
               </p>
             </section>
             <div class="decision-outcome__actions">
-              <button class="button button--primary" type="button" data-action="close-challenge">
-                Return to challenge map <span class="button-arrow" aria-hidden="true">-></span>
-              </button>
+              ${renderCompletionAction(challenge)}
             </div>
           `
           : `
@@ -666,14 +673,14 @@ export function renderControlRoom(state) {
 
           <header class="challenge-game-header">
             <div>
-              <p class="eyebrow">Challenge 05 / Measure and improve</p>
+              <p class="eyebrow">Challenge ${challenge.number} / ${challenge.phase}</p>
               <h1 id="screen-title" tabindex="-1">The Control Room</h1>
               <p>
                 Management has plenty of information, but no useful shared view of the work. Curate the current exception so the people who need to decide can see what matters first.
               </p>
             </div>
             <aside class="challenge-game-brief" aria-label="Challenge objective">
-              <span>Mission 05</span>
+              <span>Operational focus</span>
               <strong>Turn scattered operational information into a focused shared decision.</strong>
               <dl>
                 <div>
@@ -692,6 +699,7 @@ export function renderControlRoom(state) {
             </aside>
           </header>
 
+          ${renderChallengeJourney(state, challenge)}
           ${renderMissionTrail(state, signalStatus, audienceStatus)}
           ${renderSignalBoard(state, signalStatus)}
           ${renderAudienceBoard(state, audienceStatus)}

@@ -2,6 +2,7 @@ import {
   capabilityStages,
   challenges,
   getCapabilityStage,
+  hasCompletedExperience,
   kpiDefinitions,
   operationAreas,
   upgrades,
@@ -14,15 +15,15 @@ function formatKpiValue(kpi) {
 }
 
 function renderKpiChange(kpi) {
-  const delta = kpi.current - kpi.previous;
+  const delta = kpi.current - kpi.baseline;
 
   if (delta === 0) {
-    return '<span class="kpi-change">Starting point</span>';
+    return '<span class="kpi-change">At starting point</span>';
   }
 
   const direction = delta > 0 ? "is-positive" : "is-negative";
   const sign = delta > 0 ? "+" : "";
-  return `<span class="kpi-change ${direction}">${sign}${delta}${kpi.unit} since decision</span>`;
+  return `<span class="kpi-change ${direction}">${sign}${delta}${kpi.unit} from baseline</span>`;
 }
 
 function renderKpiCards(state) {
@@ -154,7 +155,11 @@ function renderChallengeCards(state) {
       ${challenges
         .map((challenge) => {
           const readiness = getChallengeReadiness(challenge.id, state);
-          const stateClass = readiness.completed || readiness.canLaunch ? "is-available" : "";
+          const stateClass = readiness.completed
+            ? "is-completed"
+            : readiness.canLaunch
+              ? "is-available"
+              : "";
           const actionLabel =
             readiness.completed
               ? "Review outcome"
@@ -164,9 +169,11 @@ function renderChallengeCards(state) {
                   ? "Connect records"
                     : challenge.id === "spreadsheet-shuffle" && readiness.canLaunch
                       ? "Redesign workflow"
+                      : challenge.id === "delivery-domino" && readiness.canLaunch
+                        ? "Trace dependencies"
                       : challenge.id === "control-room" && readiness.canLaunch
                         ? "Curate operational view"
-                    : "Review scenario";
+                        : "Review scenario";
 
           return `
             <article class="challenge-card ${readiness.canLaunch ? "is-current" : ""}">
@@ -175,9 +182,10 @@ function renderChallengeCards(state) {
                 <span class="challenge-state ${stateClass}">${getChallengeStateLabel(readiness)}</span>
               </div>
               <h3>${challenge.title}</h3>
+              <span class="challenge-phase">${challenge.phase}</span>
               <p>${challenge.story}</p>
               <div class="challenge-card__meta">
-                <span>Expected capability</span>
+                <span>Capability this creates</span>
                 <strong>${challenge.unlockLabel}</strong>
               </div>
               <button
@@ -230,6 +238,46 @@ function renderCapabilityGroup(label, title, description, capabilitySet, state) 
   `;
 }
 
+function renderCapabilityProgress(state) {
+  const experienceComplete = hasCompletedExperience(state.completedChallenges);
+  const stage = getCapabilityStage(state.capabilityStage);
+  const nextChallenge = challenges.find(
+    (challenge) => !state.completedChallenges.includes(challenge.id),
+  );
+
+  if (!experienceComplete && !nextChallenge) {
+    throw new Error("The next operational question could not be determined.");
+  }
+
+  return `
+    <aside class="resource-card capability-progress-card">
+      <span class="resource-card__label">Operating model</span>
+      <h3>${experienceComplete ? "Ready to improve again." : `${nextChallenge.title} is the next question.`}</h3>
+      <p>
+        ${
+          experienceComplete
+            ? "Visible, connected context now makes the next bottleneck easier to investigate."
+            : `${nextChallenge.journeySummary} Each capability creates the context for the question that follows.`
+        }
+      </p>
+      <dl class="resource-list">
+        <div>
+          <dt>Challenges completed</dt>
+          <dd>${state.completedChallenges.length} / ${challenges.length}</dd>
+        </div>
+        <div>
+          <dt>Current stage</dt>
+          <dd>Stage ${stage.stage}: ${stage.name}</dd>
+        </div>
+        <div>
+          <dt>${experienceComplete ? "Next improvement" : "Next focus"}</dt>
+          <dd>${experienceComplete ? "Find the next bottleneck" : nextChallenge.phase}</dd>
+        </div>
+      </dl>
+    </aside>
+  `;
+}
+
 function renderCapabilities(state) {
   const methodology = upgrades.filter((upgrade) => upgrade.type === "Method");
   const connections = upgrades.filter((upgrade) => upgrade.type === "Connection");
@@ -252,27 +300,7 @@ function renderCapabilities(state) {
           state,
         )}
       </div>
-      <aside class="resource-card">
-        <span class="resource-card__label">Available capacity</span>
-        <h3>Improve with intent.</h3>
-        <p>
-          Capacity is deliberate. Good transformation means making the right improvement in the right order.
-        </p>
-        <dl class="resource-list">
-          <div>
-            <dt>Improvement moves</dt>
-            <dd>${state.resources.improvementCapacity}</dd>
-          </div>
-          <div>
-            <dt>Connection moves</dt>
-            <dd>${state.resources.integrationCapacity}</dd>
-          </div>
-          <div>
-            <dt>Unlocked capabilities</dt>
-            <dd>${state.unlockedUpgrades.length}</dd>
-          </div>
-        </dl>
-      </aside>
+      ${renderCapabilityProgress(state)}
     </div>
   `;
 }
@@ -289,6 +317,7 @@ function renderPerformance(state) {
         <thead>
           <tr>
             <th scope="col">Measure</th>
+            <th scope="col">Baseline</th>
             <th scope="col">Current</th>
             <th scope="col">Target</th>
           </tr>
@@ -299,6 +328,7 @@ function renderPerformance(state) {
               ([key, kpi]) => `
                 <tr>
                   <th scope="row">${kpiDefinitions[key].label}</th>
+                  <td><small>${kpi.baseline}${kpi.unit}</small></td>
                   <td><strong>${kpi.current}${kpi.unit}</strong></td>
                   <td><small>${kpi.target}${kpi.unit}</small></td>
                 </tr>
@@ -326,6 +356,112 @@ function renderPerformance(state) {
   `;
 }
 
+function renderExperienceSummary(state) {
+  if (!hasCompletedExperience(state.completedChallenges)) {
+    return "";
+  }
+
+  const stage = getCapabilityStage(state.capabilityStage);
+  const outcomes = challenges.map((challenge) => {
+    const decision = state.decisions.find((item) => item.challengeId === challenge.id);
+
+    if (!decision) {
+      throw new Error(`${challenge.title} is complete without a recorded decision.`);
+    }
+
+    return `
+      <li>
+        <span>Challenge ${challenge.number} / ${challenge.phase}</span>
+        <strong>${challenge.title}</strong>
+        <p>${decision.title}</p>
+        <small>${challenge.unlockLabel}</small>
+      </li>
+    `;
+  });
+
+  return `
+    <section class="lab-section experience-summary" id="summary" aria-labelledby="summary-title">
+      <div class="section-topline">
+        <div>
+          <p class="eyebrow">Trion Labs outcome</p>
+          <h2 id="summary-title" tabindex="-1">The operation is moving.</h2>
+        </div>
+        <p>
+          The five decisions now form one operating model rather than five separate responses.
+        </p>
+      </div>
+      <div class="experience-summary__layout">
+        <div class="experience-summary__intro">
+          <p class="experience-summary__lead">
+            The operation is moving. You have improved visibility, connected information, and made the next improvement easier to find.
+          </p>
+          <p>
+            The outcome is a clearer way for people to see a signal, investigate its context, coordinate a response, and measure what to improve next.
+          </p>
+          <dl class="experience-summary__facts">
+            <div>
+              <dt>Capability stage</dt>
+              <dd>Stage ${stage.stage}: ${stage.name}</dd>
+            </div>
+            <div>
+              <dt>Operating capability</dt>
+              <dd>Central Operational View</dd>
+            </div>
+            <div>
+              <dt>Next improvement</dt>
+              <dd>Investigate the next bottleneck from shared context.</dd>
+            </div>
+          </dl>
+        </div>
+        <aside class="experience-summary__next">
+          <span>What the approach makes possible</span>
+          <strong>Better understanding makes the next improvement possible.</strong>
+          <p>
+            This illustrative scenario shows an approach to operational improvement, not a claim that every problem is solved.
+          </p>
+        </aside>
+      </div>
+      <div class="experience-summary__evidence">
+        <section aria-labelledby="summaryPathTitle">
+          <p class="eyebrow">Capability path</p>
+          <h3 id="summaryPathTitle">Each decision created the context for the next.</h3>
+          <ol class="experience-summary__outcomes">
+            ${outcomes.join("")}
+          </ol>
+        </section>
+        <section aria-labelledby="summaryKpisTitle">
+          <p class="eyebrow">Before and after</p>
+          <h3 id="summaryKpisTitle">The operation has a clearer baseline for its next decision.</h3>
+          <dl class="experience-summary__kpis">
+            ${Object.entries(state.kpis)
+              .map(
+                ([key, kpi]) => `
+                  <div>
+                    <dt>${kpiDefinitions[key].label}</dt>
+                    <dd>
+                      <span>${kpi.baseline}${kpi.unit}</span>
+                      <i aria-hidden="true">-></i>
+                      <strong>${kpi.current}${kpi.unit}</strong>
+                    </dd>
+                  </div>
+                `,
+              )
+              .join("")}
+          </dl>
+        </section>
+      </div>
+      <div class="decision-outcome__actions experience-summary__actions">
+        <button class="button button--primary" type="button" data-action="navigate" data-section="overview">
+          Explore the operational approach <span class="button-arrow" aria-hidden="true">-></span>
+        </button>
+        <button class="button button--secondary" type="button" data-action="reset">
+          Start again
+        </button>
+      </div>
+    </section>
+  `;
+}
+
 export function renderLabOverview(state) {
   const stage = getCapabilityStage(state.capabilityStage);
   const stageProgress = `${(state.capabilityStage / capabilityStages.length) * 100}%`;
@@ -342,7 +478,7 @@ export function renderLabOverview(state) {
             </h1>
             <p class="lab-copy">
               This operation is functioning, but its information, decisions, and handoffs are fragmented.
-              Follow the challenges to make the next improvement visible.
+              Follow five connected questions to understand the loss, connect the evidence, improve the flow, coordinate dependencies, and measure the next decision.
             </p>
           </div>
           <aside class="lab-summary" aria-label="Operational score and capability stage">
@@ -386,7 +522,7 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Challenge map</p>
-              <h2 id="challengesTitle">Six ways to find the friction.</h2>
+              <h2 id="challengesTitle">Five connected ways to build the flow.</h2>
             </div>
             <p>Start with the highlighted scenario, then follow the operational questions that each new capability makes possible.</p>
           </div>
@@ -414,6 +550,7 @@ export function renderLabOverview(state) {
           </div>
           ${renderPerformance(state)}
         </section>
+        ${renderExperienceSummary(state)}
       </main>
       ${renderFooter()}
     </div>

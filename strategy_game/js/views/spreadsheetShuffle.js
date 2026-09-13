@@ -14,7 +14,13 @@ import {
   spreadsheetShuffleWorkflow,
   spreadsheetShuffleWorkflowSnapshots,
 } from "../miniGames/spreadsheetShuffle.js";
-import { renderFooter, renderHeader } from "./shared.js";
+import {
+  renderChallengeJourney,
+  renderCompletionAction,
+  renderFooter,
+  getRecordedKpiImpact,
+  renderHeader,
+} from "./shared.js";
 
 const relevantKpis = ["productivity", "visibility", "cost", "delivery"];
 
@@ -301,7 +307,7 @@ function renderSimplificationSection(progress, removalStatus, completed) {
     <section class="workflow-phase workflow-phase--simplify" aria-labelledby="simplifyTitle">
       <div class="workflow-phase__header">
         <div>
-          <p class="eyebrow">Move 1 of 3 / Simplify</p>
+          <p class="eyebrow">Step 1 of 3 / Simplify</p>
           <h2 id="simplifyTitle">Remove the work that repeats information.</h2>
         </div>
         <p>
@@ -407,7 +413,7 @@ function renderStandardisationSection(progress, completed) {
     <section class="improvement-decision spreadsheet-phase-decision" id="spreadsheet-standardisation" tabindex="-1" aria-labelledby="standardisationTitle">
       <div class="improvement-decision__header">
         <div>
-          <p class="eyebrow">Move 2 of 3 / Standardise</p>
+          <p class="eyebrow">Step 2 of 3 / Standardise</p>
           <h2 id="standardisationTitle">Put the surviving work in one useful order.</h2>
         </div>
         <p>
@@ -433,8 +439,13 @@ function renderKpiImpact(state, decision) {
       ${relevantKpis
         .map((key) => {
           const impact = decision.kpiChanges[key];
-          const before = state.kpis[key].previous;
-          const after = state.kpis[key].current;
+          const recordedImpact = getRecordedKpiImpact(
+            state,
+            spreadsheetShuffleChallengeId,
+            key,
+          );
+          const before = recordedImpact.before;
+          const after = recordedImpact.after;
 
           return `
             <div class="decision-kpi-impact__item">
@@ -493,7 +504,7 @@ function renderCompletionOutcome(state, challenge, decision) {
     >
       <div class="decision-outcome__header">
         <div>
-          <p class="eyebrow">Reveal and measure</p>
+          <p class="eyebrow">Outcome and measure</p>
           <h2 id="spreadsheetAutomationOutcomeTitle">${decision.outcomeTitle}</h2>
         </div>
         <p class="decision-outcome__summary">${decision.outcomeSummary}</p>
@@ -517,9 +528,7 @@ function renderCompletionOutcome(state, challenge, decision) {
         </p>
       </section>
       <div class="decision-outcome__actions">
-        <button class="button button--primary" type="button" data-action="close-challenge">
-          Return to challenge map <span class="button-arrow" aria-hidden="true">-></span>
-        </button>
+        ${renderCompletionAction(challenge)}
       </div>
     </section>
   `;
@@ -566,7 +575,7 @@ function renderAutomationSection(state, challenge) {
     <section class="improvement-decision spreadsheet-phase-decision" id="spreadsheet-automation" tabindex="-1" aria-labelledby="automationTitle">
       <div class="improvement-decision__header">
         <div>
-          <p class="eyebrow">Move 3 of 3 / Automate</p>
+          <p class="eyebrow">Step 3 of 3 / Automate</p>
           <h2 id="automationTitle">Automate the work that now has a clear purpose.</h2>
         </div>
         <p>
@@ -606,14 +615,14 @@ export function renderSpreadsheetShuffle(state) {
 
           <header class="challenge-game-header">
             <div>
-              <p class="eyebrow">Challenge 03 / Simplify, standardise, automate</p>
+              <p class="eyebrow">Challenge ${challenge.number} / ${challenge.phase}</p>
               <h1 id="screen-title" tabindex="-1">The Spreadsheet Shuffle</h1>
               <p>
                 A planner spends the morning copying updates between spreadsheets, checking ERP information, and waiting on email confirmations. Improve the route before deciding what should be automated.
               </p>
             </div>
             <aside class="challenge-game-brief" aria-label="Challenge objective">
-              <span>Mission 03</span>
+              <span>Operational focus</span>
               <strong>Turn one fragmented planning update into a clear, connected workflow.</strong>
               <dl>
                 <div>
@@ -625,13 +634,14 @@ export function renderSpreadsheetShuffle(state) {
                   <dd>47 to 12 min</dd>
                 </div>
                 <div>
-                  <dt>Moves used</dt>
+                  <dt>Stages complete</dt>
                   <dd>${Number(isSpreadsheetShuffleSimplified(progress)) + Number(isSpreadsheetShuffleStandardised(progress)) + Number(completed)} / 3</dd>
                 </div>
               </dl>
             </aside>
           </header>
 
+          ${renderChallengeJourney(state, challenge)}
           ${renderMissionTrail(state, removalStatus)}
           ${renderWorkflowBoard(state)}
           ${renderSimplificationSection(progress, removalStatus, completed)}

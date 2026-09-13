@@ -4,6 +4,7 @@ import {
   createInitialGameState,
   getChallengeById,
   getUpgradeById,
+  hasCompletedExperience,
   kpiDefinitions,
 } from "./data.js";
 import {
@@ -47,7 +48,13 @@ import {
 } from "./miniGames/controlRoom.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
-const sectionNames = new Set(["overview", "challenges", "capabilities", "performance"]);
+const sectionNames = new Set([
+  "overview",
+  "challenges",
+  "capabilities",
+  "performance",
+  "summary",
+]);
 const listeners = new Set();
 let currentState = createInitialGameState();
 
@@ -81,7 +88,15 @@ function cloneState(state) {
     },
     completedChallenges: [...state.completedChallenges],
     unlockedUpgrades: [...state.unlockedUpgrades],
-    decisions: state.decisions.map((decision) => ({ ...decision })),
+    decisions: state.decisions.map((decision) => ({
+      ...decision,
+      kpiImpact: Object.fromEntries(
+        Object.entries(decision.kpiImpact ?? {}).map(([key, value]) => [
+          key,
+          { ...value },
+        ]),
+      ),
+    })),
     notifications: state.notifications.map((notification) => ({ ...notification })),
   };
 }
@@ -156,9 +171,22 @@ function updateResources(resources, costs) {
   return nextResources;
 }
 
+function createKpiImpactSnapshot(kpis, nextKpis, changes) {
+  return Object.fromEntries(
+    Object.keys(changes).map((key) => [
+      key,
+      {
+        before: kpis[key].current,
+        after: nextKpis[key].current,
+      },
+    ]),
+  );
+}
+
 function applyChallengeCompletion(state, action) {
   const challenge = assertKnownChallenge(action.challengeId);
-  const nextKpis = updateKpis(state.kpis, action.kpiChanges ?? {});
+  const kpiChanges = action.kpiChanges ?? {};
+  const nextKpis = updateKpis(state.kpis, kpiChanges);
   const resources = updateResources(state.resources, action.resourceCosts ?? {});
   const unlockedUpgrades = [...state.unlockedUpgrades];
   const upgradeIds = action.unlockIds ?? [challenge.unlockId];
@@ -174,8 +202,16 @@ function applyChallengeCompletion(state, action) {
   }
 
   const completedChallenges = [...state.completedChallenges, challenge.id];
+  const kpiImpact = createKpiImpactSnapshot(state.kpis, nextKpis, kpiChanges);
   const decisions = action.decision
-    ? [...state.decisions, { challengeId: challenge.id, ...action.decision }]
+    ? [
+        ...state.decisions,
+        {
+          challengeId: challenge.id,
+          ...action.decision,
+          kpiImpact,
+        },
+      ]
     : state.decisions;
 
   return {
@@ -192,8 +228,8 @@ function applyChallengeCompletion(state, action) {
 
 function deriveCapabilityStage(completedChallenges, unlockedUpgrades) {
   if (
-    completedChallenges.includes("improvement-challenge") &&
-    unlockedUpgrades.includes("continuous-improvement")
+    hasCompletedExperience(completedChallenges) &&
+    unlockedUpgrades.includes("central-operational-view")
   ) {
     return 5;
   }
@@ -231,6 +267,13 @@ function reduce(state, action) {
         throw new Error(`Unknown section: ${action.section}`);
       }
 
+      if (action.section === "summary" && !hasCompletedExperience(state.completedChallenges)) {
+        return addNotification(
+          state,
+          "Complete the five operational challenges to review the final operating model.",
+        );
+      }
+
       return addNotification(
         {
           ...state,
@@ -241,6 +284,24 @@ function reduce(state, action) {
         action.announcement ?? `Showing ${action.section}.`,
       );
     }
+
+    case "VIEW_EXPERIENCE_SUMMARY":
+      if (!hasCompletedExperience(state.completedChallenges)) {
+        return addNotification(
+          state,
+          "Complete the five operational challenges to review the final operating model.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          currentScreen: "overview",
+          activeSection: "summary",
+          activeChallengeId: null,
+        },
+        "The completed operating model is ready to review.",
+      );
 
     case "SET_SCREEN": {
       if (!screenNames.has(action.screen)) {
@@ -264,6 +325,7 @@ function reduce(state, action) {
         {
           ...state,
           currentScreen: "challenge",
+          activeSection: "challenges",
           activeChallengeId: challenge.id,
         },
         `Reviewing ${challenge.title}.`,

@@ -51,7 +51,10 @@
   .lab-hero,
   .section-heading,
   .briefing-header,
-  .briefing-grid {
+  .briefing-grid,
+  .challenge-journey,
+  .experience-summary__layout,
+  .experience-summary__evidence {
     grid-template-columns: 1fr;
   }
 
@@ -254,6 +257,19 @@
     grid-template-columns: 1fr;
   }
 
+  .challenge-journey {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .challenge-journey__path {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .challenge-journey__step:last-child {
+    grid-column: 1 / -1;
+  }
+
   .kpi-card {
     min-height: 130px;
   }
@@ -304,6 +320,21 @@
 
   .performance-table td small {
     font-size: 0.6rem;
+  }
+
+  .experience-summary__intro,
+  .experience-summary__next,
+  .experience-summary__evidence > section {
+    padding: 19px;
+  }
+
+  .experience-summary__facts,
+  .experience-summary__kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .experience-summary__facts div:last-child {
+    grid-column: 1 / -1;
   }
 
   .site-footer {

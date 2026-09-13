@@ -11,7 +11,13 @@ import {
   qualityLoopDiagnoses,
   qualityLoopNodes,
 } from "../miniGames/qualityLoop.js";
-import { renderFooter, renderHeader } from "./shared.js";
+import {
+  renderChallengeJourney,
+  renderCompletionAction,
+  renderFooter,
+  getRecordedKpiImpact,
+  renderHeader,
+} from "./shared.js";
 
 const relevantKpis = ["quality", "visibility", "productivity"];
 
@@ -422,8 +428,13 @@ function renderKpiImpact(state, decision, completed) {
       ${relevantKpis
         .map((key) => {
           const impact = decision.kpiChanges[key];
-          const before = completed ? state.kpis[key].previous : state.kpis[key].current;
-          const after = completed ? state.kpis[key].current : before + impact.delta;
+          const recordedImpact = completed
+            ? getRecordedKpiImpact(state, qualityLoopChallengeId, key)
+            : null;
+          const before = recordedImpact ? recordedImpact.before : state.kpis[key].current;
+          const after = recordedImpact
+            ? recordedImpact.after
+            : Math.max(0, Math.min(100, before + impact.delta));
           const changeClass = impact.delta > 0 ? "is-positive" : "is-neutral";
 
           return `
@@ -443,7 +454,7 @@ function renderKpiImpact(state, decision, completed) {
 }
 
 function renderDecisionOutcome(state, decision, challenge, completed) {
-  const outcomeLabel = completed ? "Reveal and measure" : "Decision consequence";
+  const outcomeLabel = completed ? "Outcome and measure" : "Decision consequence";
   const outcomeClass = completed ? "is-complete" : "is-incomplete";
 
   return `
@@ -478,9 +489,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
               </p>
             </section>
             <div class="decision-outcome__actions">
-              <button class="button button--primary" type="button" data-action="close-challenge">
-                Return to challenge map <span class="button-arrow" aria-hidden="true">-></span>
-              </button>
+              ${renderCompletionAction(challenge)}
             </div>
           `
           : `
@@ -554,14 +563,14 @@ export function renderQualityLoop(state) {
 
           <header class="challenge-game-header">
             <div>
-              <p class="eyebrow">Challenge 02 / Connect information</p>
+              <p class="eyebrow">Challenge ${challenge.number} / ${challenge.phase}</p>
               <h1 id="screen-title" tabindex="-1">The Quality Loop</h1>
               <p>
                 Defects are rising on Line 03. Production sees a machine change, quality sees failed samples, and the material trace sits somewhere else. Connect the records before deciding what happened.
               </p>
             </div>
             <aside class="challenge-game-brief" aria-label="Challenge objective">
-              <span>Mission 02</span>
+              <span>Operational focus</span>
               <strong>Find the evidence that reveals the most likely source of the repeat defect.</strong>
               <dl>
                 <div>
@@ -580,6 +589,7 @@ export function renderQualityLoop(state) {
             </aside>
           </header>
 
+          ${renderChallengeJourney(state, challenge)}
           ${renderMissionTrail(state, status)}
 
           <section class="quality-loop-investigation" aria-labelledby="qualityMapTitle">

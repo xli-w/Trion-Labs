@@ -1,5 +1,31 @@
-import { navigationItems } from "../data.js";
+import { challenges, hasCompletedExperience, navigationItems } from "../data.js";
 import { isDarkTheme } from "../../../theme.js";
+
+function getChallengeIndex(challenge) {
+  const challengeIndex = challenges.findIndex((item) => item.id === challenge.id);
+
+  if (challengeIndex === -1) {
+    throw new Error(`Unknown challenge in the Trion Labs progression: ${challenge.id}`);
+  }
+
+  return challengeIndex;
+}
+
+export function getRecordedKpiImpact(state, challengeId, kpiKey) {
+  const decision = state.decisions.find((item) => item.challengeId === challengeId);
+
+  if (!decision) {
+    throw new Error(`${challengeId} is complete without a recorded decision.`);
+  }
+
+  const kpiImpact = decision.kpiImpact?.[kpiKey];
+
+  if (!kpiImpact) {
+    throw new Error(`${challengeId} is missing its recorded ${kpiKey} KPI impact.`);
+  }
+
+  return kpiImpact;
+}
 
 function renderBrand() {
   return `
@@ -37,13 +63,86 @@ function renderThemeToggle() {
   `;
 }
 
+export function renderChallengeJourney(state, challenge) {
+  const challengeIndex = getChallengeIndex(challenge);
+  const nextChallenge = challenges[challengeIndex + 1];
+
+  if (!challenge.phase || !challenge.journeySummary) {
+    throw new Error(`${challenge.title} is missing its progression context.`);
+  }
+
+  return `
+    <section class="challenge-journey" aria-label="Trion Labs capability progression">
+      <div class="challenge-journey__copy">
+        <span>Trion Labs progression</span>
+        <strong>${challenge.phase}</strong>
+        <p>
+          ${challenge.journeySummary}
+          ${
+            nextChallenge
+              ? ` Next, ${nextChallenge.title} builds on this context.`
+              : " The shared view now makes the next improvement easier to find."
+          }
+        </p>
+      </div>
+      <ol class="challenge-journey__path">
+        ${challenges
+          .map((item, index) => {
+            const completed = state.completedChallenges.includes(item.id);
+            const current = index === challengeIndex;
+            const status = completed ? "Complete" : current ? "Current" : "Ahead";
+            const stateClass = completed ? "is-complete" : current ? "is-current" : "is-ahead";
+
+            return `
+              <li class="challenge-journey__step ${stateClass}" ${
+                current ? 'aria-current="step"' : ""
+              }>
+                <span>${item.number}</span>
+                <strong>${item.phase}</strong>
+                <small>${status}</small>
+              </li>
+            `;
+          })
+          .join("")}
+      </ol>
+    </section>
+  `;
+}
+
+export function renderCompletionAction(challenge) {
+  const challengeIndex = getChallengeIndex(challenge);
+  const nextChallenge = challenges[challengeIndex + 1];
+
+  if (nextChallenge) {
+    return `
+      <button
+        class="button button--primary"
+        type="button"
+        data-action="review-challenge"
+        data-challenge-id="${nextChallenge.id}"
+      >
+        Continue to ${nextChallenge.title} <span class="button-arrow" aria-hidden="true">-></span>
+      </button>
+    `;
+  }
+
+  return `
+    <button class="button button--primary" type="button" data-action="view-experience-summary">
+      See the completed operation <span class="button-arrow" aria-hidden="true">-></span>
+    </button>
+  `;
+}
+
 export function renderHeader(state, screen) {
   const isLanding = screen === "landing";
+  const visibleNavigationItems = hasCompletedExperience(state.completedChallenges)
+    ? [...navigationItems, { id: "summary", label: "Summary" }]
+    : navigationItems;
   const navigation = isLanding
     ? ""
     : `
       <nav class="lab-navigation" aria-label="Lab navigation">
-        ${navigationItems
+        ${visibleNavigationItems
           .map(
             (item) => `
               <button

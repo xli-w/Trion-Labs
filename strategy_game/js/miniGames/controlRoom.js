@@ -164,7 +164,7 @@ export const controlRoomDecisions = Object.freeze([
       }),
     }),
     resourceCosts: Object.freeze({}),
-    unlockIds: Object.freeze(["central-operational-view"]),
+    unlockIds: Object.freeze(["measure", "central-operational-view"]),
     announcement:
       "The shared exception now reaches management, production, and planning in the context each needs. Central Operational View is available.",
   }),

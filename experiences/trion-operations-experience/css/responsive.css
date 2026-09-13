@@ -79,6 +79,10 @@
     gap: 7px;
   }
 
+  .challenge-operation-context {
+    grid-template-columns: 1fr;
+  }
+
   .starting-snapshot__layout,
   .starting-snapshot__support,
   .connection-map-layout,
@@ -277,6 +281,15 @@
 
   .challenge-journey__step:last-child {
     grid-column: 1 / -1;
+  }
+
+  .challenge-operation-context__facts,
+  .challenge-completion-context__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .challenge-completion-context__facts div:last-child {
+    grid-column: auto;
   }
 
   .kpi-card {

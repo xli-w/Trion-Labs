@@ -373,41 +373,232 @@ export const connectionMapRelationships = Object.freeze([
   }),
 ]);
 
-export const challengeOperationLinks = Object.freeze([
+function createKpiChange(delta, explanation) {
+  return Object.freeze({ delta, explanation });
+}
+
+function createDecisionEffect(kpiChanges) {
+  return Object.freeze({
+    kpiChanges: Object.freeze(kpiChanges),
+  });
+}
+
+export const challengeDecisionEffects = Object.freeze({
+  "capture-downtime-context": createDecisionEffect({
+    throughput: createKpiChange(3, "Recurring loss can be escalated and addressed sooner."),
+    productivity: createKpiChange(2, "Teams spend less time reconstructing what happened."),
+    visibility: createKpiChange(24, "Reason, timing, and context are now captured together."),
+  }),
+  "standardise-downtime-categories": createDecisionEffect({
+    throughput: createKpiChange(0, "No immediate change while the breakdown remains unexplained."),
+    productivity: createKpiChange(0, "Teams still need to reconstruct the stop manually."),
+    visibility: createKpiChange(6, "Labels become more consistent, but the record remains incomplete."),
+  }),
+  "share-current-event-record": createDecisionEffect({
+    throughput: createKpiChange(0, "The unresolved breakdown still constrains output."),
+    productivity: createKpiChange(0, "No new evidence reduces manual investigation yet."),
+    visibility: createKpiChange(3, "More people can see the same incomplete event record."),
+  }),
+  "connect-production-quality-data": createDecisionEffect({
+    quality: createKpiChange(5, "The team can contain repeat defects sooner using the shared batch trace."),
+    visibility: createKpiChange(
+      22,
+      "Quality results and the production context that created them are available together.",
+    ),
+    productivity: createKpiChange(3, "Teams spend less time matching separate records before acting."),
+  }),
+  "standardise-quality-recording": createDecisionEffect({
+    quality: createKpiChange(0, "The recurring defect source remains difficult to isolate."),
+    visibility: createKpiChange(5, "Quality records are more consistent, but not connected to production."),
+    productivity: createKpiChange(0, "Teams still reconcile the production and quality records manually."),
+  }),
+  "create-quality-dashboard": createDecisionEffect({
+    quality: createKpiChange(0, "The quality issue remains difficult to contain at its source."),
+    visibility: createKpiChange(3, "The same disconnected defect signal is visible to more people."),
+    productivity: createKpiChange(0, "Manual reconciliation is still required before the team can respond."),
+  }),
+  "automate-connected-schedule-update": createDecisionEffect({
+    productivity: createKpiChange(
+      12,
+      "Less duplicate entry and reconciliation leaves more time for meaningful planning work.",
+    ),
+    visibility: createKpiChange(15, "Production and ERP context now travel with the planning update."),
+    cost: createKpiChange(8, "Fewer repeated checks and attachments reduce avoidable planning effort."),
+    delivery: createKpiChange(4, "A more reliable schedule update helps teams see commitments earlier."),
+  }),
+  "connect-material-and-production-planning": createDecisionEffect({
+    delivery: createKpiChange(
+      8,
+      "Affected commitments are identified early enough to replan the work and customer response.",
+    ),
+    visibility: createKpiChange(
+      3,
+      "Material, schedule, capacity, and order risk now share the same exception context.",
+    ),
+    throughput: createKpiChange(2, "Available work can move forward so the line avoids avoidable waiting."),
+  }),
+  "add-logistics-delay-report": createDecisionEffect({
+    delivery: createKpiChange(0, "The affected customer commitments still receive no earlier warning."),
+    visibility: createKpiChange(1, "The logistics signal is easier to read, but it remains isolated."),
+    throughput: createKpiChange(0, "The line still waits if the schedule is not informed before the start."),
+  }),
+  "reserve-line-capacity-manually": createDecisionEffect({
+    delivery: createKpiChange(1, "One customer may receive an earlier update, but the full delivery risk remains unclear."),
+    visibility: createKpiChange(0, "The information still has to be assembled manually for each incident."),
+    throughput: createKpiChange(
+      -2,
+      "Holding capacity reduces useful output while the root information gap remains.",
+    ),
+  }),
+  "publish-role-relevant-exception-view": createDecisionEffect({
+    visibility: createKpiChange(
+      1,
+      "Cause, work response, and customer impact now share one actionable exception context.",
+    ),
+    productivity: createKpiChange(2, "Teams no longer assemble the same decision context from separate reports."),
+    delivery: createKpiChange(2, "The customer impact is visible early enough to coordinate the response."),
+    throughput: createKpiChange(
+      1,
+      "Production can resequence available work sooner, reducing avoidable waiting.",
+    ),
+  }),
+  "show-every-metric-to-management": createDecisionEffect({
+    visibility: createKpiChange(0, "The relevant signals remain difficult to distinguish from routine information."),
+    productivity: createKpiChange(0, "People still spend time scanning information that does not affect the decision."),
+    delivery: createKpiChange(0, "The customer response is no easier to coordinate."),
+  }),
+  "send-separate-static-reports": createDecisionEffect({
+    visibility: createKpiChange(1, "Each audience receives clearer detail, but the cross-functional exception remains separated."),
+    productivity: createKpiChange(0, "Teams still rebuild the relationship between reports before they can act."),
+    delivery: createKpiChange(0, "The customer response still depends on a manual comparison of updates."),
+  }),
+});
+
+export const challengeOutcomes = Object.freeze([
   Object.freeze({
+    id: "missing-minutes-outcome",
     challengeId: "missing-minutes",
-    frictionPointIds: Object.freeze(["incomplete-downtime-context"]),
-    connectionIds: Object.freeze(["production-event-context"]),
-    capabilityId: "connected-production-view",
+    decisionId: "capture-downtime-context",
+    outcomeTitle: "Northstar's missing minutes now have context.",
+    outcomeSummary:
+      "The 16-minute breakdown is no longer just 'line stopped'. The team can separate it from planned changeover and trace the conditions around repeated loss.",
+    outcomeDetail:
+      "This does not remove the breakdown by itself. It gives supervisors enough evidence to target the next preventive improvement.",
+    announcement:
+      "Downtime context is now captured. Visibility improved and the Connected Production View is available.",
+    additionalUnlockIds: Object.freeze(["understand"]),
+    remainingWork:
+      "Production loss is clearer, but quality evidence still needs its production and material context.",
   }),
   Object.freeze({
+    id: "quality-loop-outcome",
     challengeId: "quality-loop",
-    frictionPointIds: Object.freeze(["disconnected-production-quality-records"]),
-    connectionIds: Object.freeze(["production-quality-context"]),
-    capabilityId: "production-quality-integration",
+    decisionId: "connect-production-quality-data",
+    outcomeTitle: "Northstar's production and quality records now share context.",
+    outcomeSummary:
+      "The team can see which production conditions and material trace precede recurring defects, then contain the batch while they investigate it.",
+    outcomeDetail:
+      "This does not guarantee that defects disappear. It shortens the path from a quality signal to an evidence-based response.",
+    announcement:
+      "Production and quality now share case context. The defect trace is visible, and Production + Quality Integration is available.",
+    additionalUnlockIds: Object.freeze(["connect"]),
+    remainingWork:
+      "Planning still depends on duplicated updates and manual reconciliation before the schedule can move.",
   }),
   Object.freeze({
+    id: "spreadsheet-shuffle-outcome",
     challengeId: "spreadsheet-shuffle",
-    frictionPointIds: Object.freeze(["duplicated-planning-workflow"]),
-    connectionIds: Object.freeze(["planning-erp-context"]),
-    capabilityId: "workflow-automation",
+    decisionId: "automate-connected-schedule-update",
+    outcomeTitle: "Northstar's planning automation now supports a clear flow.",
+    outcomeSummary:
+      "The planner works from one standard update. Relevant production and ERP context travels with the schedule change instead of being copied between files.",
+    outcomeDetail:
+      "This illustrative change reduces repetitive checking and gives the planning team a more reliable view of the current schedule. It does not replace judgement about exceptions.",
+    announcement:
+      "The standard planning update now carries connected context into the schedule. Workflow Automation is available.",
+    additionalUnlockIds: Object.freeze(["simplify", "standardise", "automate"]),
+    remainingWork:
+      "Material risk still needs to reach the schedule before it disrupts customer commitments.",
   }),
   Object.freeze({
+    id: "delivery-domino-outcome",
     challengeId: "delivery-domino",
-    frictionPointIds: Object.freeze(["late-material-risk-visibility"]),
-    connectionIds: Object.freeze(["material-risk-response"]),
-    capabilityId: "logistics-production-visibility",
+    decisionId: "connect-material-and-production-planning",
+    outcomeTitle: "Northstar can now act on material risk before it spreads.",
+    outcomeSummary:
+      "The supplier delay was visible in logistics, but its effect on production and customer orders was not. One connected view gives planning and delivery teams time to respond together.",
+    outcomeDetail:
+      "The material still arrives late. The team can now resequence available work, protect the remaining capacity, and give one affected customer a timely update instead of discovering the issue at dispatch.",
+    announcement:
+      "Material risk now reaches planning and delivery before it disrupts the schedule. Logistics + Production Visibility is available.",
+    additionalUnlockIds: Object.freeze([]),
+    remainingWork:
+      "The same exception still needs to reach each role with focused decision context.",
   }),
   Object.freeze({
+    id: "control-room-outcome",
     challengeId: "control-room",
-    frictionPointIds: Object.freeze(["unfocused-operational-exception-view"]),
-    connectionIds: Object.freeze([
-      "shared-decision-context",
-      "decision-to-outcome",
-    ]),
-    capabilityId: "central-operational-view",
+    decisionId: "publish-role-relevant-exception-view",
+    outcomeTitle: "Northstar's exception now reaches the right people with context to act.",
+    outcomeSummary:
+      "Management can see the customer effect, production can resequence available work, and planning can coordinate the material arrival and capacity buffer from one shared view.",
+    outcomeDetail:
+      "Quality and maintenance retain their relevant operating detail without receiving an unnecessary priority alert. The view is focused on the decision, not on displaying every available measure.",
+    announcement:
+      "The shared exception now reaches management, production, and planning in the context each needs. Central Operational View is available.",
+    additionalUnlockIds: Object.freeze(["measure"]),
+    remainingWork:
+      "The shared view makes the next bottleneck easier to investigate; it does not remove every source of friction.",
   }),
 ]);
+
+export function getOperationalAreaById(areaId) {
+  return operationalAreas.find((area) => area.id === areaId);
+}
+
+export function getFrictionPointById(frictionPointId) {
+  return frictionPoints.find((frictionPoint) => frictionPoint.id === frictionPointId);
+}
+
+export function getConnectionMapRelationshipById(relationshipId) {
+  return connectionMapRelationships.find((relationship) => relationship.id === relationshipId);
+}
+
+export function getChallengeDecisionEffect(decisionId) {
+  return challengeDecisionEffects[decisionId] ?? null;
+}
+
+export function getChallengeOutcomeById(outcomeId) {
+  return challengeOutcomes.find((outcome) => outcome.id === outcomeId);
+}
+
+export function getChallengeOutcomeByDecisionId(challengeId, decisionId) {
+  return challengeOutcomes.find(
+    (outcome) => outcome.challengeId === challengeId && outcome.decisionId === decisionId,
+  );
+}
+
+export function getChallengeDecisionDetails(challengeId, decisionId) {
+  const decisionEffect = getChallengeDecisionEffect(decisionId);
+  const outcome = getChallengeOutcomeByDecisionId(challengeId, decisionId);
+
+  if (outcome && !decisionEffect) {
+    throw new Error(`Completion decision ${decisionId} is missing its KPI effect.`);
+  }
+
+  return Object.freeze({
+    ...(decisionEffect ? { kpiChanges: decisionEffect.kpiChanges } : {}),
+    ...(outcome
+      ? {
+          outcomeId: outcome.id,
+          outcomeTitle: outcome.outcomeTitle,
+          outcomeSummary: outcome.outcomeSummary,
+          outcomeDetail: outcome.outcomeDetail,
+          announcement: outcome.announcement,
+        }
+      : {}),
+  });
+}
 
 function getUnlockedUpgrades(state) {
   if (!state || !Array.isArray(state.unlockedUpgrades)) {

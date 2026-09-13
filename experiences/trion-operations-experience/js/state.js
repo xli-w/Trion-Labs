@@ -46,6 +46,10 @@ import {
   getControlRoomSignalSelectionStatus,
   isControlRoomReadyForDecision,
 } from "./miniGames/controlRoom.js";
+import {
+  getChallengeDecisionEffect,
+  getChallengeOutcomeByDecisionId,
+} from "./operationModel.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
 const sectionNames = new Set([
@@ -208,21 +212,42 @@ function assertCompletionDecision(challenge, decision) {
   };
 }
 
-function getCompletionUpgradeIds(challenge, additionalUnlockIds) {
-  if (additionalUnlockIds !== undefined && !Array.isArray(additionalUnlockIds)) {
+function getCompletionOutcome(challenge, decision) {
+  const outcome = getChallengeOutcomeByDecisionId(challenge.id, decision.id);
+
+  if (!outcome) {
+    throw new Error(`${challenge.title} is missing a completion outcome for ${decision.id}.`);
+  }
+
+  if (challenge.outcomeId !== outcome.id) {
+    throw new Error(`${challenge.title} references an inconsistent completion outcome.`);
+  }
+
+  return outcome;
+}
+
+function getCompletionUpgradeIds(challenge, outcome) {
+  if (!Array.isArray(outcome.additionalUnlockIds)) {
     throw new Error(`Additional unlocks for ${challenge.title} must be an array.`);
   }
 
-  return [...(additionalUnlockIds ?? []), challenge.unlockId];
+  return [...outcome.additionalUnlockIds, challenge.unlockId];
 }
 
 function applyChallengeCompletion(state, action) {
   const challenge = assertKnownChallenge(action.challengeId);
   const decision = assertCompletionDecision(challenge, action.decision);
-  const kpiChanges = action.kpiChanges ?? {};
+  const outcome = getCompletionOutcome(challenge, decision);
+  const decisionEffect = getChallengeDecisionEffect(decision.id);
+
+  if (!decisionEffect) {
+    throw new Error(`${challenge.title} is missing KPI effects for ${decision.id}.`);
+  }
+
+  const kpiChanges = decisionEffect.kpiChanges;
   const nextKpis = updateKpis(state.kpis, kpiChanges);
   const unlockedUpgrades = [...state.unlockedUpgrades];
-  const upgradeIds = getCompletionUpgradeIds(challenge, action.additionalUnlockIds);
+  const upgradeIds = getCompletionUpgradeIds(challenge, outcome);
 
   for (const upgradeId of upgradeIds) {
     if (!getUpgradeById(upgradeId)) {
@@ -241,6 +266,7 @@ function applyChallengeCompletion(state, action) {
     {
       challengeId: challenge.id,
       ...decision,
+      outcomeId: outcome.id,
       kpiImpact,
     },
   ];
@@ -497,8 +523,6 @@ function reduce(state, action) {
           id: decision.id,
           title: decision.title,
         },
-        kpiChanges: decision.kpiChanges,
-        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);
@@ -734,8 +758,6 @@ function reduce(state, action) {
           id: decision.id,
           title: decision.title,
         },
-        kpiChanges: decision.kpiChanges,
-        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);
@@ -1036,8 +1058,6 @@ function reduce(state, action) {
           id: option.id,
           title: option.title,
         },
-        kpiChanges: option.kpiChanges,
-        additionalUnlockIds: option.additionalUnlockIds,
       });
 
       return addNotification(completedState, option.announcement);
@@ -1174,8 +1194,6 @@ function reduce(state, action) {
           id: decision.id,
           title: decision.title,
         },
-        kpiChanges: decision.kpiChanges,
-        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);
@@ -1512,8 +1530,6 @@ function reduce(state, action) {
           id: decision.id,
           title: decision.title,
         },
-        kpiChanges: decision.kpiChanges,
-        additionalUnlockIds: decision.additionalUnlockIds,
       });
 
       return addNotification(completedState, decision.announcement);

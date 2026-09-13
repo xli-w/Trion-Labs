@@ -1,6 +1,10 @@
 import { getChallengeById } from "../data.js";
 import { getChallengeReadiness } from "../miniGames/registry.js";
-import { renderFooter, renderHeader } from "./shared.js";
+import {
+  renderChallengeOperationContext,
+  renderFooter,
+  renderHeader,
+} from "./shared.js";
 
 function getChallengeStateLabel(readiness) {
   if (readiness.completed) {
@@ -49,6 +53,8 @@ export function renderChallengeBriefing(state) {
               </p>
             </aside>
           </header>
+
+          ${renderChallengeOperationContext(challenge)}
 
           <div class="briefing-grid">
             <section aria-labelledby="objectiveTitle">

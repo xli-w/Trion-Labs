@@ -16,8 +16,6 @@ import {
   renderHeader,
 } from "./shared.js";
 
-const relevantKpis = ["throughput", "productivity", "visibility"];
-
 function getEventStatus(event) {
   if (event.id === "running") {
     return "Productive time";
@@ -249,7 +247,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
         state,
         challengeId: missingMinutesChallengeId,
         decision,
-        kpiKeys: relevantKpis,
+        kpiKeys: challenge.kpiKeys,
         completed,
       })}
       <p class="scenario-disclaimer">

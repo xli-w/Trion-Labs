@@ -27,11 +27,13 @@ The shared `theme.js` utility remains available from the repository root.
 - `css/` separates global visual tokens and layout from reusable components and
   responsive rules.
 - `js/operationModel.js` owns the fictional operation, baseline KPI metadata,
-  operational areas, friction points, and progression-ready connection-map data.
+  operational areas, friction points, challenge outcomes, named decision effects,
+  and progression-ready connection-map data.
 - `js/data.js` owns app-wide progression data and the initial-state factory,
   reusing the shared KPI definitions from the operation model.
-- `js/state.js` owns the immutable-style central state store and all state
-  transitions.
+- `js/state.js` owns the immutable-style central state store, resolves each
+  completed decision through the shared outcome model, and applies its named
+  state transitions.
 - `js/game.js` is the application-facing game service. UI code calls it rather
   than changing state directly.
 - `js/views/` owns the semantic landing, overview, and challenge-briefing
@@ -54,10 +56,8 @@ The shared `theme.js` utility remains available from the repository root.
   experience and standalone mini-games.
 
 Each mini-game module owns only its focused interaction. On a completed
-decision it can call `completeChallenge()` from `js/game.js` with
-the challenge id, decision record, KPI changes, and any additional method
-unlocks. The state store resolves the challenge's named capability, then
-records the result and updates the aggregate operational score and capability
+decision, the state store resolves the central outcome and named KPI effects,
+records the result, and updates the aggregate operational score and capability
 stage.
 
 ## Implemented interactive challenges

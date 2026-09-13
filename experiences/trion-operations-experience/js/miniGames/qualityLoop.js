@@ -1,4 +1,13 @@
+import { getChallengeDecisionDetails } from "../operationModel.js";
+
 export const qualityLoopChallengeId = "quality-loop";
+
+function createQualityLoopDecision(definition) {
+  return Object.freeze({
+    ...definition,
+    ...getChallengeDecisionDetails(qualityLoopChallengeId, definition.id),
+  });
+}
 
 export const qualityLoopNodes = Object.freeze([
   Object.freeze({
@@ -154,37 +163,15 @@ export const qualityLoopDiagnoses = Object.freeze([
 ]);
 
 export const qualityLoopDecisions = Object.freeze([
-  Object.freeze({
+  createQualityLoopDecision({
     id: "connect-production-quality-data",
     title: "Connect production and quality data",
     description:
       "Give every quality result the production run, material batch, machine, and shift context that created it.",
     effectLabel: "Makes recurring defects traceable at the source.",
     completesChallenge: true,
-    outcomeTitle: "Production and quality now share the same case context.",
-    outcomeSummary:
-      "The team can see which production conditions and material trace precede recurring defects, then contain the batch while they investigate it.",
-    outcomeDetail:
-      "This does not guarantee that defects disappear. It shortens the path from a quality signal to an evidence-based response.",
-    kpiChanges: Object.freeze({
-      quality: Object.freeze({
-        delta: 5,
-        explanation: "The team can contain repeat defects sooner using the shared batch trace.",
-      }),
-      visibility: Object.freeze({
-        delta: 22,
-        explanation: "Quality results and the production context that created them are available together.",
-      }),
-      productivity: Object.freeze({
-        delta: 3,
-        explanation: "Teams spend less time matching separate records before acting.",
-      }),
-    }),
-    additionalUnlockIds: Object.freeze(["connect"]),
-    announcement:
-      "Production and quality now share case context. The defect trace is visible, and Production + Quality Integration is available.",
   }),
-  Object.freeze({
+  createQualityLoopDecision({
     id: "standardise-quality-recording",
     title: "Standardise quality recording",
     description:
@@ -196,24 +183,10 @@ export const qualityLoopDecisions = Object.freeze([
       "Standard categories make defect results easier to compare. They still do not show which run, batch, or machine conditions produced the failures.",
     outcomeDetail:
       "Standardisation becomes more useful once the records carry the production context needed to act on the comparison.",
-    kpiChanges: Object.freeze({
-      quality: Object.freeze({
-        delta: 0,
-        explanation: "The recurring defect source remains difficult to isolate.",
-      }),
-      visibility: Object.freeze({
-        delta: 5,
-        explanation: "Quality records are more consistent, but not connected to production.",
-      }),
-      productivity: Object.freeze({
-        delta: 0,
-        explanation: "Teams still reconcile the production and quality records manually.",
-      }),
-    }),
     announcement:
       "Quality recording is more consistent, but the production and material context remains disconnected.",
   }),
-  Object.freeze({
+  createQualityLoopDecision({
     id: "create-quality-dashboard",
     title: "Create a quality visibility dashboard",
     description:
@@ -225,20 +198,6 @@ export const qualityLoopDecisions = Object.freeze([
       "A dashboard makes the spike easier to notice. Without the linked production and material records, the team still cannot distinguish timing from cause.",
     outcomeDetail:
       "A shared view becomes valuable after it brings together the evidence required for the next decision.",
-    kpiChanges: Object.freeze({
-      quality: Object.freeze({
-        delta: 0,
-        explanation: "The quality issue remains difficult to contain at its source.",
-      }),
-      visibility: Object.freeze({
-        delta: 3,
-        explanation: "The same disconnected defect signal is visible to more people.",
-      }),
-      productivity: Object.freeze({
-        delta: 0,
-        explanation: "Manual reconciliation is still required before the team can respond.",
-      }),
-    }),
     announcement:
       "The defect rate is more widely visible, but the disconnected evidence still cannot point the team to its source.",
   }),

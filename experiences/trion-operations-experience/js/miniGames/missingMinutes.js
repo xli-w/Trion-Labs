@@ -1,4 +1,13 @@
+import { getChallengeDecisionDetails } from "../operationModel.js";
+
 export const missingMinutesChallengeId = "missing-minutes";
+
+function createMissingMinutesDecision(definition) {
+  return Object.freeze({
+    ...definition,
+    ...getChallengeDecisionDetails(missingMinutesChallengeId, definition.id),
+  });
+}
 
 export const missingMinutesTimeline = Object.freeze([
   Object.freeze({
@@ -105,7 +114,7 @@ export const missingMinutesSummary = Object.freeze(
 );
 
 export const missingMinutesDecisions = Object.freeze([
-  Object.freeze({
+  createMissingMinutesDecision({
     id: "capture-downtime-context",
     title: "Improve downtime data capture",
     description:
@@ -113,30 +122,8 @@ export const missingMinutesDecisions = Object.freeze([
     effectLabel: "Makes a recurring loss traceable before the next intervention.",
     focusEventId: "breakdown",
     completesChallenge: true,
-    outcomeTitle: "The missing minutes now have context.",
-    outcomeSummary:
-      "The 16-minute breakdown is no longer just 'line stopped'. The team can separate it from planned changeover and trace the conditions around repeated loss.",
-    outcomeDetail:
-      "This does not remove the breakdown by itself. It gives supervisors enough evidence to target the next preventive improvement.",
-    kpiChanges: Object.freeze({
-      throughput: Object.freeze({
-        delta: 3,
-        explanation: "Recurring loss can be escalated and addressed sooner.",
-      }),
-      productivity: Object.freeze({
-        delta: 2,
-        explanation: "Teams spend less time reconstructing what happened.",
-      }),
-      visibility: Object.freeze({
-        delta: 24,
-        explanation: "Reason, timing, and context are now captured together.",
-      }),
-    }),
-    additionalUnlockIds: Object.freeze(["understand"]),
-    announcement:
-      "Downtime context is now captured. Visibility improved and the Connected Production View is available.",
   }),
-  Object.freeze({
+  createMissingMinutesDecision({
     id: "standardise-downtime-categories",
     title: "Standardise downtime categories",
     description: "Apply consistent labels to the existing stop records.",
@@ -148,24 +135,10 @@ export const missingMinutesDecisions = Object.freeze([
       "A common category makes the stop records easier to compare. The breakdown entry still lacks the timing and machine context needed to explain or prevent the 16-minute loss.",
     outcomeDetail:
       "Standardisation is useful once the operation can capture meaningful evidence. It is not enough as the first response here.",
-    kpiChanges: Object.freeze({
-      throughput: Object.freeze({
-        delta: 0,
-        explanation: "No immediate change while the breakdown remains unexplained.",
-      }),
-      productivity: Object.freeze({
-        delta: 0,
-        explanation: "Teams still need to reconstruct the stop manually.",
-      }),
-      visibility: Object.freeze({
-        delta: 6,
-        explanation: "Labels become more consistent, but the record remains incomplete.",
-      }),
-    }),
     announcement:
       "Downtime categories are more consistent, but the largest loss still lacks the context needed to act.",
   }),
-  Object.freeze({
+  createMissingMinutesDecision({
     id: "share-current-event-record",
     title: "Connect events to a shared production view",
     description: "Make the current event record visible to the people coordinating the line.",
@@ -177,20 +150,6 @@ export const missingMinutesDecisions = Object.freeze([
       "Supervisors can see the stop sooner, but 'line stopped' still does not say why it happened. Connecting ambiguous records does not make them actionable.",
     outcomeDetail:
       "A shared view becomes useful after the event data can distinguish the reason for loss from the time it occurred.",
-    kpiChanges: Object.freeze({
-      throughput: Object.freeze({
-        delta: 0,
-        explanation: "The unresolved breakdown still constrains output.",
-      }),
-      productivity: Object.freeze({
-        delta: 0,
-        explanation: "No new evidence reduces manual investigation yet.",
-      }),
-      visibility: Object.freeze({
-        delta: 3,
-        explanation: "More people can see the same incomplete event record.",
-      }),
-    }),
     announcement:
       "The production record is more widely visible, but the unexplained breakdown still cannot be investigated reliably.",
   }),

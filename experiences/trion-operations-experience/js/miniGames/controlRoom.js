@@ -1,4 +1,13 @@
+import { getChallengeDecisionDetails } from "../operationModel.js";
+
 export const controlRoomChallengeId = "control-room";
+
+function createControlRoomDecision(definition) {
+  return Object.freeze({
+    ...definition,
+    ...getChallengeDecisionDetails(controlRoomChallengeId, definition.id),
+  });
+}
 
 export const controlRoomSignalSelectionLimit = 4;
 export const controlRoomRequiredSignalIds = Object.freeze([
@@ -137,37 +146,15 @@ export const controlRoomAudiences = Object.freeze([
 ]);
 
 export const controlRoomDecisions = Object.freeze([
-  Object.freeze({
+  createControlRoomDecision({
     id: "publish-role-relevant-exception-view",
     title: "Publish one shared exception view, filtered by role",
     description:
       "Keep the material cause, work response, and customer impact together, then show each team the part they need to act on.",
     effectLabel: "Creates shared context without asking every role to scan every measure.",
     completesChallenge: true,
-    outcomeTitle: "The exception now reaches the right people with the context to act.",
-    outcomeSummary:
-      "Management can see the customer effect, production can resequence available work, and planning can coordinate the material arrival and capacity buffer from one shared view.",
-    outcomeDetail:
-      "Quality and maintenance retain their relevant operating detail without receiving an unnecessary priority alert. The view is focused on the decision, not on displaying every available measure.",
-    kpiChanges: Object.freeze({
-      visibility: Object.freeze({
-        delta: 1,
-        explanation: "Cause, work response, and customer impact now share one actionable exception context.",
-      }),
-      productivity: Object.freeze({
-        delta: 2,
-        explanation: "Teams no longer assemble the same decision context from separate reports.",
-      }),
-      delivery: Object.freeze({
-        delta: 2,
-        explanation: "The customer impact is visible early enough to coordinate the response.",
-      }),
-    }),
-    additionalUnlockIds: Object.freeze(["measure"]),
-    announcement:
-      "The shared exception now reaches management, production, and planning in the context each needs. Central Operational View is available.",
   }),
-  Object.freeze({
+  createControlRoomDecision({
     id: "show-every-metric-to-management",
     title: "Show every available metric to management",
     description:
@@ -179,24 +166,10 @@ export const controlRoomDecisions = Object.freeze([
       "The material delay, remaining capacity, and customer effect are still present, but they now compete with routine quality, maintenance, and monthly cost information.",
     outcomeDetail:
       "Keep the essential cause, work response, and customer impact together. Other roles still need detail, but not every detail belongs in the same priority view.",
-    kpiChanges: Object.freeze({
-      visibility: Object.freeze({
-        delta: 0,
-        explanation: "The relevant signals remain difficult to distinguish from routine information.",
-      }),
-      productivity: Object.freeze({
-        delta: 0,
-        explanation: "People still spend time scanning information that does not affect the decision.",
-      }),
-      delivery: Object.freeze({
-        delta: 0,
-        explanation: "The customer response is no easier to coordinate.",
-      }),
-    }),
     announcement:
       "The page contains more information, but the immediate material and delivery decision is still obscured.",
   }),
-  Object.freeze({
+  createControlRoomDecision({
     id: "send-separate-static-reports",
     title: "Send separate static reports to each team",
     description:
@@ -208,20 +181,6 @@ export const controlRoomDecisions = Object.freeze([
       "The reports are more relevant than one large page, yet management, production, and planning still have to reconcile the material, schedule, and delivery consequence themselves.",
     outcomeDetail:
       "Use one shared exception as the source of truth, then filter its relevant decision context for each role.",
-    kpiChanges: Object.freeze({
-      visibility: Object.freeze({
-        delta: 1,
-        explanation: "Each audience receives clearer detail, but the cross-functional exception remains separated.",
-      }),
-      productivity: Object.freeze({
-        delta: 0,
-        explanation: "Teams still rebuild the relationship between reports before they can act.",
-      }),
-      delivery: Object.freeze({
-        delta: 0,
-        explanation: "The customer response still depends on a manual comparison of updates.",
-      }),
-    }),
     announcement:
       "The reports are tailored, but management, production, and planning still do not share the same exception context.",
   }),

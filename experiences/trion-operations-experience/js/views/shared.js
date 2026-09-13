@@ -1,9 +1,17 @@
 import {
   challenges,
+  getChallengeById,
   hasCompletedExperience,
   kpiDefinitions,
   navigationItems,
 } from "../data.js";
+import {
+  getChallengeOutcomeById,
+  getConnectionMapRelationshipById,
+  getFrictionPointById,
+  getOperationalAreaById,
+  operation,
+} from "../operationModel.js";
 import { isDarkTheme } from "../../../../theme.js";
 
 function getChallengeIndex(challenge) {
@@ -69,6 +77,115 @@ function getDisplayedKpiImpact(state, challengeId, kpiKey, impact, completed) {
   };
 }
 
+function getChallengeReferences(challenge) {
+  const referenceGroups = [
+    {
+      ids: challenge.frictionPointIds,
+      getItemById: getFrictionPointById,
+      label: "friction point",
+    },
+    {
+      ids: challenge.operationalAreaIds,
+      getItemById: getOperationalAreaById,
+      label: "operational area",
+    },
+    {
+      ids: challenge.connectionIds,
+      getItemById: getConnectionMapRelationshipById,
+      label: "connection-map relationship",
+    },
+  ];
+
+  return referenceGroups.map(({ ids, getItemById, label }) => {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      throw new Error(`${challenge.title} is missing ${label} references.`);
+    }
+
+    return ids.map((id) => {
+      const item = getItemById(id);
+
+      if (!item) {
+        throw new Error(`${challenge.title} references an unknown ${label}: ${id}.`);
+      }
+
+      return item;
+    });
+  });
+}
+
+function formatReferenceLabels(items) {
+  return items.map((item) => item.title ?? item.label).join(", ");
+}
+
+export function renderChallengeOperationContext(challenge) {
+  const [frictionPoints, operationalAreas, relationships] = getChallengeReferences(challenge);
+
+  if (typeof challenge.operationalProblem !== "string") {
+    throw new Error(`${challenge.title} is missing its operational problem.`);
+  }
+
+  return `
+    <section class="challenge-operation-context" aria-label="${operation.name} operational context">
+      <div class="challenge-operation-context__intro">
+        <span>${operation.name} connection</span>
+        <strong>${challenge.operationalProblem}</strong>
+      </div>
+      <dl class="challenge-operation-context__facts">
+        <div>
+          <dt>Friction</dt>
+          <dd>${formatReferenceLabels(frictionPoints)}</dd>
+        </div>
+        <div>
+          <dt>Areas involved</dt>
+          <dd>${formatReferenceLabels(operationalAreas)}</dd>
+        </div>
+        <div>
+          <dt>Map relationship</dt>
+          <dd>${formatReferenceLabels(relationships)}</dd>
+        </div>
+      </dl>
+    </section>
+  `;
+}
+
+export function renderChallengeCompletionContext(challenge, decision) {
+  if (!decision || typeof decision.outcomeId !== "string") {
+    throw new Error(`${challenge.title} is missing its recorded outcome.`);
+  }
+
+  const outcome = getChallengeOutcomeById(decision.outcomeId);
+
+  if (!outcome || outcome.challengeId !== challenge.id) {
+    throw new Error(`${challenge.title} has an inconsistent recorded outcome.`);
+  }
+
+  const [frictionPoints, , relationships] = getChallengeReferences(challenge);
+
+  return `
+    <section class="challenge-completion-context" aria-label="${operation.name} operating model update">
+      <span class="challenge-completion-context__label">Operating model update</span>
+      <dl class="challenge-completion-context__facts">
+        <div>
+          <dt>Friction addressed</dt>
+          <dd>${formatReferenceLabels(frictionPoints)}</dd>
+        </div>
+        <div>
+          <dt>Capability unlocked</dt>
+          <dd>${challenge.unlockLabel}</dd>
+        </div>
+        <div>
+          <dt>Map relationship</dt>
+          <dd>${formatReferenceLabels(relationships)}</dd>
+        </div>
+        <div>
+          <dt>Still to investigate</dt>
+          <dd>${outcome.remainingWork}</dd>
+        </div>
+      </dl>
+    </section>
+  `;
+}
+
 export function renderDecisionKpiImpact({
   state,
   challengeId,
@@ -86,8 +203,13 @@ export function renderDecisionKpiImpact({
   }
 
   const modifierClass = className ? ` ${className}` : "";
+  const challenge = completed ? getChallengeById(challengeId) : null;
 
-  return `
+  if (completed && !challenge) {
+    throw new Error(`Unknown completed challenge: ${challengeId}`);
+  }
+
+  const kpiImpact = `
     <dl class="decision-kpi-impact${modifierClass}">
       ${kpiKeys
         .map((kpiKey) => {
@@ -123,6 +245,10 @@ export function renderDecisionKpiImpact({
         .join("")}
     </dl>
   `;
+
+  return completed
+    ? `${kpiImpact}${renderChallengeCompletionContext(challenge, decision)}`
+    : kpiImpact;
 }
 
 function renderBrand() {
@@ -204,6 +330,7 @@ export function renderChallengeJourney(state, challenge) {
           .join("")}
       </ol>
     </section>
+    ${renderChallengeOperationContext(challenge)}
   `;
 }
 

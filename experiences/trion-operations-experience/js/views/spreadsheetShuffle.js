@@ -22,8 +22,6 @@ import {
   renderHeader,
 } from "./shared.js";
 
-const relevantKpis = ["productivity", "visibility", "cost", "delivery"];
-
 function getMissionStepClass(completed, current) {
   if (completed) {
     return "is-complete";
@@ -480,7 +478,7 @@ function renderCompletionOutcome(state, challenge, decision) {
         state,
         challengeId: spreadsheetShuffleChallengeId,
         decision,
-        kpiKeys: relevantKpis,
+        kpiKeys: challenge.kpiKeys,
         completed: true,
         className: "spreadsheet-kpi-impact",
       })}

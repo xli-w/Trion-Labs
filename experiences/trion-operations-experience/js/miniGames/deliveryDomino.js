@@ -1,4 +1,13 @@
+import { getChallengeDecisionDetails } from "../operationModel.js";
+
 export const deliveryDominoChallengeId = "delivery-domino";
+
+function createDeliveryDominoDecision(definition) {
+  return Object.freeze({
+    ...definition,
+    ...getChallengeDecisionDetails(deliveryDominoChallengeId, definition.id),
+  });
+}
 
 export const deliveryDominoDependencies = Object.freeze([
   Object.freeze({
@@ -102,36 +111,15 @@ export const deliveryDominoOrders = Object.freeze([
 ]);
 
 export const deliveryDominoDecisions = Object.freeze([
-  Object.freeze({
+  createDeliveryDominoDecision({
     id: "connect-material-and-production-planning",
     title: "Connect material status with production planning",
     description:
       "Show arrival changes beside the production schedule, capacity buffer, affected orders, and delivery commitments.",
     effectLabel: "Turns a late delivery into an earlier shared exception.",
     completesChallenge: true,
-    outcomeTitle: "The material delay can now be acted on before it spreads.",
-    outcomeSummary:
-      "The supplier delay was visible in logistics, but its effect on production and customer orders was not. One connected view gives planning and delivery teams time to respond together.",
-    outcomeDetail:
-      "The material still arrives late. The team can now resequence available work, protect the remaining capacity, and give one affected customer a timely update instead of discovering the issue at dispatch.",
-    kpiChanges: Object.freeze({
-      delivery: Object.freeze({
-        delta: 8,
-        explanation: "Affected commitments are identified early enough to replan the work and customer response.",
-      }),
-      visibility: Object.freeze({
-        delta: 3,
-        explanation: "Material, schedule, capacity, and order risk now share the same exception context.",
-      }),
-      throughput: Object.freeze({
-        delta: 2,
-        explanation: "Available work can move forward so the line avoids avoidable waiting.",
-      }),
-    }),
-    announcement:
-      "Material risk now reaches planning and delivery before it disrupts the schedule. Logistics + Production Visibility is available.",
   }),
-  Object.freeze({
+  createDeliveryDominoDecision({
     id: "add-logistics-delay-report",
     title: "Add a logistics delay report",
     description:
@@ -143,24 +131,10 @@ export const deliveryDominoDecisions = Object.freeze([
       "Logistics can see the late arrival more clearly. Planning and delivery still have to discover its effect by comparing separate information.",
     outcomeDetail:
       "A report improves awareness in one area, but it does not create the shared exception needed to protect the work already depending on the material.",
-    kpiChanges: Object.freeze({
-      delivery: Object.freeze({
-        delta: 0,
-        explanation: "The affected customer commitments still receive no earlier warning.",
-      }),
-      visibility: Object.freeze({
-        delta: 1,
-        explanation: "The logistics signal is easier to read, but it remains isolated.",
-      }),
-      throughput: Object.freeze({
-        delta: 0,
-        explanation: "The line still waits if the schedule is not informed before the start.",
-      }),
-    }),
     announcement:
       "The logistics signal is clearer, but the production schedule and customer commitments remain disconnected.",
   }),
-  Object.freeze({
+  createDeliveryDominoDecision({
     id: "reserve-line-capacity-manually",
     title: "Reserve capacity and call customers manually",
     description:
@@ -172,20 +146,6 @@ export const deliveryDominoDecisions = Object.freeze([
       "A manual call can help one customer, but holding capacity reduces the work the line can complete and leaves the same disconnected handoffs in place.",
     outcomeDetail:
       "Use the material exception to coordinate the existing capacity and commitments. That creates a repeatable response without reserving work blindly.",
-    kpiChanges: Object.freeze({
-      delivery: Object.freeze({
-        delta: 1,
-        explanation: "One customer may receive an earlier update, but the full delivery risk remains unclear.",
-      }),
-      visibility: Object.freeze({
-        delta: 0,
-        explanation: "The information still has to be assembled manually for each incident.",
-      }),
-      throughput: Object.freeze({
-        delta: -2,
-        explanation: "Holding capacity reduces useful output while the root information gap remains.",
-      }),
-    }),
     announcement:
       "The manual response protects a single promise, but it consumes capacity without connecting the next material exception to the plan.",
   }),

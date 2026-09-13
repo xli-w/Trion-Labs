@@ -159,6 +159,92 @@
   color: var(--trion-purple);
 }
 
+.challenge-operation-context {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.48fr) minmax(0, 1fr);
+  gap: 18px;
+  margin: 14px 0 0;
+  padding: 17px 19px;
+  border: 1px solid var(--trion-border);
+  border-left: 3px solid var(--trion-purple-light);
+  border-radius: var(--radius-medium);
+  background: var(--trion-surface);
+}
+
+.challenge-operation-context__intro {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.challenge-operation-context__intro > span,
+.challenge-completion-context__label,
+.challenge-operation-context__facts dt,
+.challenge-completion-context__facts dt {
+  color: var(--trion-purple-muted);
+  font-size: 0.55rem;
+  font-weight: 810;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.challenge-operation-context__intro > strong {
+  color: var(--trion-purple);
+  font-size: 0.84rem;
+  font-weight: 680;
+  letter-spacing: -0.03em;
+  line-height: 1.4;
+}
+
+.challenge-operation-context__facts,
+.challenge-completion-context__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.challenge-operation-context__facts div,
+.challenge-completion-context__facts div {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid var(--trion-border);
+  border-radius: var(--radius-small);
+  background: var(--trion-surface-elevated);
+}
+
+.challenge-operation-context__facts dd,
+.challenge-completion-context__facts dd {
+  margin: 5px 0 0;
+  color: var(--trion-purple);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+.challenge-completion-context {
+  display: grid;
+  gap: 11px;
+  margin-top: 18px;
+  padding: 17px 19px;
+  border: 1px solid rgba(63, 129, 109, 0.45);
+  border-radius: var(--radius-medium);
+  background: var(--trion-green-soft);
+}
+
+.challenge-completion-context__label {
+  color: var(--trion-green);
+}
+
+.challenge-completion-context__facts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.challenge-completion-context__facts div:last-child {
+  grid-column: 1 / -1;
+}
+
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));

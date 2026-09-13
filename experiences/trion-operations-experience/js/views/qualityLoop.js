@@ -19,8 +19,6 @@ import {
   renderHeader,
 } from "./shared.js";
 
-const relevantKpis = ["quality", "visibility", "productivity"];
-
 function getMissionStepClass(completed, current) {
   if (completed) {
     return "is-complete";
@@ -437,7 +435,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
         state,
         challengeId: qualityLoopChallengeId,
         decision,
-        kpiKeys: relevantKpis,
+        kpiKeys: challenge.kpiKeys,
         completed,
       })}
       <p class="scenario-disclaimer">

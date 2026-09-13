@@ -74,12 +74,7 @@ export function getChallengeStatus(challengeId) {
   return getChallengeReadiness(challengeId, getState());
 }
 
-export function completeChallenge({
-  challengeId,
-  decision,
-  kpiChanges,
-  additionalUnlockIds,
-} = {}) {
+export function completeChallenge({ challengeId, decision } = {}) {
   const challenge = getChallengeById(challengeId);
 
   if (!challenge) {
@@ -90,8 +85,6 @@ export function completeChallenge({
     type: "COMPLETE_CHALLENGE",
     challengeId,
     decision,
-    kpiChanges,
-    additionalUnlockIds,
   });
 }
 

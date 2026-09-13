@@ -17,8 +17,6 @@ import {
   renderHeader,
 } from "./shared.js";
 
-const relevantKpis = ["delivery", "visibility", "throughput"];
-
 function getMissionStepClass(completed, current) {
   if (completed) {
     return "is-complete";
@@ -430,7 +428,7 @@ function renderDecisionOutcome(state, decision, challenge, completed) {
         state,
         challengeId: deliveryDominoChallengeId,
         decision,
-        kpiKeys: relevantKpis,
+        kpiKeys: challenge.kpiKeys,
         completed,
         className: "delivery-domino-kpi-impact",
       })}

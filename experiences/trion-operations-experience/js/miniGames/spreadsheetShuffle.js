@@ -1,4 +1,13 @@
+import { getChallengeDecisionDetails } from "../operationModel.js";
+
 export const spreadsheetShuffleChallengeId = "spreadsheet-shuffle";
+
+function createSpreadsheetShuffleAutomation(definition) {
+  return Object.freeze({
+    ...definition,
+    ...getChallengeDecisionDetails(spreadsheetShuffleChallengeId, definition.id),
+  });
+}
 
 export const spreadsheetShuffleRemovalBudget = 2;
 
@@ -217,45 +226,15 @@ export const spreadsheetShuffleStandardisationOptions = Object.freeze([
 ]);
 
 export const spreadsheetShuffleAutomationOptions = Object.freeze([
-  Object.freeze({
+  createSpreadsheetShuffleAutomation({
     id: "automate-connected-schedule-update",
     title: "Automate the connected schedule update",
     description:
       "Use the standard production and ERP context to update the schedule and share the planning change.",
     effectLabel: "Automates a clear workflow instead of a spreadsheet workaround.",
     completesChallenge: true,
-    outcomeTitle: "Automation now supports a clear planning flow.",
-    outcomeSummary:
-      "The planner works from one standard update. Relevant production and ERP context travels with the schedule change instead of being copied between files.",
-    outcomeDetail:
-      "This illustrative change reduces repetitive checking and gives the planning team a more reliable view of the current schedule. It does not replace judgement about exceptions.",
-    kpiChanges: Object.freeze({
-      productivity: Object.freeze({
-        delta: 12,
-        explanation: "Less duplicate entry and reconciliation leaves more time for meaningful planning work.",
-      }),
-      visibility: Object.freeze({
-        delta: 15,
-        explanation: "Production and ERP context now travel with the planning update.",
-      }),
-      cost: Object.freeze({
-        delta: 8,
-        explanation: "Fewer repeated checks and attachments reduce avoidable planning effort.",
-      }),
-      delivery: Object.freeze({
-        delta: 4,
-        explanation: "A more reliable schedule update helps teams see commitments earlier.",
-      }),
-    }),
-    additionalUnlockIds: Object.freeze([
-      "simplify",
-      "standardise",
-      "automate",
-    ]),
-    announcement:
-      "The standard planning update now carries connected context into the schedule. Workflow Automation is available.",
   }),
-  Object.freeze({
+  createSpreadsheetShuffleAutomation({
     id: "automate-spreadsheet-copying",
     title: "Automate spreadsheet copying",
     description:
@@ -270,7 +249,7 @@ export const spreadsheetShuffleAutomationOptions = Object.freeze([
     announcement:
       "Automating spreadsheet copies would speed up duplicate work. Choose the connected schedule update that follows the new standard route.",
   }),
-  Object.freeze({
+  createSpreadsheetShuffleAutomation({
     id: "automate-confirmation-emails",
     title: "Automate confirmation emails",
     description:

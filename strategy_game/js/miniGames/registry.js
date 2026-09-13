@@ -9,6 +9,7 @@ import {
   deliveryDominoChallengeId,
   deliveryDominoModule,
 } from "./deliveryDomino.js";
+import { controlRoomChallengeId, controlRoomModule } from "./controlRoom.js";
 
 function createChallengeContract(challenge) {
   return Object.freeze({
@@ -35,6 +36,8 @@ const registeredModules = new Map(
         ? spreadsheetShuffleModule
       : challenge.id === deliveryDominoChallengeId
         ? deliveryDominoModule
+      : challenge.id === controlRoomChallengeId
+        ? controlRoomModule
       : createChallengeContract(challenge),
   ]),
 );

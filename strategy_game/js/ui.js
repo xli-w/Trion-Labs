@@ -5,10 +5,12 @@ import { renderMissingMinutes } from "./views/missingMinutes.js";
 import { renderQualityLoop } from "./views/qualityLoop.js";
 import { renderSpreadsheetShuffle } from "./views/spreadsheetShuffle.js";
 import { renderDeliveryDomino } from "./views/deliveryDomino.js";
+import { renderControlRoom } from "./views/controlRoom.js";
 import { missingMinutesChallengeId } from "./miniGames/missingMinutes.js";
 import { qualityLoopChallengeId } from "./miniGames/qualityLoop.js";
 import { spreadsheetShuffleChallengeId } from "./miniGames/spreadsheetShuffle.js";
 import { deliveryDominoChallengeId } from "./miniGames/deliveryDomino.js";
+import { controlRoomChallengeId } from "./miniGames/controlRoom.js";
 import { getChallengeReadiness } from "./miniGames/registry.js";
 
 const appRoot = document.querySelector("#app");
@@ -56,6 +58,12 @@ export function render(state) {
   ) {
     appRoot.innerHTML = renderDeliveryDomino(state);
     document.title = "Trion Labs | The Delivery Domino";
+  } else if (
+    state.activeChallengeId === controlRoomChallengeId &&
+    canRenderInteractiveChallenge(state, controlRoomChallengeId)
+  ) {
+    appRoot.innerHTML = renderControlRoom(state);
+    document.title = "Trion Labs | The Control Room";
   } else {
     appRoot.innerHTML = renderChallengeBriefing(state);
     document.title = "Trion Labs | Challenge briefing";

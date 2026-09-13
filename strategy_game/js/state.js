@@ -36,6 +36,15 @@ import {
   isDeliveryDominoDependencyAvailable,
   isDeliveryDominoReadyForDecision,
 } from "./miniGames/deliveryDomino.js";
+import {
+  controlRoomChallengeId,
+  getControlRoomAudienceById,
+  getControlRoomAudienceSelectionStatus,
+  getControlRoomDecisionById,
+  getControlRoomSignalById,
+  getControlRoomSignalSelectionStatus,
+  isControlRoomReadyForDecision,
+} from "./miniGames/controlRoom.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
 const sectionNames = new Set(["overview", "challenges", "capabilities", "performance"]);
@@ -64,6 +73,11 @@ function cloneState(state) {
     deliveryDomino: {
       ...state.deliveryDomino,
       inspectedDependencyIds: [...state.deliveryDomino.inspectedDependencyIds],
+    },
+    controlRoom: {
+      ...state.controlRoom,
+      selectedSignalIds: [...state.controlRoom.selectedSignalIds],
+      prioritizedAudienceIds: [...state.controlRoom.prioritizedAudienceIds],
     },
     completedChallenges: [...state.completedChallenges],
     unlockedUpgrades: [...state.unlockedUpgrades],
@@ -1062,6 +1076,345 @@ function reduce(state, action) {
           },
         },
         "Choose the intervention that connects the material exception to the work and commitments it affects.",
+      );
+
+    case "TOGGLE_CONTROL_ROOM_SIGNAL": {
+      const signal = getControlRoomSignalById(action.signalId);
+
+      if (!signal) {
+        throw new Error(`Unknown Control Room signal: ${action.signalId}`);
+      }
+
+      if (state.completedChallenges.includes(controlRoomChallengeId)) {
+        return addNotification(
+          state,
+          "The Control Room is already complete. Review the Central Operational View outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.controlRoom;
+
+      if (progress.signalsConfirmed) {
+        return addNotification(
+          state,
+          "The focused exception is already confirmed. Continue by prioritising the people who need it.",
+        );
+      }
+
+      const selected = progress.selectedSignalIds.includes(signal.id);
+      const signalStatus = getControlRoomSignalSelectionStatus(progress);
+
+      if (!selected && signalStatus.selectedCount >= signalStatus.selectionLimit) {
+        const signalError = `The focused exception has room for ${signalStatus.selectionLimit} signals. Remove one before selecting ${signal.label}.`;
+
+        return addNotification(
+          {
+            ...state,
+            controlRoom: {
+              ...progress,
+              signalError,
+            },
+          },
+          signalError,
+        );
+      }
+
+      const selectedSignalIds = selected
+        ? progress.selectedSignalIds.filter((signalId) => signalId !== signal.id)
+        : [...progress.selectedSignalIds, signal.id];
+
+      return addNotification(
+        {
+          ...state,
+          controlRoom: {
+            ...progress,
+            selectedSignalIds,
+            signalError: null,
+          },
+        },
+        selected
+          ? `${signal.label} is no longer in the focused exception.`
+          : `${signal.label} is included in the focused exception.`,
+      );
+    }
+
+    case "CONFIRM_CONTROL_ROOM_SIGNALS": {
+      if (state.completedChallenges.includes(controlRoomChallengeId)) {
+        return addNotification(
+          state,
+          "The Control Room is already complete. Review the Central Operational View outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.controlRoom;
+
+      if (progress.signalsConfirmed) {
+        return addNotification(
+          state,
+          "The focused exception is already confirmed. Continue by prioritising the people who need it.",
+        );
+      }
+
+      const signalStatus = getControlRoomSignalSelectionStatus(progress);
+
+      if (!signalStatus.isExactSelection) {
+        const missingLabels = signalStatus.missingItems.map((signal) => signal.label).join(", ");
+        const extraLabels = signalStatus.extraItems.map((signal) => signal.label).join(", ");
+        const signalError = missingLabels && extraLabels
+          ? `Replace ${extraLabels} with ${missingLabels} to show the cause, available work, and customer consequence.`
+          : missingLabels
+            ? `Include ${missingLabels} to show the cause, available work, and customer consequence.`
+          : `Remove ${extraLabels} and keep only the signals that change this response.`;
+
+        return addNotification(
+          {
+            ...state,
+            controlRoom: {
+              ...progress,
+              signalError,
+            },
+          },
+          signalError,
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          controlRoom: {
+            ...progress,
+            signalsConfirmed: true,
+            signalError: null,
+          },
+        },
+        "The focused exception now keeps the material cause, work response, and customer impact together.",
+      );
+    }
+
+    case "TOGGLE_CONTROL_ROOM_AUDIENCE": {
+      const audience = getControlRoomAudienceById(action.audienceId);
+
+      if (!audience) {
+        throw new Error(`Unknown Control Room audience: ${action.audienceId}`);
+      }
+
+      if (state.completedChallenges.includes(controlRoomChallengeId)) {
+        return addNotification(
+          state,
+          "The Control Room is already complete. Review the Central Operational View outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.controlRoom;
+
+      if (!progress.signalsConfirmed) {
+        const audienceError =
+          "Confirm the focused signals before deciding who needs the priority response.";
+
+        return addNotification(
+          {
+            ...state,
+            controlRoom: {
+              ...progress,
+              audienceError,
+            },
+          },
+          audienceError,
+        );
+      }
+
+      if (progress.audiencesConfirmed) {
+        return addNotification(
+          state,
+          "The priority response group is already confirmed. Choose how the shared view should reach it.",
+        );
+      }
+
+      const selected = progress.prioritizedAudienceIds.includes(audience.id);
+      const audienceStatus = getControlRoomAudienceSelectionStatus(progress);
+
+      if (!selected && audienceStatus.selectedCount >= audienceStatus.selectionLimit) {
+        const audienceError = `The priority response has room for ${audienceStatus.selectionLimit} roles. Remove one before selecting ${audience.label}.`;
+
+        return addNotification(
+          {
+            ...state,
+            controlRoom: {
+              ...progress,
+              audienceError,
+            },
+          },
+          audienceError,
+        );
+      }
+
+      const prioritizedAudienceIds = selected
+        ? progress.prioritizedAudienceIds.filter((audienceId) => audienceId !== audience.id)
+        : [...progress.prioritizedAudienceIds, audience.id];
+
+      return addNotification(
+        {
+          ...state,
+          controlRoom: {
+            ...progress,
+            prioritizedAudienceIds,
+            audienceError: null,
+          },
+        },
+        selected
+          ? `${audience.label} no longer has a priority response view.`
+          : `${audience.label} is selected for the priority response view.`,
+      );
+    }
+
+    case "CONFIRM_CONTROL_ROOM_AUDIENCES": {
+      if (state.completedChallenges.includes(controlRoomChallengeId)) {
+        return addNotification(
+          state,
+          "The Control Room is already complete. Review the Central Operational View outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.controlRoom;
+
+      if (!progress.signalsConfirmed) {
+        const audienceError =
+          "Confirm the focused signals before deciding who needs the priority response.";
+
+        return addNotification(
+          {
+            ...state,
+            controlRoom: {
+              ...progress,
+              audienceError,
+            },
+          },
+          audienceError,
+        );
+      }
+
+      if (progress.audiencesConfirmed) {
+        return addNotification(
+          state,
+          "The priority response group is already confirmed. Choose how the shared view should reach it.",
+        );
+      }
+
+      const audienceStatus = getControlRoomAudienceSelectionStatus(progress);
+
+      if (!audienceStatus.isExactSelection) {
+        const missingLabels = audienceStatus.missingItems
+          .map((audience) => audience.label)
+          .join(", ");
+        const extraLabels = audienceStatus.extraItems.map((audience) => audience.label).join(", ");
+        const audienceError = missingLabels && extraLabels
+          ? `Replace ${extraLabels} with ${missingLabels} so the material, work, and customer response have clear owners.`
+          : missingLabels
+            ? `Prioritise ${missingLabels} so the material, work, and customer response have clear owners.`
+          : `Remove ${extraLabels}; this exception does not need to interrupt every role.`;
+
+        return addNotification(
+          {
+            ...state,
+            controlRoom: {
+              ...progress,
+              audienceError,
+            },
+          },
+          audienceError,
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          controlRoom: {
+            ...progress,
+            audiencesConfirmed: true,
+            audienceError: null,
+          },
+        },
+        "Management, production, and planning now share the priority response while other roles retain relevant detail.",
+      );
+    }
+
+    case "CHOOSE_CONTROL_ROOM_DECISION": {
+      const decision = getControlRoomDecisionById(action.decisionId);
+
+      if (!decision) {
+        throw new Error(`Unknown Control Room decision: ${action.decisionId}`);
+      }
+
+      if (state.completedChallenges.includes(controlRoomChallengeId)) {
+        return addNotification(
+          state,
+          "The Control Room is already complete. Review the Central Operational View outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.controlRoom;
+
+      if (!isControlRoomReadyForDecision(progress)) {
+        const decisionError =
+          "Focus the essential signals and confirm the priority roles before choosing how the operational view should be shared.";
+
+        return addNotification(
+          {
+            ...state,
+            controlRoom: {
+              ...progress,
+              decisionError,
+            },
+          },
+          decisionError,
+        );
+      }
+
+      const nextState = {
+        ...state,
+        controlRoom: {
+          ...progress,
+          decisionId: decision.id,
+          decisionError: null,
+        },
+      };
+
+      if (!decision.completesChallenge) {
+        return addNotification(nextState, decision.announcement);
+      }
+
+      const completedState = applyChallengeCompletion(nextState, {
+        challengeId: controlRoomChallengeId,
+        decision: {
+          id: decision.id,
+          title: decision.title,
+        },
+        kpiChanges: decision.kpiChanges,
+        resourceCosts: decision.resourceCosts,
+        unlockIds: decision.unlockIds,
+      });
+
+      return addNotification(completedState, decision.announcement);
+    }
+
+    case "RETRY_CONTROL_ROOM_DECISION":
+      if (state.completedChallenges.includes(controlRoomChallengeId)) {
+        return addNotification(
+          state,
+          "The Control Room is already complete. Review the Central Operational View outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          controlRoom: {
+            ...state.controlRoom,
+            decisionId: null,
+            decisionError: null,
+          },
+        },
+        "Choose the approach that keeps one shared exception useful for each role.",
       );
 
     case "RESET": {

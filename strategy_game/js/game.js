@@ -17,6 +17,11 @@ import {
   getDeliveryDominoDecisionById,
   getDeliveryDominoDependencyById,
 } from "./miniGames/deliveryDomino.js";
+import {
+  getControlRoomAudienceById,
+  getControlRoomDecisionById,
+  getControlRoomSignalById,
+} from "./miniGames/controlRoom.js";
 import { getChallengeReadiness, getChallengeModule } from "./miniGames/registry.js";
 import { dispatch, getState } from "./state.js";
 
@@ -234,4 +239,49 @@ export function chooseDeliveryDominoImprovement(decisionId) {
 
 export function retryDeliveryDominoImprovement() {
   return dispatch({ type: "RETRY_DELIVERY_DOMINO_IMPROVEMENT" });
+}
+
+export function toggleControlRoomSignal(signalId) {
+  if (!getControlRoomSignalById(signalId)) {
+    throw new Error(`Unknown Control Room signal: ${signalId}`);
+  }
+
+  return dispatch({
+    type: "TOGGLE_CONTROL_ROOM_SIGNAL",
+    signalId,
+  });
+}
+
+export function confirmControlRoomSignals() {
+  return dispatch({ type: "CONFIRM_CONTROL_ROOM_SIGNALS" });
+}
+
+export function toggleControlRoomAudience(audienceId) {
+  if (!getControlRoomAudienceById(audienceId)) {
+    throw new Error(`Unknown Control Room audience: ${audienceId}`);
+  }
+
+  return dispatch({
+    type: "TOGGLE_CONTROL_ROOM_AUDIENCE",
+    audienceId,
+  });
+}
+
+export function confirmControlRoomAudiences() {
+  return dispatch({ type: "CONFIRM_CONTROL_ROOM_AUDIENCES" });
+}
+
+export function chooseControlRoomDecision(decisionId) {
+  if (!getControlRoomDecisionById(decisionId)) {
+    throw new Error(`Unknown Control Room decision: ${decisionId}`);
+  }
+
+  return dispatch({
+    type: "CHOOSE_CONTROL_ROOM_DECISION",
+    decisionId,
+  });
+}
+
+export function retryControlRoomDecision() {
+  return dispatch({ type: "RETRY_CONTROL_ROOM_DECISION" });
 }

@@ -2,6 +2,7 @@ import { createInitialMissingMinutesState } from "./miniGames/missingMinutes.js"
 import { createInitialQualityLoopState } from "./miniGames/qualityLoop.js";
 import { createInitialSpreadsheetShuffleState } from "./miniGames/spreadsheetShuffle.js";
 import { createInitialDeliveryDominoState } from "./miniGames/deliveryDomino.js";
+import { createInitialControlRoomState } from "./miniGames/controlRoom.js";
 
 export const navigationItems = Object.freeze([
   { id: "overview", label: "Overview" },
@@ -178,7 +179,7 @@ export const challenges = Object.freeze([
       "Management has plenty of data but no clear operational view. Important signals compete with distracting information.",
     objective: "Build a useful view by selecting the information that supports the next operational decision.",
     mechanic: "Dashboard composition",
-    focus: ["Role-relevant KPIs", "Live operational data", "Exceptions", "Decision context"],
+    focus: ["Role-relevant KPIs", "Current operational signals", "Exceptions", "Decision context"],
     principle: "The right information, presented to the right people, enables better decisions.",
     unlockId: "central-operational-view",
     unlockLabel: "Central Operational View",
@@ -325,6 +326,7 @@ export function createInitialGameState() {
     qualityLoop: createInitialQualityLoopState(),
     spreadsheetShuffle: createInitialSpreadsheetShuffleState(),
     deliveryDomino: createInitialDeliveryDominoState(),
+    controlRoom: createInitialControlRoomState(),
     decisions: [],
     notifications: [],
     announcement: "Welcome to Trion Labs.",

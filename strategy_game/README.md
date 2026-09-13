@@ -94,11 +94,20 @@ delivery, visibility, and throughput effects, and unlocks Logistics +
 Production Visibility. A logistics-only report and a manual capacity response
 explain their narrower trade-offs and allow a retry.
 
+`The Control Room` is the fifth completed challenge. Visitors curate four
+signals that explain the material exception, its work response, and its customer
+impact; then they prioritise management, production, and planning without
+interrupting every role. Publishing one shared exception view, filtered by
+role, applies bounded visibility, productivity, and delivery effects and
+unlocks the Central Operational View. An overloaded management page and
+separate static reports explain why more information or tailored reports alone
+do not create an actionable shared decision.
+
 ## Remaining foundation scope
 
 The challenge map provides complete scenario briefings and preserves the
-intended challenge sequence. The distinct 30-90 second interactive mechanics
-for challenges five and six remain deliberately isolated behind the registry
-for later implementation. No backend, external API, framework, or
+intended challenge sequence. The distinct 30-90 second interactive mechanic
+for the sixth Improvement Challenge remains deliberately isolated behind the
+registry for later implementation. No backend, external API, framework, or
 visitor-progression persistence is used. The selected colour theme is stored
 locally so it remains in place across reloads and implemented mini-games.

@@ -62,25 +62,34 @@ function renderOperationMap(state) {
   const hasLogisticsProductionVisibility = state.unlockedUpgrades.includes(
     "logistics-production-visibility",
   );
-  const insightLabel = hasLogisticsProductionVisibility
+  const hasCentralOperationalView = state.unlockedUpgrades.includes(
+    "central-operational-view",
+  );
+  const insightLabel = hasCentralOperationalView
+    ? "Central operational view"
+    : hasLogisticsProductionVisibility
     ? "Delivery response connected"
     : hasWorkflowAutomation || hasProductionQualityIntegration
       ? "New shared capability"
     : "Current condition";
-  const insightTitle = hasLogisticsProductionVisibility
+  const insightTitle = hasCentralOperationalView
+    ? "The right exception now reaches the people who can act on it."
+    : hasLogisticsProductionVisibility
     ? "Material risk now reaches planning before it reaches customer commitments."
     : hasWorkflowAutomation
       ? "Planning updates now follow a shared, automated route."
     : hasProductionQualityIntegration
       ? "Production and quality now share a traceable record."
       : `${stage.name} operations need clearer shared context.`;
-  const insightCopy = hasLogisticsProductionVisibility
-    ? "Logistics exceptions can be viewed with the production schedule, available capacity, customer orders, and delivery commitments they affect."
-    : hasWorkflowAutomation
-      ? "Production and ERP context travel with the planning update, reducing copied figures and giving people a clearer schedule to work from."
-    : hasProductionQualityIntegration
-      ? "Defect signals can be compared with the production conditions and material trace that created them."
-      : stage.description;
+  const insightCopy = hasCentralOperationalView
+    ? "Management, production, and planning now work from one shared exception, with role-relevant detail rather than a larger generic dashboard."
+    : hasLogisticsProductionVisibility
+      ? "Logistics exceptions can be viewed with the production schedule, available capacity, customer orders, and delivery commitments they affect."
+      : hasWorkflowAutomation
+        ? "Production and ERP context travel with the planning update, reducing copied figures and giving people a clearer schedule to work from."
+        : hasProductionQualityIntegration
+          ? "Defect signals can be compared with the production conditions and material trace that created them."
+          : stage.description;
 
   return `
     <div class="operations-layout">
@@ -95,6 +104,11 @@ function renderOperationMap(state) {
         ${
           hasLogisticsProductionVisibility
             ? '<p class="sr-only">Logistics material risk is connected to the shared operational context.</p>'
+            : ""
+        }
+        ${
+          hasCentralOperationalView
+            ? '<p class="sr-only">A central operational view now filters the shared exception for the people who need to act.</p>'
             : ""
         }
         ${operationAreas
@@ -150,6 +164,8 @@ function renderChallengeCards(state) {
                   ? "Connect records"
                     : challenge.id === "spreadsheet-shuffle" && readiness.canLaunch
                       ? "Redesign workflow"
+                      : challenge.id === "control-room" && readiness.canLaunch
+                        ? "Curate operational view"
                     : "Review scenario";
 
           return `
@@ -262,6 +278,10 @@ function renderCapabilities(state) {
 }
 
 function renderPerformance(state) {
+  const hasCentralOperationalView = state.unlockedUpgrades.includes(
+    "central-operational-view",
+  );
+
   return `
     <div class="performance-grid">
       <table class="performance-table">
@@ -288,10 +308,18 @@ function renderPerformance(state) {
         </tbody>
       </table>
       <aside class="performance-insight">
-        <span>Starting performance</span>
-        <strong>Visibility is the first constraint.</strong>
+        <span>${hasCentralOperationalView ? "Decision context improved" : "Starting performance"}</span>
+        <strong>${
+          hasCentralOperationalView
+            ? "The right signal now reaches the right decision."
+            : "Visibility is the first constraint."
+        }</strong>
         <p>
-          The operation is producing, but the information needed to explain loss and coordinate a response is scattered.
+          ${
+            hasCentralOperationalView
+              ? "A focused shared exception helps management, production, and planning coordinate the current response without turning routine detail into a priority alert."
+              : "The operation is producing, but the information needed to explain loss and coordinate a response is scattered."
+          }
         </p>
       </aside>
     </div>

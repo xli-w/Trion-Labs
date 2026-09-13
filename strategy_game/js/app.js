@@ -1,11 +1,14 @@
 import {
   applySpreadsheetShuffleSimplification,
+  chooseControlRoomDecision,
   chooseDeliveryDominoImprovement,
   chooseQualityLoopImprovement,
   chooseMissingMinutesImprovement,
   chooseSpreadsheetShuffleAutomation,
   chooseSpreadsheetShuffleStandardisation,
   closeChallengeBriefing,
+  confirmControlRoomAudiences,
+  confirmControlRoomSignals,
   enterLab,
   identifyQualityLoopCause,
   inspectDeliveryDominoDependency,
@@ -19,10 +22,13 @@ import {
   retrySpreadsheetShuffleAutomation,
   retrySpreadsheetShuffleSimplification,
   retrySpreadsheetShuffleStandardisation,
+  retryControlRoomDecision,
   retryDeliveryDominoImprovement,
   reviewChallenge,
   selectQualityLoopNode,
   toggleSpreadsheetShuffleStep,
+  toggleControlRoomAudience,
+  toggleControlRoomSignal,
 } from "./game.js";
 import {
   bindInteractions,
@@ -162,6 +168,39 @@ bindInteractions({
   "retry-delivery-domino-improvement": () => {
     retryDeliveryDominoImprovement();
     focusElementById("delivery-domino-decision");
+  },
+  "toggle-control-room-signal": ({ signalId }) => {
+    toggleControlRoomSignal(signalId);
+    focusElementById(`control-room-signal-${signalId}`);
+  },
+  "confirm-control-room-signals": () => {
+    const nextState = confirmControlRoomSignals();
+
+    if (nextState.controlRoom.signalsConfirmed || nextState.controlRoom.signalError) {
+      focusElementById("control-room-signal-outcome");
+    }
+  },
+  "toggle-control-room-audience": ({ audienceId }) => {
+    toggleControlRoomAudience(audienceId);
+    focusElementById(`control-room-audience-${audienceId}`);
+  },
+  "confirm-control-room-audiences": () => {
+    const nextState = confirmControlRoomAudiences();
+
+    if (nextState.controlRoom.audiencesConfirmed || nextState.controlRoom.audienceError) {
+      focusElementById("control-room-audience-outcome");
+    }
+  },
+  "choose-control-room-decision": ({ decisionId }) => {
+    const nextState = chooseControlRoomDecision(decisionId);
+
+    if (nextState.controlRoom.decisionId === decisionId) {
+      focusElementById("control-room-outcome");
+    }
+  },
+  "retry-control-room-decision": () => {
+    retryControlRoomDecision();
+    focusElementById("control-room-decision");
   },
   reset: () => {
     resetExperience();

@@ -13,6 +13,10 @@ import {
   getSpreadsheetShuffleStandardisationById,
   getSpreadsheetShuffleStepById,
 } from "./miniGames/spreadsheetShuffle.js";
+import {
+  getDeliveryDominoDecisionById,
+  getDeliveryDominoDependencyById,
+} from "./miniGames/deliveryDomino.js";
 import { getChallengeReadiness, getChallengeModule } from "./miniGames/registry.js";
 import { dispatch, getState } from "./state.js";
 
@@ -204,4 +208,30 @@ export function chooseSpreadsheetShuffleAutomation(optionId) {
 
 export function retrySpreadsheetShuffleAutomation() {
   return dispatch({ type: "RETRY_SPREADSHEET_SHUFFLE_AUTOMATION" });
+}
+
+export function inspectDeliveryDominoDependency(dependencyId) {
+  if (!getDeliveryDominoDependencyById(dependencyId)) {
+    throw new Error(`Unknown Delivery Domino dependency: ${dependencyId}`);
+  }
+
+  return dispatch({
+    type: "INSPECT_DELIVERY_DOMINO_DEPENDENCY",
+    dependencyId,
+  });
+}
+
+export function chooseDeliveryDominoImprovement(decisionId) {
+  if (!getDeliveryDominoDecisionById(decisionId)) {
+    throw new Error(`Unknown Delivery Domino improvement: ${decisionId}`);
+  }
+
+  return dispatch({
+    type: "CHOOSE_DELIVERY_DOMINO_IMPROVEMENT",
+    decisionId,
+  });
+}
+
+export function retryDeliveryDominoImprovement() {
+  return dispatch({ type: "RETRY_DELIVERY_DOMINO_IMPROVEMENT" });
 }

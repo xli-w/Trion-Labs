@@ -42,6 +42,9 @@ development server with the same document root will also work.
 - `js/miniGames/spreadsheetShuffle.js` owns the third challenge's illustrative
   planning workflow, simplification rules, standardisation choices, and
   automation decision state.
+- `js/miniGames/deliveryDomino.js` owns the fourth challenge's illustrative
+  material-delay dependency chain, intervention rules, and delivery-response
+  state.
 - `../theme.js` owns the shared local colour preference used by the strategy
   experience and standalone mini-games.
 
@@ -83,11 +86,19 @@ schedule update applies bounded productivity, visibility, cost, and delivery
 effects and unlocks Workflow Automation. Choices that preserve a spreadsheet
 workaround or email-based handoff explain the trade-off and offer a retry.
 
+`The Delivery Domino` is the fourth completed challenge. Visitors trace an
+illustrative late material delivery through the production schedule, available
+capacity, customer orders, and delivery commitments. Connecting material status
+with planning turns the delay into an earlier shared exception, applies bounded
+delivery, visibility, and throughput effects, and unlocks Logistics +
+Production Visibility. A logistics-only report and a manual capacity response
+explain their narrower trade-offs and allow a retry.
+
 ## Remaining foundation scope
 
 The challenge map provides complete scenario briefings and preserves the
 intended challenge sequence. The distinct 30-90 second interactive mechanics
-for challenges four through six remain deliberately isolated behind the
-registry for later implementation. No backend, external API, framework, or
+for challenges five and six remain deliberately isolated behind the registry
+for later implementation. No backend, external API, framework, or
 visitor-progression persistence is used. The selected colour theme is stored
 locally so it remains in place across reloads and implemented mini-games.

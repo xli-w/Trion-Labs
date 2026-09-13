@@ -246,6 +246,18 @@
   box-shadow: 0 0 0 3px rgba(63, 129, 109, 0.12);
 }
 
+.operations-connection--logistics-systems {
+  top: 40%;
+  left: 83%;
+  width: 24%;
+  transform: rotate(90deg);
+  transform-origin: left center;
+}
+
+.operations-connection--logistics-systems.is-active {
+  transform: rotate(90deg) scaleX(1.08);
+}
+
 .operations-node {
   position: relative;
   z-index: 1;

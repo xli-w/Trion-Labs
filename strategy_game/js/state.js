@@ -29,6 +29,13 @@ import {
   isSpreadsheetShuffleStandardised,
   spreadsheetShuffleChallengeId,
 } from "./miniGames/spreadsheetShuffle.js";
+import {
+  deliveryDominoChallengeId,
+  getDeliveryDominoDecisionById,
+  getDeliveryDominoDependencyById,
+  isDeliveryDominoDependencyAvailable,
+  isDeliveryDominoReadyForDecision,
+} from "./miniGames/deliveryDomino.js";
 
 const screenNames = new Set(["landing", "overview", "challenge"]);
 const sectionNames = new Set(["overview", "challenges", "capabilities", "performance"]);
@@ -53,6 +60,10 @@ function cloneState(state) {
     spreadsheetShuffle: {
       ...state.spreadsheetShuffle,
       selectedStepIds: [...state.spreadsheetShuffle.selectedStepIds],
+    },
+    deliveryDomino: {
+      ...state.deliveryDomino,
+      inspectedDependencyIds: [...state.deliveryDomino.inspectedDependencyIds],
     },
     completedChallenges: [...state.completedChallenges],
     unlockedUpgrades: [...state.unlockedUpgrades],
@@ -166,10 +177,26 @@ function applyChallengeCompletion(state, action) {
 }
 
 function deriveCapabilityStage(completedChallenges, unlockedUpgrades) {
-  const progressPoints = completedChallenges.length + unlockedUpgrades.length;
-  const calculatedStage = 1 + Math.floor(progressPoints / 2);
+  if (
+    completedChallenges.includes("improvement-challenge") &&
+    unlockedUpgrades.includes("continuous-improvement")
+  ) {
+    return 5;
+  }
 
-  return Math.min(capabilityStages.length, calculatedStage);
+  if (completedChallenges.includes("spreadsheet-shuffle")) {
+    return 4;
+  }
+
+  if (completedChallenges.includes("quality-loop")) {
+    return 3;
+  }
+
+  if (completedChallenges.includes("missing-minutes")) {
+    return 2;
+  }
+
+  return 1;
 }
 
 function commit(nextState) {
@@ -896,6 +923,145 @@ function reduce(state, action) {
           },
         },
         "Choose the automation that carries the standard source context into the schedule update.",
+      );
+
+    case "INSPECT_DELIVERY_DOMINO_DEPENDENCY": {
+      const dependency = getDeliveryDominoDependencyById(action.dependencyId);
+
+      if (!dependency) {
+        throw new Error(`Unknown Delivery Domino dependency: ${action.dependencyId}`);
+      }
+
+      if (state.completedChallenges.includes(deliveryDominoChallengeId)) {
+        return addNotification(
+          state,
+          "The Delivery Domino is already complete. Review the Logistics + Production Visibility outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.deliveryDomino;
+
+      if (!isDeliveryDominoDependencyAvailable(dependency.id, progress)) {
+        const prerequisite = getDeliveryDominoDependencyById(dependency.dependsOn);
+
+        if (!prerequisite) {
+          throw new Error(`Missing Delivery Domino prerequisite: ${dependency.dependsOn}`);
+        }
+
+        const traceError = `Trace ${prerequisite.label} before ${dependency.label}; it carries the context this step needs.`;
+
+        return addNotification(
+          {
+            ...state,
+            deliveryDomino: {
+              ...progress,
+              traceError,
+            },
+          },
+          traceError,
+        );
+      }
+
+      const alreadyTraced = progress.inspectedDependencyIds.includes(dependency.id);
+      const inspectedDependencyIds = alreadyTraced
+        ? progress.inspectedDependencyIds
+        : [...progress.inspectedDependencyIds, dependency.id];
+      const nextState = {
+        ...state,
+        deliveryDomino: {
+          ...progress,
+          selectedDependencyId: dependency.id,
+          inspectedDependencyIds,
+          traceError: null,
+          decisionError: null,
+        },
+      };
+
+      return addNotification(
+        nextState,
+        alreadyTraced
+          ? `${dependency.label} remains part of the traced dependency chain.`
+          : `${dependency.label} traced. ${dependency.announcement}`,
+      );
+    }
+
+    case "CHOOSE_DELIVERY_DOMINO_IMPROVEMENT": {
+      const decision = getDeliveryDominoDecisionById(action.decisionId);
+
+      if (!decision) {
+        throw new Error(`Unknown Delivery Domino improvement: ${action.decisionId}`);
+      }
+
+      if (state.completedChallenges.includes(deliveryDominoChallengeId)) {
+        return addNotification(
+          state,
+          "The Delivery Domino is already complete. Review the Logistics + Production Visibility outcome from the challenge map.",
+        );
+      }
+
+      const progress = state.deliveryDomino;
+
+      if (!isDeliveryDominoReadyForDecision(progress)) {
+        const decisionError =
+          "Trace the material delay through the production schedule, capacity, customer orders, and delivery commitments before choosing an intervention.";
+
+        return addNotification(
+          {
+            ...state,
+            deliveryDomino: {
+              ...progress,
+              decisionError,
+            },
+          },
+          decisionError,
+        );
+      }
+
+      const nextState = {
+        ...state,
+        deliveryDomino: {
+          ...progress,
+          decisionId: decision.id,
+          decisionError: null,
+        },
+      };
+
+      if (!decision.completesChallenge) {
+        return addNotification(nextState, decision.announcement);
+      }
+
+      const completedState = applyChallengeCompletion(nextState, {
+        challengeId: deliveryDominoChallengeId,
+        decision: {
+          id: decision.id,
+          title: decision.title,
+        },
+        kpiChanges: decision.kpiChanges,
+        resourceCosts: decision.resourceCosts,
+        unlockIds: decision.unlockIds,
+      });
+
+      return addNotification(completedState, decision.announcement);
+    }
+
+    case "RETRY_DELIVERY_DOMINO_IMPROVEMENT":
+      if (state.completedChallenges.includes(deliveryDominoChallengeId)) {
+        return addNotification(
+          state,
+          "The Delivery Domino is already complete. Review the Logistics + Production Visibility outcome from the challenge map.",
+        );
+      }
+
+      return addNotification(
+        {
+          ...state,
+          deliveryDomino: {
+            ...state.deliveryDomino,
+            decisionId: null,
+            decisionError: null,
+          },
+        },
+        "Choose the intervention that connects the material exception to the work and commitments it affects.",
       );
 
     case "RESET": {

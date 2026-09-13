@@ -1,5 +1,6 @@
 import {
   applySpreadsheetShuffleSimplification,
+  chooseDeliveryDominoImprovement,
   chooseQualityLoopImprovement,
   chooseMissingMinutesImprovement,
   chooseSpreadsheetShuffleAutomation,
@@ -7,6 +8,7 @@ import {
   closeChallengeBriefing,
   enterLab,
   identifyQualityLoopCause,
+  inspectDeliveryDominoDependency,
   inspectMissingMinutesEvent,
   navigateToSection,
   resetExperience,
@@ -17,6 +19,7 @@ import {
   retrySpreadsheetShuffleAutomation,
   retrySpreadsheetShuffleSimplification,
   retrySpreadsheetShuffleStandardisation,
+  retryDeliveryDominoImprovement,
   reviewChallenge,
   selectQualityLoopNode,
   toggleSpreadsheetShuffleStep,
@@ -145,6 +148,20 @@ bindInteractions({
   "retry-spreadsheet-shuffle-automation": () => {
     retrySpreadsheetShuffleAutomation();
     focusElementById("spreadsheet-automation");
+  },
+  "inspect-delivery-domino-dependency": ({ dependencyId }) => {
+    inspectDeliveryDominoDependency(dependencyId);
+  },
+  "choose-delivery-domino-improvement": ({ decisionId }) => {
+    const nextState = chooseDeliveryDominoImprovement(decisionId);
+
+    if (nextState.deliveryDomino.decisionId === decisionId) {
+      focusElementById("delivery-domino-outcome");
+    }
+  },
+  "retry-delivery-domino-improvement": () => {
+    retryDeliveryDominoImprovement();
+    focusElementById("delivery-domino-decision");
   },
   reset: () => {
     resetExperience();

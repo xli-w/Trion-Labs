@@ -1,6 +1,7 @@
 import { createInitialMissingMinutesState } from "./miniGames/missingMinutes.js";
 import { createInitialQualityLoopState } from "./miniGames/qualityLoop.js";
 import { createInitialSpreadsheetShuffleState } from "./miniGames/spreadsheetShuffle.js";
+import { createInitialDeliveryDominoState } from "./miniGames/deliveryDomino.js";
 
 export const navigationItems = Object.freeze([
   { id: "overview", label: "Overview" },
@@ -90,7 +91,7 @@ export const operationAreas = Object.freeze([
     id: "logistics",
     label: "Logistics",
     detail: "Material and delivery dependencies",
-    activeAt: 5,
+    unlockId: "logistics-production-visibility",
   },
   {
     id: "planning",
@@ -251,7 +252,7 @@ export const upgrades = Object.freeze([
   {
     id: "logistics-production-visibility",
     type: "Connection",
-    title: "Logistics + Production",
+    title: "Logistics + Production Visibility",
     description: "Material risk is visible before it disrupts the schedule.",
   },
   {
@@ -323,6 +324,7 @@ export function createInitialGameState() {
     missingMinutes: createInitialMissingMinutesState(),
     qualityLoop: createInitialQualityLoopState(),
     spreadsheetShuffle: createInitialSpreadsheetShuffleState(),
+    deliveryDomino: createInitialDeliveryDominoState(),
     decisions: [],
     notifications: [],
     announcement: "Welcome to Trion Labs.",

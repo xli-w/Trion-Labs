@@ -47,22 +47,37 @@ function renderKpiCards(state) {
   `;
 }
 
+function isOperationAreaActive(area, state) {
+  return area.unlockId
+    ? state.unlockedUpgrades.includes(area.unlockId)
+    : state.capabilityStage >= area.activeAt;
+}
+
 function renderOperationMap(state) {
   const stage = getCapabilityStage(state.capabilityStage);
   const hasProductionQualityIntegration = state.unlockedUpgrades.includes(
     "production-quality-integration",
   );
   const hasWorkflowAutomation = state.unlockedUpgrades.includes("workflow-automation");
-  const insightLabel = hasWorkflowAutomation || hasProductionQualityIntegration
-    ? "New shared capability"
+  const hasLogisticsProductionVisibility = state.unlockedUpgrades.includes(
+    "logistics-production-visibility",
+  );
+  const insightLabel = hasLogisticsProductionVisibility
+    ? "Delivery response connected"
+    : hasWorkflowAutomation || hasProductionQualityIntegration
+      ? "New shared capability"
     : "Current condition";
-  const insightTitle = hasWorkflowAutomation
-    ? "Planning updates now follow a shared, automated route."
+  const insightTitle = hasLogisticsProductionVisibility
+    ? "Material risk now reaches planning before it reaches customer commitments."
+    : hasWorkflowAutomation
+      ? "Planning updates now follow a shared, automated route."
     : hasProductionQualityIntegration
       ? "Production and quality now share a traceable record."
       : `${stage.name} operations need clearer shared context.`;
-  const insightCopy = hasWorkflowAutomation
-    ? "Production and ERP context travel with the planning update, reducing copied figures and giving people a clearer schedule to work from."
+  const insightCopy = hasLogisticsProductionVisibility
+    ? "Logistics exceptions can be viewed with the production schedule, available capacity, customer orders, and delivery commitments they affect."
+    : hasWorkflowAutomation
+      ? "Production and ERP context travel with the planning update, reducing copied figures and giving people a clearer schedule to work from."
     : hasProductionQualityIntegration
       ? "Defect signals can be compared with the production conditions and material trace that created them."
       : stage.description;
@@ -71,21 +86,29 @@ function renderOperationMap(state) {
     <div class="operations-layout">
       <div class="operations-map" data-stage="${state.capabilityStage}" aria-label="Operational model at ${stage.name} capability stage">
         <span class="operations-connection operations-connection--production-quality ${hasProductionQualityIntegration ? "is-active" : ""}" aria-hidden="true"></span>
+        <span class="operations-connection operations-connection--logistics-systems ${hasLogisticsProductionVisibility ? "is-active" : ""}" aria-hidden="true"></span>
         ${
           hasProductionQualityIntegration
             ? '<p class="sr-only">Production and quality information are connected in the operational model.</p>'
             : ""
         }
+        ${
+          hasLogisticsProductionVisibility
+            ? '<p class="sr-only">Logistics material risk is connected to the shared operational context.</p>'
+            : ""
+        }
         ${operationAreas
-          .map(
-            (area) => `
-              <article class="operations-node ${state.capabilityStage >= area.activeAt ? "is-active" : ""}">
+          .map((area) => {
+            const isActive = isOperationAreaActive(area, state);
+
+            return `
+              <article class="operations-node ${isActive ? "is-active" : ""}">
                 <span>${area.label}</span>
                 <strong>${area.detail}</strong>
-                <small>${state.capabilityStage >= area.activeAt ? "Context is available" : "Connection will unlock"}</small>
+                <small>${isActive ? "Context is available" : "Connection will unlock"}</small>
               </article>
-            `,
-          )
+            `;
+          })
           .join("")}
       </div>
       <aside class="map-insight">

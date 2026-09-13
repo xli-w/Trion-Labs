@@ -130,11 +130,8 @@
 :root[data-theme="dark"] .kpi-card,
 :root[data-theme="dark"] .snapshot-panel,
 :root[data-theme="dark"] .operation-facts div,
-:root[data-theme="dark"] .operation-area-list li,
-:root[data-theme="dark"] .operation-system-list li,
 :root[data-theme="dark"] .connection-map,
 :root[data-theme="dark"] .connection-map__node,
-:root[data-theme="dark"] .connection-map__relationship,
 :root[data-theme="dark"] .diagnostic-profile__summary-copy,
 :root[data-theme="dark"] .diagnostic-profile__facts div,
 :root[data-theme="dark"] .diagnostic-dimension,
@@ -145,8 +142,7 @@
 :root[data-theme="dark"] .opportunity-selection-feedback dl div,
 :root[data-theme="dark"] .trion-approach-step,
 :root[data-theme="dark"] .challenge-card,
-:root[data-theme="dark"] .capability-card,
-:root[data-theme="dark"] .performance-table,
+:root[data-theme="dark"] .capability-trail__item,
 :root[data-theme="dark"] .briefing-steps li,
 :root[data-theme="dark"] .briefing-facts div,
 :root[data-theme="dark"] .challenge-game-brief,
@@ -231,10 +227,6 @@
     var(--trion-surface-elevated);
 }
 
-:root[data-theme="dark"] .connection-map__relationship.is-connected {
-  border-color: var(--trion-green);
-}
-
 :root[data-theme="dark"] .challenge-card.is-current,
 :root[data-theme="dark"] .challenge-card:hover {
   border-color: var(--trion-purple-muted);
@@ -244,7 +236,7 @@
   background: linear-gradient(145deg, var(--trion-surface-elevated) 0%, var(--trion-surface) 100%);
 }
 
-:root[data-theme="dark"] .capability-card.is-unlocked,
+:root[data-theme="dark"] .capability-trail__item.is-unlocked,
 :root[data-theme="dark"] .decision-gate__checks li.is-complete {
   border-color: var(--trion-green);
 }

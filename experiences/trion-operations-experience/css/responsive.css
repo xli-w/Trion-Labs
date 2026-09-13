@@ -81,12 +81,6 @@
     gap: 16px;
   }
 
-  .snapshot-kpis__heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
-  }
-
   .diagnostic-profile__heading,
   .diagnostic-profile__section-heading,
   .opportunity-prioritization__heading,
@@ -103,7 +97,6 @@
   }
 
   .starting-snapshot__layout,
-  .starting-snapshot__support,
   .connection-map-layout,
   .diagnostic-profile__summary,
   .diagnostic-profile__next,
@@ -136,17 +129,6 @@
   .capability-layout > .resource-card > .resource-list {
     grid-row: 1 / span 2;
     grid-column: 2;
-  }
-
-  .capability-group__header {
-    align-items: start;
-    flex-direction: column;
-    gap: 7px;
-  }
-
-  .capability-group__header p {
-    max-width: none;
-    text-align: left;
   }
 
   .briefing-status {
@@ -297,7 +279,6 @@
 
   .kpi-grid,
   .challenge-grid,
-  .capability-list,
   .diagnostic-dimensions,
   .trion-approach-steps {
     grid-template-columns: 1fr;
@@ -342,12 +323,6 @@
     gap: 7px;
   }
 
-  .operation-area-list,
-  .operation-system-list,
-  .connection-map__relationships {
-    grid-template-columns: 1fr;
-  }
-
   .connection-map {
     padding: 16px;
   }
@@ -382,24 +357,6 @@
   .capability-layout > .resource-card > .resource-list {
     grid-row: auto;
     grid-column: auto;
-  }
-
-  .performance-table th,
-  .performance-table td {
-    padding: 13px 14px;
-  }
-
-  .performance-table thead th {
-    font-size: 0.53rem;
-  }
-
-  .performance-table tbody th,
-  .performance-table td strong {
-    font-size: 0.72rem;
-  }
-
-  .performance-table td small {
-    font-size: 0.6rem;
   }
 
   .experience-summary__intro,

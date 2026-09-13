@@ -7,13 +7,7 @@ import {
   upgrades,
 } from "../data.js";
 import { getChallengeReadiness } from "../miniGames/registry.js";
-import {
-  connectionMapNodes,
-  getOperationSnapshot,
-  operation,
-  operationalAreas,
-  operationSystems,
-} from "../operationModel.js";
+import { connectionMapNodes, getOperationSnapshot, operation } from "../operationModel.js";
 import { renderBeforeAfterOperatingModel } from "./beforeAfterOperatingModel.js";
 import { renderDiagnosticProfile } from "./diagnosticProfile.js";
 import { renderOpportunityPrioritization } from "./opportunityPrioritization.js";
@@ -142,52 +136,6 @@ function renderStartingSnapshot(state) {
           </ol>
         </aside>
       </div>
-      <div class="starting-snapshot__support">
-        <section class="snapshot-panel snapshot-panel--areas" aria-labelledby="areasTitle">
-          <p class="snapshot-panel__label">Operational areas</p>
-          <h3 id="areasTitle">The work involved</h3>
-          <ul class="operation-area-list">
-            ${operationalAreas
-              .map(
-                (area) => `
-                  <li>
-                    <strong>${area.label}</strong>
-                    <span>${area.detail}</span>
-                  </li>
-                `,
-              )
-              .join("")}
-          </ul>
-        </section>
-        <section class="snapshot-panel snapshot-panel--systems" aria-labelledby="systemsTitle">
-          <p class="snapshot-panel__label">Existing systems and tools</p>
-          <h3 id="systemsTitle">Information is already there</h3>
-          <ul class="operation-system-list">
-            ${operationSystems
-              .map(
-                (system) => `
-                  <li>
-                    <strong>${system.label}</strong>
-                    <span>${system.type}</span>
-                  </li>
-                `,
-              )
-              .join("")}
-          </ul>
-        </section>
-      </div>
-      <section class="snapshot-kpis" aria-labelledby="snapshotKpisTitle">
-        <div class="snapshot-kpis__heading">
-          <div>
-            <p class="snapshot-panel__label">Baseline measures</p>
-            <h3 id="snapshotKpisTitle">What the operation can see today.</h3>
-          </div>
-          <p>
-            Illustrative baseline measures show where the operation has room to improve. A challenge changes only the measures it meaningfully affects.
-          </p>
-        </div>
-        ${renderKpiCards(state)}
-      </section>
       <div class="starting-snapshot__action">
         ${action}
         <p>Start with the production loss that is visible, but not yet understood.</p>
@@ -248,21 +196,6 @@ function renderOperationMap(state) {
           <strong>${snapshot.connectedRelationshipCount} of ${snapshot.totalRelationshipCount} relationships connected</strong>
           <span>${relationshipSummary}</span>
         </p>
-        <ol class="connection-map__relationships" aria-label="Connection status">
-          ${snapshot.connections
-            .map(
-              (relationship) => `
-                <li class="connection-map__relationship is-${relationship.status}">
-                  <span class="connection-map__relationship-status">${relationship.statusLabel}</span>
-                  <div>
-                    <strong>${relationship.title}</strong>
-                    <p>${relationship.statusDescription}</p>
-                  </div>
-                </li>
-              `,
-            )
-            .join("")}
-        </ol>
       </div>
       <aside class="map-insight">
         <div>
@@ -342,37 +275,22 @@ function renderChallengeCards(state) {
   `;
 }
 
-function renderCapabilityCards(capabilitySet, state) {
-  return capabilitySet
-    .map((upgrade) => {
-      const unlocked = state.unlockedUpgrades.includes(upgrade.id);
-
-      return `
-        <article class="capability-card ${unlocked ? "is-unlocked" : ""}">
-          <span class="capability-card__type">${upgrade.type}</span>
-          <span class="capability-card__status">${unlocked ? "Unlocked" : "Path ahead"}</span>
-          <h4>${upgrade.title}</h4>
-          <p>${upgrade.description}</p>
-        </article>
-      `;
-    })
-    .join("");
-}
-
-function renderCapabilityGroup(label, title, description, capabilitySet, state) {
+function renderCapabilityTrail(capabilitySet, state) {
   return `
-    <section class="capability-group" aria-label="${title}">
-      <header class="capability-group__header">
-        <div>
-          <span>${label}</span>
-          <h3>${title}</h3>
-        </div>
-        <p>${description}</p>
-      </header>
-      <div class="capability-list">
-        ${renderCapabilityCards(capabilitySet, state)}
-      </div>
-    </section>
+    <ul class="capability-trail" aria-label="Capabilities this experience unlocks">
+      ${capabilitySet
+        .map((upgrade) => {
+          const unlocked = state.unlockedUpgrades.includes(upgrade.id);
+
+          return `
+            <li class="capability-trail__item ${unlocked ? "is-unlocked" : ""}">
+              <span class="capability-trail__status">${unlocked ? "Unlocked" : "Path ahead"}</span>
+              <strong>${upgrade.title}</strong>
+            </li>
+          `;
+        })
+        .join("")}
+    </ul>
   `;
 }
 
@@ -417,27 +335,11 @@ function renderCapabilityProgress(state) {
 }
 
 function renderCapabilities(state) {
-  const methodology = upgrades.filter((upgrade) => upgrade.type === "Method");
   const connections = upgrades.filter((upgrade) => upgrade.type === "Connection");
 
   return `
     <div class="capability-layout">
-      <div class="capability-groups">
-        ${renderCapabilityGroup(
-          "Methodology",
-          "Improve the way work flows.",
-          "The practical methods that make change useful and repeatable.",
-          methodology,
-          state,
-        )}
-        ${renderCapabilityGroup(
-          "Connected capability",
-          "Create a shared operational view.",
-          "Connections unlock only where they make the next decision easier.",
-          connections,
-          state,
-        )}
-      </div>
+      ${renderCapabilityTrail(connections, state)}
       ${renderCapabilityProgress(state)}
     </div>
   `;
@@ -450,31 +352,7 @@ function renderPerformance(state) {
 
   return `
     <div class="performance-grid">
-      <table class="performance-table">
-        <caption class="sr-only">Current operational performance</caption>
-        <thead>
-          <tr>
-            <th scope="col">Measure</th>
-            <th scope="col">Baseline</th>
-            <th scope="col">Current</th>
-            <th scope="col">Target</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${Object.entries(state.kpis)
-            .map(
-              ([key, kpi]) => `
-                <tr>
-                  <th scope="row">${kpiDefinitions[key].label}</th>
-                  <td><small>${kpi.baseline}${kpi.unit}</small></td>
-                  <td><strong>${kpi.current}${kpi.unit}</strong></td>
-                  <td><small>${kpi.target}${kpi.unit}</small></td>
-                </tr>
-              `,
-            )
-            .join("")}
-        </tbody>
-      </table>
+      ${renderKpiCards(state)}
       <aside class="performance-insight">
         <span>${hasCentralOperationalView ? "Decision context improved" : "Starting performance"}</span>
         <strong>${
@@ -531,10 +409,7 @@ function renderExperienceSummary(state) {
       <div class="experience-summary__layout">
         <div class="experience-summary__intro">
           <p class="experience-summary__lead">
-            The operation is moving. You have improved visibility, connected information, and made the next improvement easier to find.
-          </p>
-          <p>
-            The outcome is a clearer way for people to see a signal, investigate its context, coordinate a response, and measure what to improve next.
+            You have improved visibility, connected information, and made the next improvement easier to find.
           </p>
           <dl class="experience-summary__facts">
             <div>
@@ -663,9 +538,9 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Capability path</p>
-              <h2 id="capabilitiesTitle" tabindex="-1">Methods first. Connections with purpose.</h2>
+              <h2 id="capabilitiesTitle" tabindex="-1">Connections with purpose.</h2>
             </div>
-            <p>Trion methodology and practical integration form the improvement system, without hiding the real operational work.</p>
+            <p>Each capability unlocks only where it makes the next decision easier.</p>
           </div>
           ${renderCapabilities(state)}
         </section>

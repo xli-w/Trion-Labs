@@ -10,7 +10,6 @@ export { initialKpis, kpiDefinitions };
 export const navigationItems = Object.freeze([
   { id: "overview", label: "Overview" },
   { id: "challenges", label: "Challenges" },
-  { id: "capabilities", label: "Capabilities" },
   { id: "performance", label: "Performance" },
 ]);
 

@@ -57,7 +57,6 @@ const screenNames = new Set(["landing", "overview", "challenge"]);
 const sectionNames = new Set([
   "overview",
   "challenges",
-  "capabilities",
   "performance",
   "summary",
 ]);

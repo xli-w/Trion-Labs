@@ -79,8 +79,8 @@ function renderStartingSnapshot(state) {
         </button>
       `
     : `
-        <button class="button button--primary" type="button" data-action="navigate" data-section="capabilities">
-          Review the connected operation <span class="button-arrow" aria-hidden="true">-></span>
+        <button class="button button--primary" type="button" data-action="navigate" data-section="performance">
+          Review the operational baseline <span class="button-arrow" aria-hidden="true">-></span>
         </button>
       `;
 
@@ -334,17 +334,6 @@ function renderCapabilityProgress(state) {
   `;
 }
 
-function renderCapabilities(state) {
-  const connections = upgrades.filter((upgrade) => upgrade.type === "Connection");
-
-  return `
-    <div class="capability-layout">
-      ${renderCapabilityTrail(connections, state)}
-      ${renderCapabilityProgress(state)}
-    </div>
-  `;
-}
-
 function renderPerformance(state) {
   const hasCentralOperationalView = state.unlockedUpgrades.includes(
     "central-operational-view",
@@ -540,17 +529,6 @@ export function renderLabOverview(state) {
             <p>Start with the highlighted issue, then follow the next question it makes visible.</p>
           </div>
           ${renderChallengeCards(state)}
-        </section>
-
-        <section class="lab-section" id="capabilities" aria-labelledby="capabilitiesTitle">
-          <div class="section-topline">
-            <div>
-              <p class="eyebrow">Capability path</p>
-              <h2 id="capabilitiesTitle" tabindex="-1">What each capability changes.</h2>
-            </div>
-            <p>Each change is only worth keeping if it makes the next decision clearer.</p>
-          </div>
-          ${renderCapabilities(state)}
         </section>
 
         <section class="lab-section lab-section--surface" id="performance" aria-labelledby="performanceTitle">

@@ -45,7 +45,6 @@ import { initializeTheme, syncThemeToggle, toggleTheme } from "./theme.js";
 const sectionFocusTargetIds = Object.freeze({
   overview: "screen-title",
   challenges: "challengesTitle",
-  capabilities: "capabilitiesTitle",
   performance: "performanceTitle",
   summary: "summary-title",
 });

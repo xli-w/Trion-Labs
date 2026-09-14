@@ -30,22 +30,34 @@ export function renderLanding(state) {
             </ul>
           </div>
 
-          <div class="landing-diagram">
-            <p class="sr-only">
-              A diagram of production, quality, planning, and people connected through a Trion operational view.
-            </p>
-            <div class="diagram-surface" aria-hidden="true">
-              <div class="diagram-caption"><i></i> Operational context</div>
-              <svg class="diagram-flow" viewBox="0 0 480 440" preserveAspectRatio="none">
-                <path d="M80 142C170 110 180 215 235 220S340 120 414 101" />
-                <path d="M110 349C175 292 202 308 235 220S354 284 427 315" />
-                <path d="M235 220C230 160 234 116 234 69" />
-              </svg>
-              <div class="diagram-node diagram-node--production"><span>Production</span><strong>Line events</strong></div>
-              <div class="diagram-node diagram-node--quality"><span>Quality</span><strong>Defect signals</strong></div>
-              <div class="diagram-node diagram-node--planning"><span>Planning</span><strong>Order context</strong></div>
-              <div class="diagram-node diagram-node--people"><span>People</span><strong>Better decisions</strong></div>
-              <div class="diagram-core">Trion<br />Fabric</div>
+          <div class="landing-diagram" aria-label="Operational context imagery">
+            <div class="photo-collage">
+              <figure class="photo-card photo-card--feature">
+                <img
+                  src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1200&q=80"
+                  alt="Operators and production technicians reviewing a manufacturing line"
+                  loading="eager"
+                />
+                <figcaption>Production flow</figcaption>
+              </figure>
+              <div class="photo-stack">
+                <figure class="photo-card photo-card--small">
+                  <img
+                    src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80"
+                    alt="Operations team reviewing an improvement plan together"
+                    loading="lazy"
+                  />
+                  <figcaption>Decision making</figcaption>
+                </figure>
+                <figure class="photo-card photo-card--small">
+                  <img
+                    src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80"
+                    alt="Warehouse and logistics environment supporting a connected operation"
+                    loading="lazy"
+                  />
+                  <figcaption>Connected logistics</figcaption>
+                </figure>
+              </div>
             </div>
           </div>
         </section>

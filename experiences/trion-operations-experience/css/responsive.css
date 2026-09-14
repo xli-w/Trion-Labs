@@ -61,6 +61,16 @@
     margin: 0 auto;
   }
 
+  .photo-collage {
+    inset: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .photo-card--feature,
+  .photo-card--small {
+    min-height: 180px;
+  }
+
   .section-heading {
     gap: 16px;
   }

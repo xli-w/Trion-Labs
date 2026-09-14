@@ -92,7 +92,7 @@ function renderStartingSnapshot(state) {
           <h2 id="startingSnapshotTitle" tabindex="-1">Working harder than it needs to.</h2>
         </div>
         <p>
-          This illustrative operation has capable people and useful systems. The friction is in the handoffs between them.
+          Capable people and useful systems are already in place. The issues are in the handoffs.
         </p>
       </div>
       <div class="starting-snapshot__layout">
@@ -138,7 +138,7 @@ function renderStartingSnapshot(state) {
       </div>
       <div class="starting-snapshot__action">
         ${action}
-        <p>Start with the production loss that is visible, but not yet understood.</p>
+        <p>Start with the loss you can see, then explain it.</p>
       </div>
     </section>
   `;
@@ -403,7 +403,7 @@ function renderExperienceSummary(state) {
           <h2 id="summary-title" tabindex="-1">The operation is moving.</h2>
         </div>
         <p>
-          The five decisions now form one operating model rather than five separate responses.
+          The decisions now fit one operating model instead of five separate responses.
         </p>
       </div>
       <nav class="summary-nav-pills" aria-label="Transformation summary sections">
@@ -417,7 +417,7 @@ function renderExperienceSummary(state) {
       <div class="experience-summary__layout" id="summary-journey">
         <div class="experience-summary__intro">
           <p class="experience-summary__lead">
-            You have improved visibility, connected information, and made the next improvement easier to find.
+            Visibility is clearer, information is connected, and the next improvement is easier to find.
           </p>
           <dl class="experience-summary__facts">
             <div>
@@ -438,21 +438,21 @@ function renderExperienceSummary(state) {
           <span>What the approach makes possible</span>
           <strong>Better understanding makes the next improvement possible.</strong>
           <p>
-            This illustrative scenario shows an approach to operational improvement, not a claim that every problem is solved.
+            This is an illustrative approach to improvement, not a claim that every problem is solved.
           </p>
         </aside>
       </div>
       <div class="experience-summary__evidence">
         <section aria-labelledby="summaryPathTitle">
           <p class="eyebrow">Capability path</p>
-          <h3 id="summaryPathTitle">Each decision created the context for the next.</h3>
+          <h3 id="summaryPathTitle">Each decision built the next one.</h3>
           <ol class="experience-summary__outcomes">
             ${outcomes.join("")}
           </ol>
         </section>
         <section aria-labelledby="summaryKpisTitle">
           <p class="eyebrow">Illustrative KPI movement</p>
-          <h3 id="summaryKpisTitle">Measure the changes already made.</h3>
+          <h3 id="summaryKpisTitle">Measure what changed.</h3>
           <dl class="experience-summary__kpis">
             ${Object.entries(state.kpis)
               .map(
@@ -519,9 +519,9 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Friction and connection map</p>
-              <h2 id="modelTitle" tabindex="-1">Where useful context is breaking.</h2>
+              <h2 id="modelTitle" tabindex="-1">Where the signal breaks down.</h2>
             </div>
-            <p>Each relationship becomes useful only when it helps the right people make a better operational decision.</p>
+            <p>Useful information helps decisions. Missing context slows the response.</p>
           </div>
           <div class="stage-line" aria-label="Capability progression">
             <span>Stage ${stage.stage} of ${capabilityStages.length}</span>
@@ -535,9 +535,9 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Challenge map</p>
-              <h2 id="challengesTitle" tabindex="-1">Five connected ways to build the flow.</h2>
+              <h2 id="challengesTitle" tabindex="-1">Five ways to build the flow.</h2>
             </div>
-            <p>Start with the highlighted scenario, then follow the operational questions that each new capability makes possible.</p>
+            <p>Start with the highlighted issue, then follow the next question it makes visible.</p>
           </div>
           ${renderChallengeCards(state)}
         </section>
@@ -546,9 +546,9 @@ export function renderLabOverview(state) {
           <div class="section-topline">
             <div>
               <p class="eyebrow">Capability path</p>
-              <h2 id="capabilitiesTitle" tabindex="-1">Connections with purpose.</h2>
+              <h2 id="capabilitiesTitle" tabindex="-1">What each capability changes.</h2>
             </div>
-            <p>Each capability unlocks only where it makes the next decision easier.</p>
+            <p>Each change is only worth keeping if it makes the next decision clearer.</p>
           </div>
           ${renderCapabilities(state)}
         </section>
@@ -559,7 +559,7 @@ export function renderLabOverview(state) {
               <p class="eyebrow">Performance baseline</p>
               <h2 id="performanceTitle" tabindex="-1">Measure what changes.</h2>
             </div>
-            <p>Use the starting condition to judge the next decision. A balanced improvement creates the conditions for the one after it.</p>
+            <p>Use the baseline to judge each improvement and the next one worth making.</p>
           </div>
           ${renderPerformance(state)}
         </section>

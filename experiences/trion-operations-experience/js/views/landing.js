@@ -12,8 +12,8 @@ export function renderLanding(state) {
               Find the friction.<br /><span class="heading-accent">Build the flow.</span>
             </h1>
             <p class="landing-copy">
-              A small operation. A few hidden problems. A chance to make it work better.
-              Investigate what is happening, connect the information that matters, and see what changes.
+              A small operation. A few hidden problems. A chance to improve it.
+              Trace the friction, connect the right information, and see what changes.
             </p>
             <div class="hero-actions">
               <button class="button button--primary" type="button" data-action="enter-lab">
@@ -69,8 +69,7 @@ export function renderLanding(state) {
               <h2 id="howItWorksTitle">Improve the operation, not just the dashboard.</h2>
             </div>
             <p>
-              Each challenge follows a clear operational loop. The work begins with understanding,
-              then turns insight into a practical, measurable improvement.
+              Each challenge follows the same pattern: understand the issue, act on it, and measure the result.
             </p>
           </div>
           <ol class="loop-list">

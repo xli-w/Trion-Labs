@@ -24,11 +24,10 @@ This folder is intentionally separate from the active experience and should not 
 - [archive/fabric-line-simulator](archive/fabric-line-simulator) — historical prototype archive
 - [prompts](prompts) — product and delivery prompts for the active repo direction
 - [.github](.github) — repo instructions and skill definitions
-- [theme.js](theme.js) — shared theme utility used by the active experience
 
 ## Run the active experience
 
-From the repository root:
+From the repository root (or by serving the experience directory directly):
 
 ```bash
 python -m http.server 4173 --bind 127.0.0.1

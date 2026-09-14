@@ -18,7 +18,9 @@ Then open:
 http://127.0.0.1:4173/experiences/trion-operations-experience/
 ```
 
-The shared `theme.js` utility remains available from the repository root.
+For deployment, set `experiences/trion-operations-experience` as the Vercel
+Root Directory. The site is self-contained in that directory and has no build
+or install command.
 
 ## Architecture
 
@@ -64,8 +66,7 @@ The shared `theme.js` utility remains available from the repository root.
 - `js/miniGames/deliveryDomino.js` owns the fourth challenge's illustrative
   material-delay dependency chain, intervention rules, and delivery-response
   state.
-- `../theme.js` owns the shared local colour preference used by the strategy
-  experience and standalone mini-games.
+- `js/theme.js` owns the local colour preference used by the experience.
 
 Each mini-game module owns only its focused interaction. On a completed
 decision, the state store resolves the central outcome and named KPI effects,

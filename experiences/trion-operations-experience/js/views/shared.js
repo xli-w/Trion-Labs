@@ -267,50 +267,7 @@ function renderThemeToggle() {
 }
 
 export function renderChallengeJourney(state, challenge) {
-  const challengeIndex = getChallengeIndex(challenge);
-  const nextChallenge = challenges[challengeIndex + 1];
-
-  if (!challenge.phase || !challenge.journeySummary) {
-    throw new Error(`${challenge.title} is missing its progression context.`);
-  }
-
-  return `
-    <section class="challenge-journey" aria-label="Trion Labs capability progression">
-      <div class="challenge-journey__copy">
-        <span>Trion Labs progression</span>
-        <strong>${challenge.phase}</strong>
-        <p>
-          ${challenge.journeySummary}
-          ${
-            nextChallenge
-              ? ` Next, ${nextChallenge.title} builds on this context.`
-              : " The shared view now makes the next improvement easier to find."
-          }
-        </p>
-      </div>
-      <ol class="challenge-journey__path">
-        ${challenges
-          .map((item, index) => {
-            const completed = state.completedChallenges.includes(item.id);
-            const current = index === challengeIndex;
-            const status = completed ? "Complete" : current ? "Current" : "Ahead";
-            const stateClass = completed ? "is-complete" : current ? "is-current" : "is-ahead";
-
-            return `
-              <li class="challenge-journey__step ${stateClass}" ${
-                current ? 'aria-current="step"' : ""
-              }>
-                <span>${item.number}</span>
-                <strong>${item.phase}</strong>
-                <small>${status}</small>
-              </li>
-            `;
-          })
-          .join("")}
-      </ol>
-    </section>
-    ${renderChallengeOperationContext(challenge)}
-  `;
+  return "";
 }
 
 export function renderCompletionAction(challenge) {
